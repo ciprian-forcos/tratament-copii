@@ -189,3 +189,12 @@ Groups 1–6 are complete. Work continues on Group 7 (Extra Features).
   `afterMedicationId`) remain in localStorage. ProgramTab shows them with raw IDs as names.
   Fix: `useEffect` in ProgramTab filters out rules with unknown medication IDs whenever the
   `medications` prop changes.
+
+---
+
+## Group 9 — Quality of Life
+
+- [x] **9.1 "Acum" reset button for start time**
+  Add a compact "Acum" button next to the datetime-local input in the Program tab.
+  When clicked, sets the start time to the current moment. Useful when starting a new
+  treatment session without having to manually edit the datetime field.

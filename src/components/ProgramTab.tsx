@@ -426,12 +426,21 @@ export function ProgramTab({ activeChild, medications, children, setActiveChildI
           <Clock size={15} />
           Ora de start
         </label>
-        <input
-          type="datetime-local"
-          value={startTimeStr.slice(0, 16)}
-          onChange={e => setStartTimeStr(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
+        <div className="flex gap-2">
+          <input
+            type="datetime-local"
+            value={startTimeStr.slice(0, 16)}
+            onChange={e => setStartTimeStr(e.target.value)}
+            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+          <button
+            onClick={() => setStartTimeStr(toDatetimeLocalString(new Date()))}
+            className="shrink-0 px-3 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:border-gray-400 transition-colors"
+            title="Resetează la ora curentă"
+          >
+            Acum
+          </button>
+        </div>
       </div>
 
       {/* Timeline */}
