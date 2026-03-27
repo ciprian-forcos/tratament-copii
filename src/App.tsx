@@ -1,15 +1,18 @@
 import { useState } from 'react'
 import { Calendar, Pill, Users, type LucideIcon } from 'lucide-react'
 import { useLocalStorage } from './hooks/useLocalStorage'
-import type { Child } from './types'
+import { CopiiTab } from './components/CopiiTab'
+import { DEFAULT_MEDICATIONS } from './data/medications'
+import type { Child, Medication } from './types'
 
 type Tab = 'program' | 'medicamente' | 'copii'
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('program')
 
-  const [children] = useLocalStorage<Child[]>('tratament-copii-children', [])
-  const [activeChildId] = useLocalStorage<string | null>('tratament-copii-active-child', null)
+  const [children, setChildren] = useLocalStorage<Child[]>('tratament-copii-children', [])
+  const [activeChildId, setActiveChildId] = useLocalStorage<string | null>('tratament-copii-active-child', null)
+  const [medications] = useLocalStorage<Medication[]>('tratament-copii-medications', DEFAULT_MEDICATIONS)
 
   const activeChild = children.find(c => c.id === activeChildId) ?? null
 
@@ -50,9 +53,13 @@ function App() {
           </div>
         )}
         {activeTab === 'copii' && (
-          <div className="p-4 text-center mt-8 text-gray-400 text-sm">
-            Profilele copiilor vor apărea aici.
-          </div>
+          <CopiiTab
+            children={children}
+            setChildren={setChildren}
+            activeChildId={activeChildId}
+            setActiveChildId={setActiveChildId}
+            medications={medications}
+          />
         )}
       </main>
 
