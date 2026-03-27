@@ -151,7 +151,7 @@ Work continues on Group 4 (Medicamente Tab) and Group 5 (Program Tab).
 
 ## Group 6 — UI Polish
 
-- [ ] **6.1 Color-coded medication badges**
+- [x] **6.1 Color-coded medication badges**
   Use each medication's `color` hex value for badge backgrounds throughout the app
   (timeline, medication cards, child toggles). Ensure readable contrast (white or dark text).
 

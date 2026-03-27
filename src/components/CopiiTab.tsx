@@ -259,8 +259,9 @@ export function CopiiTab({ children, setChildren, activeChildId, setActiveChildI
                       <span className="flex-1 text-sm text-gray-800 truncate">{med.name}</span>
                       <div
                         className={`w-9 h-5 rounded-full flex items-center transition-colors flex-shrink-0 ${
-                          enabled ? 'bg-indigo-500' : 'bg-gray-300'
+                          !enabled ? 'bg-gray-300' : ''
                         }`}
+                        style={enabled ? { backgroundColor: med.color } : {}}
                       >
                         <div
                           className={`w-4 h-4 rounded-full bg-white mx-0.5 transition-transform shadow-sm ${
@@ -268,7 +269,13 @@ export function CopiiTab({ children, setChildren, activeChildId, setActiveChildI
                           }`}
                         />
                       </div>
-                      {enabled && <Check size={14} className="text-indigo-500 flex-shrink-0" />}
+                      {enabled && (
+                        <Check
+                          size={14}
+                          className="flex-shrink-0"
+                          style={{ color: med.color }}
+                        />
+                      )}
                     </button>
                   )
                 })}
