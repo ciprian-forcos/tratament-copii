@@ -35,7 +35,7 @@ The project scaffold is complete (React + TypeScript + Vite + Tailwind CSS + PWA
   - `estimateHeight(weightKg)` — lookup table from `medications.md`
   - `formatDose(amount, unit)` — returns human-readable string or "Sub doza minima"
 
-- [ ] **1.5 LocalStorage persistence**
+- [x] **1.5 LocalStorage persistence**
   Create `src/hooks/useLocalStorage.ts` — generic hook `useLocalStorage<T>(key, defaultValue)`.
   Keys to use:
   - `tratament-copii-children`
