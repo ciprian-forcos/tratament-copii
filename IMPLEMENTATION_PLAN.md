@@ -176,6 +176,6 @@ Groups 1–6 are complete. Work continues on Group 7 (Extra Features).
   In the Medicamente tab, below the active child's info, optionally show the estimated
   or entered height and the BSA (Mosteller) value used in dose calculations.
 
-- [ ] **7.2 Service worker cache version bump**
+- [x] **7.2 Service worker cache version bump**
   When the build produces a new bundle hash, update `sw.js` cache name (or automate via
   Vite plugin) so returning users get fresh assets.
