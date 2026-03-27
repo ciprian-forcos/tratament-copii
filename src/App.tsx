@@ -3,6 +3,7 @@ import { Calendar, Pill, Users, type LucideIcon } from 'lucide-react'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { CopiiTab } from './components/CopiiTab'
 import { MedicamenteTab } from './components/MedicamenteTab'
+import { ProgramTab } from './components/ProgramTab'
 import { DEFAULT_MEDICATIONS } from './data/medications'
 import type { Child, Medication } from './types'
 
@@ -44,9 +45,10 @@ function App() {
       {/* Tab content */}
       <main className="flex-1 overflow-y-auto">
         {activeTab === 'program' && (
-          <div className="p-4 text-center mt-8 text-gray-400 text-sm">
-            Programul de tratament va apărea aici.
-          </div>
+          <ProgramTab
+            activeChild={activeChild}
+            medications={medications}
+          />
         )}
         {activeTab === 'medicamente' && (
           <MedicamenteTab

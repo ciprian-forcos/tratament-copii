@@ -109,11 +109,11 @@ Work continues on Group 4 (Medicamente Tab) and Group 5 (Program Tab).
 
 ## Group 5 — Program Tab
 
-- [ ] **5.1 Treatment start time picker**
+- [x] **5.1 Treatment start time picker**
   Date + time input (or datetime-local) at the top of the Program tab. Defaults to now.
   Persisted to localStorage.
 
-- [ ] **5.2 24-hour dose timeline**
+- [x] **5.2 24-hour dose timeline**
   Compute all dose times for the next 24 hours based on the active schedule rules and
   the active child's enabled medications. Display as a chronological list. Each entry
   shows: time (HH:mm), color-coded medication name badge, dose amount string.
