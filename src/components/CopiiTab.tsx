@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus, Pencil, Trash2, ChevronDown, ChevronUp, Check } from 'lucide-react'
+import { Plus, Pencil, Trash2, ChevronDown, ChevronUp, Check, Users } from 'lucide-react'
 import type { Child, Medication } from '../types'
 
 const PRESET_COLORS = [
@@ -145,9 +145,13 @@ export function CopiiTab({ children, setChildren, activeChildId, setActiveChildI
       </button>
 
       {children.length === 0 && (
-        <p className="text-center text-gray-400 text-sm mt-8">
-          Niciun profil adăugat. Apasă butonul de mai sus pentru a adăuga un copil.
-        </p>
+        <div className="flex flex-col items-center justify-center py-12 text-center px-4">
+          <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center mb-4">
+            <Users size={28} className="text-indigo-400" />
+          </div>
+          <p className="text-sm font-medium text-gray-700 mb-1">Niciun profil adăugat</p>
+          <p className="text-xs text-gray-400">Apasă „Adaugă copil" pentru a crea primul profil.</p>
+        </div>
       )}
 
       {children.map(child => {

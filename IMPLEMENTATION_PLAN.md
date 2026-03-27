@@ -159,7 +159,7 @@ Work continues on Group 4 (Medicamente Tab) and Group 5 (Program Tab).
   Max-width container (e.g., 480px) centred on desktop. Bottom nav bar stays fixed.
   All dialogs use full-screen sheet on mobile.
 
-- [ ] **6.3 Empty states**
+- [x] **6.3 Empty states**
   Meaningful empty-state messages when:
   - No children added yet (Copii tab)
   - No active child selected (Program and Medicamente tabs)

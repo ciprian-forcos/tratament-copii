@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react'
-import { Clock, Check, ChevronDown, ChevronUp, Plus, Pencil, Trash2 } from 'lucide-react'
+import { Clock, Check, ChevronDown, ChevronUp, Plus, Pencil, Trash2, User, CalendarX } from 'lucide-react'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { generateSchedule } from '../utils/scheduleEngine'
 import { calculateDose, formatDose } from '../utils/doseCalculation'
@@ -422,13 +422,27 @@ export function ProgramTab({ activeChild, medications, children, setActiveChildI
 
       {/* Timeline */}
       {!activeChild ? (
-        <p className="text-center mt-8 text-gray-400 text-sm">
-          Selectează un copil pentru a vedea programul.
-        </p>
+        <div className="flex flex-col items-center justify-center py-10 text-center px-4">
+          <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center mb-4">
+            <User size={28} className="text-indigo-400" />
+          </div>
+          <p className="text-sm font-medium text-gray-700 mb-1">Niciun copil selectat</p>
+          <p className="text-xs text-gray-400">
+            {children.length === 0
+              ? 'Adaugă un copil din tab-ul Copii pentru a vedea programul.'
+              : 'Selectează un copil din lista de mai sus pentru a vedea programul.'}
+          </p>
+        </div>
       ) : timeline.length === 0 ? (
-        <p className="text-center mt-8 text-gray-400 text-sm">
-          Niciun medicament activ în program.
-        </p>
+        <div className="flex flex-col items-center justify-center py-10 text-center px-4">
+          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+            <CalendarX size={28} className="text-gray-400" />
+          </div>
+          <p className="text-sm font-medium text-gray-700 mb-1">Niciun medicament în program</p>
+          <p className="text-xs text-gray-400">
+            Activează medicamente în profilul copilului sau adaugă reguli de administrare.
+          </p>
+        </div>
       ) : (
         <div className="flex flex-col gap-1">
           <h2 className="text-sm font-medium text-gray-700 mb-1">Program 24 ore</h2>

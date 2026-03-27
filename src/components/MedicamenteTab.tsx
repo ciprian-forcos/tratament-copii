@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus, Pencil, Trash2 } from 'lucide-react'
+import { Plus, Pencil, Trash2, Pill, User } from 'lucide-react'
 import type { Child, Medication, DoseConfig } from '../types'
 import { calculateDose, formatDose } from '../utils/doseCalculation'
 
@@ -262,15 +262,22 @@ export function MedicamenteTab({ medications, setMedications, activeChild, setCh
       </button>
 
       {!activeChild && medications.length > 0 && (
-        <p className="text-xs text-gray-400 text-center">
-          Selectează un copil pentru a vedea dozele calculate.
-        </p>
+        <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-amber-50 border border-amber-200">
+          <User size={15} className="text-amber-500 shrink-0" />
+          <p className="text-xs text-amber-700">
+            Selectează un copil din tab-ul <strong>Copii</strong> pentru a vedea dozele calculate.
+          </p>
+        </div>
       )}
 
       {medications.length === 0 && (
-        <p className="text-center text-gray-400 text-sm mt-8">
-          Niciun medicament. Apasă butonul de mai sus pentru a adăuga.
-        </p>
+        <div className="flex flex-col items-center justify-center py-12 text-center px-4">
+          <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center mb-4">
+            <Pill size={28} className="text-indigo-400" />
+          </div>
+          <p className="text-sm font-medium text-gray-700 mb-1">Niciun medicament</p>
+          <p className="text-xs text-gray-400">Apasă „Adaugă medicament" pentru a adăuga primul medicament.</p>
+        </div>
       )}
 
       {medications.map(med => {
