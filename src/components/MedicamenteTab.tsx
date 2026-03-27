@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Plus, Pencil, Trash2, Pill, User } from 'lucide-react'
 import type { Child, Medication, DoseConfig } from '../types'
-import { calculateDose, formatDose } from '../utils/doseCalculation'
+import { calculateDose, formatDose, estimateHeight, calculateBSA } from '../utils/doseCalculation'
 
 const PRESET_COLORS = [
   '#3b82f6', '#f97316', '#8b5cf6', '#14b8a6',
@@ -269,6 +269,31 @@ export function MedicamenteTab({ medications, setMedications, activeChild, setCh
           </p>
         </div>
       )}
+
+      {activeChild && (() => {
+        const heightCm = activeChild.height ?? estimateHeight(activeChild.weight)
+        const isEstimated = activeChild.height == null
+        const bsa = calculateBSA(activeChild.weight, heightCm)
+        return (
+          <div className="px-3 py-2.5 rounded-xl bg-indigo-50 border border-indigo-100 text-xs text-indigo-800">
+            <div className="flex items-center gap-1.5 mb-1">
+              <User size={13} className="text-indigo-400 shrink-0" />
+              <span className="font-semibold">{activeChild.name}</span>
+              <span className="text-indigo-400">·</span>
+              <span>{activeChild.weight} kg</span>
+            </div>
+            <div className="flex gap-3 text-indigo-700">
+              <span>
+                Înălțime: <strong>{heightCm} cm</strong>
+                {isEstimated && <span className="text-indigo-400 ml-1">(estimat)</span>}
+              </span>
+              <span>
+                BSA: <strong>{bsa.toFixed(2)} m²</strong>
+              </span>
+            </div>
+          </div>
+        )
+      })()}
 
       {medications.length === 0 && (
         <div className="flex flex-col items-center justify-center py-12 text-center px-4">

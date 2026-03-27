@@ -172,7 +172,7 @@ Groups 1–6 are complete. Work continues on Group 7 (Extra Features).
 
 ## Group 7 — Extra Features
 
-- [ ] **7.1 BSA / height estimation display**
+- [x] **7.1 BSA / height estimation display**
   In the Medicamente tab, below the active child's info, optionally show the estimated
   or entered height and the BSA (Mosteller) value used in dose calculations.
 
