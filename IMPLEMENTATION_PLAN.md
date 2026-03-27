@@ -48,7 +48,7 @@ The project scaffold is complete (React + TypeScript + Vite + Tailwind CSS + PWA
 
 ## Group 2 — App Shell & Navigation
 
-- [ ] **2.1 App shell with tabs**
+- [x] **2.1 App shell with tabs**
   Replace placeholder `src/App.tsx` with a full shell containing three bottom-navigation
   tabs: **Program**, **Medicamente**, **Copii**. Wire up state from localStorage hooks.
   Include active-child selector (name badge) in the top bar.
