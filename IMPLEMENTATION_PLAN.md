@@ -29,7 +29,7 @@ The project scaffold is complete (React + TypeScript + Vite + Tailwind CSS + PWA
   Create `src/data/scheduleRules.ts` exporting the 9 default rules (r1–r9) from
   `scheduling.md` with correct types and medication references.
 
-- [ ] **1.4 Dose calculation logic**
+- [x] **1.4 Dose calculation logic**
   Create `src/utils/doseCalculation.ts` implementing:
   - `calculateDose(medication, weightKg, heightCm?)` — dispatches to each dose type
   - `estimateHeight(weightKg)` — lookup table from `medications.md`
