@@ -312,6 +312,20 @@ export function ProgramTab({ activeChild, medications, children, setActiveChildI
     return () => clearInterval(interval)
   }, [])
 
+  // Clean up orphaned rules when medications change (e.g. after deletion)
+  useEffect(() => {
+    const medIds = new Set(medications.map(m => m.id))
+    setRules(prev => {
+      const filtered = prev.filter(r => {
+        if (!medIds.has(r.medicationId)) return false
+        if (r.type === 'after_medication' && !medIds.has(r.afterMedicationId)) return false
+        return true
+      })
+      if (filtered.length === prev.length) return prev
+      return filtered
+    })
+  }, [medications])
+
   const [rulesOpen, setRulesOpen] = useState(false)
   const [editingRule, setEditingRule] = useState<ScheduleRule | null | undefined>(undefined)
   const [deletingRuleId, setDeletingRuleId] = useState<string | null>(null)

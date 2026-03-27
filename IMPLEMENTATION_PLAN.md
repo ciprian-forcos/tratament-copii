@@ -179,3 +179,13 @@ Groups 1–6 are complete. Work continues on Group 7 (Extra Features).
 - [x] **7.2 Service worker cache version bump**
   When the build produces a new bundle hash, update `sw.js` cache name (or automate via
   Vite plugin) so returning users get fresh assets.
+
+---
+
+## Group 8 — Bug Fixes
+
+- [x] **8.1 Clean up orphaned schedule rules on medication deletion**
+  When a medication is deleted, any schedule rules referencing it (via `medicationId` or
+  `afterMedicationId`) remain in localStorage. ProgramTab shows them with raw IDs as names.
+  Fix: `useEffect` in ProgramTab filters out rules with unknown medication IDs whenever the
+  `medications` prop changes.
