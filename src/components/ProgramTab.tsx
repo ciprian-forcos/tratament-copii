@@ -9,6 +9,8 @@ import type { AdministeredDose, Child, Medication, ScheduleRule } from '../types
 interface Props {
   activeChild: Child | null
   medications: Medication[]
+  children: Child[]
+  setActiveChildId: (id: string | null) => void
 }
 
 function toDatetimeLocalString(date: Date): string {
@@ -30,7 +32,7 @@ function getContrastColor(hex: string): string {
 
 const SOON_MS = 30 * 60 * 1000
 
-export function ProgramTab({ activeChild, medications }: Props) {
+export function ProgramTab({ activeChild, medications, children, setActiveChildId }: Props) {
   const [startTimeStr, setStartTimeStr] = useLocalStorage<string>(
     'tratament-copii-start-time',
     toDatetimeLocalString(new Date()),
@@ -97,6 +99,31 @@ export function ProgramTab({ activeChild, medications }: Props) {
 
   return (
     <div className="p-4 flex flex-col gap-4">
+      {/* Child selector — shown only when there are multiple children */}
+      {children.length > 1 && (
+        <div className="flex gap-1 overflow-x-auto pb-1 -mx-1 px-1">
+          {children.map(child => {
+            const isActive = activeChild?.id === child.id
+            const bg = child.color ?? '#6366f1'
+            const textColor = getContrastColor(bg)
+            return (
+              <button
+                key={child.id}
+                onClick={() => setActiveChildId(child.id)}
+                className="shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-colors border"
+                style={
+                  isActive
+                    ? { backgroundColor: bg, color: textColor, borderColor: bg }
+                    : { backgroundColor: 'transparent', color: '#6b7280', borderColor: '#d1d5db' }
+                }
+              >
+                {child.name}
+              </button>
+            )
+          })}
+        </div>
+      )}
+
       {/* Start time picker */}
       <div className="flex flex-col gap-1">
         <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">

@@ -48,6 +48,8 @@ function App() {
           <ProgramTab
             activeChild={activeChild}
             medications={medications}
+            children={children}
+            setActiveChildId={setActiveChildId}
           />
         )}
         {activeTab === 'medicamente' && (

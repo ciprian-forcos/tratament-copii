@@ -134,7 +134,7 @@ Work continues on Group 4 (Medicamente Tab) and Group 5 (Program Tab).
   `tratament-copii-administered-doses` (keyed by child id + medication id + scheduled
   datetime). Administered doses show a check mark and are visually complete.
 
-- [ ] **5.6 Child selector in Program tab**
+- [x] **5.6 Child selector in Program tab**
   If more than one child exists, show a segmented control / tab strip at the top to switch
   the active child without leaving the Program tab.
 
