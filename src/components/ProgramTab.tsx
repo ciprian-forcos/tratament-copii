@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react'
-import { Clock, Check } from 'lucide-react'
+import { Clock, Check, ChevronDown, ChevronUp, Plus, Pencil, Trash2 } from 'lucide-react'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { generateSchedule } from '../utils/scheduleEngine'
 import { calculateDose, formatDose } from '../utils/doseCalculation'
@@ -30,14 +30,274 @@ function getContrastColor(hex: string): string {
   return luminance > 0.5 ? '#111827' : '#ffffff'
 }
 
+function generateId(): string {
+  return Math.random().toString(36).slice(2) + Date.now().toString(36)
+}
+
 const SOON_MS = 30 * 60 * 1000
+
+const RULE_TYPE_LABELS: Record<ScheduleRule['type'], string> = {
+  every_n_hours: 'La fiecare N ore',
+  after_medication: 'La N ore după',
+  once_per_day: 'O dată pe zi',
+  times_per_day: 'De N ori pe zi',
+}
+
+interface RuleFormState {
+  type: ScheduleRule['type']
+  medicationId: string
+  everyNHours: string
+  isStartRule: boolean
+  afterMedicationId: string
+  hoursAfter: string
+  timesPerDay: string
+}
+
+function emptyRuleForm(medications: Medication[]): RuleFormState {
+  return {
+    type: 'every_n_hours',
+    medicationId: medications[0]?.id ?? '',
+    everyNHours: '8',
+    isStartRule: false,
+    afterMedicationId: medications[0]?.id ?? '',
+    hoursAfter: '3',
+    timesPerDay: '2',
+  }
+}
+
+function ruleToForm(rule: ScheduleRule): RuleFormState {
+  const base: RuleFormState = {
+    type: rule.type,
+    medicationId: rule.medicationId,
+    everyNHours: '8',
+    isStartRule: false,
+    afterMedicationId: rule.medicationId,
+    hoursAfter: '3',
+    timesPerDay: '2',
+  }
+  if (rule.type === 'every_n_hours') {
+    base.everyNHours = String(rule.everyNHours)
+    base.isStartRule = rule.isStartRule ?? false
+  } else if (rule.type === 'after_medication') {
+    base.afterMedicationId = rule.afterMedicationId
+    base.hoursAfter = String(rule.hoursAfter)
+  } else if (rule.type === 'times_per_day') {
+    base.timesPerDay = String(rule.timesPerDay)
+  }
+  return base
+}
+
+function formToRule(form: RuleFormState, id: string): ScheduleRule {
+  if (form.type === 'every_n_hours') {
+    return {
+      id,
+      type: 'every_n_hours',
+      medicationId: form.medicationId,
+      everyNHours: Math.max(1, Number(form.everyNHours) || 8),
+      isStartRule: form.isStartRule,
+    }
+  }
+  if (form.type === 'after_medication') {
+    return {
+      id,
+      type: 'after_medication',
+      medicationId: form.medicationId,
+      afterMedicationId: form.afterMedicationId,
+      hoursAfter: Math.max(0, Number(form.hoursAfter) || 3),
+    }
+  }
+  if (form.type === 'times_per_day') {
+    return {
+      id,
+      type: 'times_per_day',
+      medicationId: form.medicationId,
+      timesPerDay: Math.max(1, Number(form.timesPerDay) || 2),
+    }
+  }
+  // once_per_day
+  return {
+    id,
+    type: 'once_per_day',
+    medicationId: form.medicationId,
+  }
+}
+
+function describeRule(rule: ScheduleRule, medMap: Map<string, Medication>): string {
+  const med = medMap.get(rule.medicationId)?.name ?? rule.medicationId
+  if (rule.type === 'every_n_hours') {
+    return `${med} — la fiecare ${rule.everyNHours}h${rule.isStartRule ? ' (start)' : ''}`
+  }
+  if (rule.type === 'after_medication') {
+    const ref = medMap.get(rule.afterMedicationId)?.name ?? rule.afterMedicationId
+    return `${med} — la ${rule.hoursAfter}h după ${ref}`
+  }
+  if (rule.type === 'once_per_day') {
+    return `${med} — o dată pe zi`
+  }
+  if (rule.type === 'times_per_day') {
+    return `${med} — de ${rule.timesPerDay}x/zi`
+  }
+  return med
+}
+
+interface RuleDialogProps {
+  rule: ScheduleRule | null
+  medications: Medication[]
+  onSave: (rule: ScheduleRule) => void
+  onClose: () => void
+}
+
+function RuleDialog({ rule, medications, onSave, onClose }: RuleDialogProps) {
+  const [form, setForm] = useState<RuleFormState>(() =>
+    rule ? ruleToForm(rule) : emptyRuleForm(medications),
+  )
+
+  function set<K extends keyof RuleFormState>(key: K, value: RuleFormState[K]) {
+    setForm(prev => ({ ...prev, [key]: value }))
+  }
+
+  function handleSave() {
+    if (!form.medicationId) return
+    const id = rule?.id ?? generateId()
+    onSave(formToRule(form, id))
+  }
+
+  const isValid = !!form.medicationId
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40" onClick={onClose}>
+      <div
+        className="w-full sm:max-w-md bg-white rounded-t-2xl sm:rounded-2xl shadow-xl p-4 flex flex-col gap-4 max-h-[90vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
+        <h2 className="text-base font-semibold text-gray-900">
+          {rule ? 'Editează regulă' : 'Regulă nouă'}
+        </h2>
+
+        {/* Rule type */}
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">Tip regulă</label>
+          <select
+            value={form.type}
+            onChange={e => set('type', e.target.value as ScheduleRule['type'])}
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            {(Object.keys(RULE_TYPE_LABELS) as ScheduleRule['type'][]).map(t => (
+              <option key={t} value={t}>{RULE_TYPE_LABELS[t]}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Medication */}
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">Medicament</label>
+          <select
+            value={form.medicationId}
+            onChange={e => set('medicationId', e.target.value)}
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            {medications.map(m => (
+              <option key={m.id} value={m.id}>{m.name}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Type-specific fields */}
+        {form.type === 'every_n_hours' && (
+          <>
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Interval (ore)</label>
+              <input
+                type="number"
+                min="1"
+                max="24"
+                value={form.everyNHours}
+                onChange={e => set('everyNHours', e.target.value)}
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.isStartRule}
+                onChange={e => set('isStartRule', e.target.checked)}
+                className="accent-indigo-600"
+              />
+              Regulă de start (ancorează ora de început)
+            </label>
+          </>
+        )}
+
+        {form.type === 'after_medication' && (
+          <>
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Medicament de referință</label>
+              <select
+                value={form.afterMedicationId}
+                onChange={e => set('afterMedicationId', e.target.value)}
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                {medications.map(m => (
+                  <option key={m.id} value={m.id}>{m.name}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Ore după</label>
+              <input
+                type="number"
+                min="0"
+                max="24"
+                step="0.5"
+                value={form.hoursAfter}
+                onChange={e => set('hoursAfter', e.target.value)}
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          </>
+        )}
+
+        {form.type === 'times_per_day' && (
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Administrări pe zi</label>
+            <input
+              type="number"
+              min="1"
+              max="12"
+              value={form.timesPerDay}
+              onChange={e => set('timesPerDay', e.target.value)}
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="flex gap-2 pt-1">
+          <button
+            onClick={onClose}
+            className="flex-1 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            Anulează
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={!isValid}
+            className="flex-1 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium disabled:opacity-50 hover:bg-indigo-700"
+          >
+            Salvează
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export function ProgramTab({ activeChild, medications, children, setActiveChildId }: Props) {
   const [startTimeStr, setStartTimeStr] = useLocalStorage<string>(
     'tratament-copii-start-time',
     toDatetimeLocalString(new Date()),
   )
-  const [rules] = useLocalStorage<ScheduleRule[]>(
+  const [rules, setRules] = useLocalStorage<ScheduleRule[]>(
     'tratament-copii-schedule-rules',
     defaultScheduleRules,
   )
@@ -51,6 +311,10 @@ export function ProgramTab({ activeChild, medications, children, setActiveChildI
     const interval = setInterval(() => setNow(new Date()), 30_000)
     return () => clearInterval(interval)
   }, [])
+
+  const [rulesOpen, setRulesOpen] = useState(false)
+  const [editingRule, setEditingRule] = useState<ScheduleRule | null | undefined>(undefined)
+  const [deletingRuleId, setDeletingRuleId] = useState<string | null>(null)
 
   const startTime = useMemo(() => new Date(startTimeStr), [startTimeStr])
 
@@ -95,6 +359,24 @@ export function ProgramTab({ activeChild, medications, children, setActiveChildI
         administeredAt: new Date().toISOString(),
       }])
     }
+  }
+
+  function saveRule(rule: ScheduleRule) {
+    setRules(prev => {
+      const idx = prev.findIndex(r => r.id === rule.id)
+      if (idx >= 0) {
+        const next = [...prev]
+        next[idx] = rule
+        return next
+      }
+      return [...prev, rule]
+    })
+    setEditingRule(undefined)
+  }
+
+  function deleteRule(id: string) {
+    setRules(prev => prev.filter(r => r.id !== id))
+    setDeletingRuleId(null)
   }
 
   return (
@@ -237,6 +519,100 @@ export function ProgramTab({ activeChild, medications, children, setActiveChildI
               </div>
             )
           })}
+        </div>
+      )}
+
+      {/* Schedule rules section */}
+      <div className="border border-gray-200 rounded-xl overflow-hidden">
+        <button
+          onClick={() => setRulesOpen(v => !v)}
+          className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          <span>Reguli de administrare ({rules.length})</span>
+          {rulesOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </button>
+
+        {rulesOpen && (
+          <div className="flex flex-col divide-y divide-gray-100">
+            {rules.length === 0 && (
+              <p className="px-4 py-3 text-sm text-gray-400">Nicio regulă definită.</p>
+            )}
+            {rules.map(rule => {
+              const med = medMap.get(rule.medicationId)
+              const bg = med?.color ?? '#6366f1'
+              return (
+                <div key={rule.id} className="flex items-center gap-3 px-4 py-2.5">
+                  <span
+                    className="w-2 h-2 rounded-full shrink-0"
+                    style={{ backgroundColor: bg }}
+                  />
+                  <span className="flex-1 text-sm text-gray-700 min-w-0 truncate">
+                    {describeRule(rule, medMap)}
+                  </span>
+                  <span className="text-xs text-gray-400 shrink-0 hidden sm:inline">
+                    {RULE_TYPE_LABELS[rule.type]}
+                  </span>
+                  <button
+                    onClick={() => setEditingRule(rule)}
+                    aria-label="Editează regulă"
+                    className="shrink-0 p-1 rounded hover:bg-gray-100 text-gray-500"
+                  >
+                    <Pencil size={14} />
+                  </button>
+                  <button
+                    onClick={() => setDeletingRuleId(rule.id)}
+                    aria-label="Șterge regulă"
+                    className="shrink-0 p-1 rounded hover:bg-red-50 text-gray-500 hover:text-red-600"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              )
+            })}
+
+            {/* Add rule button */}
+            <button
+              onClick={() => setEditingRule(null)}
+              className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-indigo-600 hover:bg-indigo-50"
+            >
+              <Plus size={16} />
+              Adaugă regulă
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Add/Edit rule dialog */}
+      {editingRule !== undefined && (
+        <RuleDialog
+          rule={editingRule}
+          medications={medications}
+          onSave={saveRule}
+          onClose={() => setEditingRule(undefined)}
+        />
+      )}
+
+      {/* Delete confirmation */}
+      {deletingRuleId && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40">
+          <div className="w-full sm:max-w-sm bg-white rounded-t-2xl sm:rounded-2xl shadow-xl p-4 flex flex-col gap-4">
+            <h2 className="text-base font-semibold text-gray-900">Șterge regulă</h2>
+            <p className="text-sm text-gray-600">Ești sigur că vrei să ștergi această regulă?</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setDeletingRuleId(null)}
+                className="flex-1 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Anulează
+              </button>
+              <button
+                onClick={() => deleteRule(deletingRuleId)}
+                className="flex-1 py-2 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700"
+              >
+                Șterge
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

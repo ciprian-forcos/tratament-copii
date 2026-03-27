@@ -138,11 +138,11 @@ Work continues on Group 4 (Medicamente Tab) and Group 5 (Program Tab).
   If more than one child exists, show a segmented control / tab strip at the top to switch
   the active child without leaving the Program tab.
 
-- [ ] **5.7 Schedule rule management UI**
+- [x] **5.7 Schedule rule management UI**
   A collapsible or modal "Reguli" section listing all schedule rules. Each row shows rule
   type, medication name, and parameters. Buttons to add, edit, and delete rules.
 
-- [ ] **5.8 Add/Edit schedule rule dialog**
+- [x] **5.8 Add/Edit schedule rule dialog**
   Form dialog: rule type selector (every_n_hours | after_medication | once_per_day |
   times_per_day), medication selector, and type-specific parameter fields (interval hours,
   reference medication, times per day, etc.).
