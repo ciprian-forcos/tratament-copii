@@ -20,7 +20,7 @@ The project scaffold is complete (React + TypeScript + Vite + Tailwind CSS + PWA
   (all four variants: `weight_divided`, `mg_per_kg`, `fixed`, `weight_threshold`),
   `ScheduleRule` (all four rule types), and `AdministeredDose`.
 
-- [ ] **1.2 Default medications data**
+- [x] **1.2 Default medications data**
   Create `src/data/medications.ts` exporting the 8 default medications from the spec
   (nurofen, panadol, diclofenac, novocalmin, vitamina_d, vitamina_c, virodep, greentus)
   with exact ids, names, doseType, doseConfig, color, and notes.
