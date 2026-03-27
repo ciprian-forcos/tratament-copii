@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Calendar, Pill, Users, type LucideIcon } from 'lucide-react'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { CopiiTab } from './components/CopiiTab'
@@ -16,6 +16,12 @@ function App() {
   const [activeChildId, setActiveChildId] = useLocalStorage<string | null>('tratament-copii-active-child', null)
   const [medications, setMedications] = useLocalStorage<Medication[]>('tratament-copii-medications', DEFAULT_MEDICATIONS)
 
+  const [isHydrated, setIsHydrated] = useState(false)
+
+  useEffect(() => {
+    setIsHydrated(true)
+  }, [])
+
   const activeChild = children.find(c => c.id === activeChildId) ?? null
 
   const tabs: { id: Tab; label: string; Icon: LucideIcon }[] = [
@@ -23,6 +29,17 @@ function App() {
     { id: 'medicamente', label: 'Medicamente', Icon: Pill },
     { id: 'copii', label: 'Copii', Icon: Users },
   ]
+
+  if (!isHydrated) {
+    return (
+      <div className="flex items-center justify-center h-screen max-w-[480px] mx-auto bg-white">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-gray-500">Se încarcă...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col h-screen max-w-[480px] mx-auto bg-white shadow-sm">
