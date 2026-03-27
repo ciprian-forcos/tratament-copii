@@ -82,7 +82,7 @@ Work continues on Group 4 (Medicamente Tab) and Group 5 (Program Tab).
 
 ## Group 4 — Medicamente Tab
 
-- [ ] **4.1 Medication list UI**
+- [x] **4.1 Medication list UI**
   List all medications as cards showing: color badge, name, calculated dose for the
   active child (weight-based), unit, and notes. Show "Selectează un copil" message if no
   active child.
