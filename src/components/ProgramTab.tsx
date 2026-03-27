@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { Clock } from 'lucide-react'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { generateSchedule } from '../utils/scheduleEngine'
@@ -28,6 +28,8 @@ function getContrastColor(hex: string): string {
   return luminance > 0.5 ? '#111827' : '#ffffff'
 }
 
+const SOON_MS = 30 * 60 * 1000
+
 export function ProgramTab({ activeChild, medications }: Props) {
   const [startTimeStr, setStartTimeStr] = useLocalStorage<string>(
     'tratament-copii-start-time',
@@ -37,6 +39,12 @@ export function ProgramTab({ activeChild, medications }: Props) {
     'tratament-copii-schedule-rules',
     defaultScheduleRules,
   )
+
+  const [now, setNow] = useState(() => new Date())
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 30_000)
+    return () => clearInterval(interval)
+  }, [])
 
   const startTime = useMemo(() => new Date(startTimeStr), [startTimeStr])
 
@@ -48,6 +56,11 @@ export function ProgramTab({ activeChild, medications }: Props) {
   const medMap = useMemo(
     () => new Map(medications.map(m => [m.id, m])),
     [medications],
+  )
+
+  const nextIndex = useMemo(
+    () => timeline.findIndex(e => e.scheduledAt >= now),
+    [timeline, now],
   )
 
   return (
@@ -85,12 +98,35 @@ export function ProgramTab({ activeChild, medications }: Props) {
             const doseStr = formatDose(dose, med.doseConfig.unit)
             const bg = med.color ?? '#6366f1'
             const textColor = getContrastColor(bg)
+
+            const isPast = entry.scheduledAt < now
+            const isNext = i === nextIndex
+            const isSoon =
+              !isPast &&
+              !isNext &&
+              entry.scheduledAt.getTime() - now.getTime() <= SOON_MS
+
             return (
               <div
                 key={i}
-                className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0"
+                className={[
+                  'flex items-center gap-3 py-2 px-2 rounded-lg border transition-colors',
+                  isPast
+                    ? 'opacity-40 border-transparent'
+                    : isNext
+                      ? 'bg-indigo-50 border-indigo-300 shadow-sm'
+                      : 'border-transparent',
+                ].join(' ')}
               >
-                <span className="text-sm font-mono text-gray-500 w-12 shrink-0">
+                <span
+                  className={[
+                    'text-sm font-mono w-12 shrink-0',
+                    isPast ? 'text-gray-400 line-through' : 'text-gray-500',
+                    isNext ? 'font-semibold text-indigo-700' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                >
                   {formatTime(entry.scheduledAt)}
                 </span>
                 <span
@@ -99,7 +135,27 @@ export function ProgramTab({ activeChild, medications }: Props) {
                 >
                   {med.name}
                 </span>
-                <span className="text-sm text-gray-700 ml-auto text-right">{doseStr}</span>
+                {isSoon && (
+                  <span className="text-xs font-medium text-amber-600 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5 shrink-0">
+                    curând
+                  </span>
+                )}
+                {isNext && (
+                  <span className="text-xs font-medium text-indigo-600 bg-indigo-100 rounded-full px-2 py-0.5 shrink-0">
+                    următor
+                  </span>
+                )}
+                <span
+                  className={[
+                    'text-sm ml-auto text-right',
+                    isPast ? 'text-gray-400 line-through' : 'text-gray-700',
+                    isNext ? 'font-medium text-indigo-700' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                >
+                  {doseStr}
+                </span>
               </div>
             )
           })}

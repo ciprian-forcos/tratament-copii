@@ -125,7 +125,7 @@ Work continues on Group 4 (Medicamente Tab) and Group 5 (Program Tab).
   - `once_per_day`: single occurrence at start time (or fixed time of day)
   - `times_per_day`: N evenly-spaced occurrences across 24h
 
-- [ ] **5.4 Past / current / upcoming visual distinction**
+- [x] **5.4 Past / current / upcoming visual distinction**
   Doses in the past are dimmed / struck through. The next upcoming dose is highlighted.
   Doses within the next 30 minutes get a "soon" indicator.
 
