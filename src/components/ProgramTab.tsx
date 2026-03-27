@@ -1,10 +1,10 @@
 import { useMemo, useState, useEffect } from 'react'
-import { Clock } from 'lucide-react'
+import { Clock, Check } from 'lucide-react'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { generateSchedule } from '../utils/scheduleEngine'
 import { calculateDose, formatDose } from '../utils/doseCalculation'
 import { defaultScheduleRules } from '../data/scheduleRules'
-import type { Child, Medication, ScheduleRule } from '../types'
+import type { AdministeredDose, Child, Medication, ScheduleRule } from '../types'
 
 interface Props {
   activeChild: Child | null
@@ -39,6 +39,10 @@ export function ProgramTab({ activeChild, medications }: Props) {
     'tratament-copii-schedule-rules',
     defaultScheduleRules,
   )
+  const [administeredDoses, setAdministeredDoses] = useLocalStorage<AdministeredDose[]>(
+    'tratament-copii-administered-doses',
+    [],
+  )
 
   const [now, setNow] = useState(() => new Date())
   useEffect(() => {
@@ -62,6 +66,34 @@ export function ProgramTab({ activeChild, medications }: Props) {
     () => timeline.findIndex(e => e.scheduledAt >= now),
     [timeline, now],
   )
+
+  const administeredSet = useMemo(() => {
+    if (!activeChild) return new Set<string>()
+    return new Set(
+      administeredDoses
+        .filter(d => d.childId === activeChild.id)
+        .map(d => `${d.childId}|${d.medicationId}|${d.scheduledAt}`),
+    )
+  }, [administeredDoses, activeChild])
+
+  function toggleAdministered(medicationId: string, scheduledAt: Date) {
+    if (!activeChild) return
+    const scheduledAtStr = scheduledAt.toISOString()
+    const key = `${activeChild.id}|${medicationId}|${scheduledAtStr}`
+    if (administeredSet.has(key)) {
+      setAdministeredDoses(administeredDoses.filter(
+        d => !(d.childId === activeChild.id && d.medicationId === medicationId && d.scheduledAt === scheduledAtStr),
+      ))
+    } else {
+      setAdministeredDoses([...administeredDoses, {
+        id: Math.random().toString(36).slice(2) + Date.now().toString(36),
+        childId: activeChild.id,
+        medicationId,
+        scheduledAt: scheduledAtStr,
+        administeredAt: new Date().toISOString(),
+      }])
+    }
+  }
 
   return (
     <div className="p-4 flex flex-col gap-4">
@@ -99,9 +131,12 @@ export function ProgramTab({ activeChild, medications }: Props) {
             const bg = med.color ?? '#6366f1'
             const textColor = getContrastColor(bg)
 
+            const entryKey = `${activeChild.id}|${entry.medicationId}|${entry.scheduledAt.toISOString()}`
+            const isAdministered = administeredSet.has(entryKey)
             const isPast = entry.scheduledAt < now
-            const isNext = i === nextIndex
+            const isNext = !isAdministered && i === nextIndex
             const isSoon =
+              !isAdministered &&
               !isPast &&
               !isNext &&
               entry.scheduledAt.getTime() - now.getTime() <= SOON_MS
@@ -111,17 +146,33 @@ export function ProgramTab({ activeChild, medications }: Props) {
                 key={i}
                 className={[
                   'flex items-center gap-3 py-2 px-2 rounded-lg border transition-colors',
-                  isPast
-                    ? 'opacity-40 border-transparent'
-                    : isNext
-                      ? 'bg-indigo-50 border-indigo-300 shadow-sm'
-                      : 'border-transparent',
+                  isAdministered
+                    ? 'opacity-50 border-transparent bg-green-50'
+                    : isPast
+                      ? 'opacity-40 border-transparent'
+                      : isNext
+                        ? 'bg-indigo-50 border-indigo-300 shadow-sm'
+                        : 'border-transparent',
                 ].join(' ')}
               >
+                {/* Administered checkbox */}
+                <button
+                  onClick={() => toggleAdministered(entry.medicationId, entry.scheduledAt)}
+                  aria-label={isAdministered ? 'Marchează ca neadministrat' : 'Marchează ca administrat'}
+                  className={[
+                    'shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors',
+                    isAdministered
+                      ? 'bg-green-500 border-green-500 text-white'
+                      : 'border-gray-300 hover:border-green-400',
+                  ].join(' ')}
+                >
+                  {isAdministered && <Check size={12} strokeWidth={3} />}
+                </button>
+
                 <span
                   className={[
                     'text-sm font-mono w-12 shrink-0',
-                    isPast ? 'text-gray-400 line-through' : 'text-gray-500',
+                    isAdministered || isPast ? 'text-gray-400 line-through' : 'text-gray-500',
                     isNext ? 'font-semibold text-indigo-700' : '',
                   ]
                     .filter(Boolean)
@@ -148,7 +199,7 @@ export function ProgramTab({ activeChild, medications }: Props) {
                 <span
                   className={[
                     'text-sm ml-auto text-right',
-                    isPast ? 'text-gray-400 line-through' : 'text-gray-700',
+                    isAdministered || isPast ? 'text-gray-400 line-through' : 'text-gray-700',
                     isNext ? 'font-medium text-indigo-700' : '',
                   ]
                     .filter(Boolean)

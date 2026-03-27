@@ -129,7 +129,7 @@ Work continues on Group 4 (Medicamente Tab) and Group 5 (Program Tab).
   Doses in the past are dimmed / struck through. The next upcoming dose is highlighted.
   Doses within the next 30 minutes get a "soon" indicator.
 
-- [ ] **5.5 Mark dose as administered**
+- [x] **5.5 Mark dose as administered**
   Checkbox or tap on a dose entry marks it as administered. Administered status stored in
   `tratament-copii-administered-doses` (keyed by child id + medication id + scheduled
   datetime). Administered doses show a check mark and are visually complete.
