@@ -72,7 +72,7 @@ function App() {
       </main>
 
       {/* Bottom navigation */}
-      <nav className="flex border-t bg-white sticky bottom-0 z-10">
+      <nav className="flex border-t bg-white sticky bottom-0 z-10" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
         {tabs.map(({ id, label, Icon }) => (
           <button
             key={id}

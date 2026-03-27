@@ -155,7 +155,7 @@ Work continues on Group 4 (Medicamente Tab) and Group 5 (Program Tab).
   Use each medication's `color` hex value for badge backgrounds throughout the app
   (timeline, medication cards, child toggles). Ensure readable contrast (white or dark text).
 
-- [ ] **6.2 Mobile-first responsive layout**
+- [x] **6.2 Mobile-first responsive layout**
   Max-width container (e.g., 480px) centred on desktop. Bottom nav bar stays fixed.
   All dialogs use full-screen sheet on mobile.
 
