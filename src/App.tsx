@@ -13,7 +13,7 @@ function App() {
 
   const [children, setChildren] = useLocalStorage<Child[]>('tratament-copii-children', [])
   const [activeChildId, setActiveChildId] = useLocalStorage<string | null>('tratament-copii-active-child', null)
-  const [medications] = useLocalStorage<Medication[]>('tratament-copii-medications', DEFAULT_MEDICATIONS)
+  const [medications, setMedications] = useLocalStorage<Medication[]>('tratament-copii-medications', DEFAULT_MEDICATIONS)
 
   const activeChild = children.find(c => c.id === activeChildId) ?? null
 
@@ -51,7 +51,9 @@ function App() {
         {activeTab === 'medicamente' && (
           <MedicamenteTab
             medications={medications}
+            setMedications={setMedications}
             activeChild={activeChild}
+            setChildren={setChildren}
           />
         )}
         {activeTab === 'copii' && (

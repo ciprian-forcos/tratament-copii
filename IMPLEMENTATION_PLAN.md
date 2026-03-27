@@ -87,18 +87,18 @@ Work continues on Group 4 (Medicamente Tab) and Group 5 (Program Tab).
   active child (weight-based), unit, and notes. Show "Selectează un copil" message if no
   active child.
 
-- [ ] **4.2 Add medication dialog**
+- [x] **4.2 Add medication dialog**
   Form dialog with fields: name, doseType selector, doseConfig fields (dynamic per type),
   color picker (hex input), notes. On save, generates a UUID id and appends to the list.
 
-- [ ] **4.3 Edit medication dialog**
+- [x] **4.3 Edit medication dialog**
   Same form as add, pre-populated with existing values. Saves in-place.
 
-- [ ] **4.4 Delete medication with confirmation**
+- [x] **4.4 Delete medication with confirmation**
   Delete button on each card with a confirm step. Also removes the medication id from all
   children's `enabledMedications` and from all schedule rules referencing it.
 
-- [ ] **4.5 No-duplicate name validation** _(spec: no-duplicate-medications.md)_
+- [x] **4.5 No-duplicate name validation** _(spec: no-duplicate-medications.md)_
   Real-time check as user types the name field:
   - Case-insensitive, whitespace-trimmed comparison against all existing medication names
   - Show inline error: `"Există deja un medicament cu acest nume."`
