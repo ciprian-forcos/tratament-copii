@@ -118,7 +118,7 @@ Work continues on Group 4 (Medicamente Tab) and Group 5 (Program Tab).
   the active child's enabled medications. Display as a chronological list. Each entry
   shows: time (HH:mm), color-coded medication name badge, dose amount string.
 
-- [ ] **5.3 Schedule rule engine**
+- [x] **5.3 Schedule rule engine**
   Create `src/utils/scheduleEngine.ts` implementing all four rule types:
   - `every_n_hours`: repeat from start time, capped at 24h window
   - `after_medication`: N hours after the most recent dose of the referenced medication
