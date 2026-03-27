@@ -25,7 +25,7 @@ The project scaffold is complete (React + TypeScript + Vite + Tailwind CSS + PWA
   (nurofen, panadol, diclofenac, novocalmin, vitamina_d, vitamina_c, virodep, greentus)
   with exact ids, names, doseType, doseConfig, color, and notes.
 
-- [ ] **1.3 Default schedule rules data**
+- [x] **1.3 Default schedule rules data**
   Create `src/data/scheduleRules.ts` exporting the 9 default rules (r1–r9) from
   `scheduling.md` with correct types and medication references.
 
