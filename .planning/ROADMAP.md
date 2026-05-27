@@ -13,7 +13,7 @@ self-contained enough to hand to a fresh subagent.
 
 ## Phases
 
-- [ ] **Phase 0: Baseline** — commit design B + install Vitest + RTL + smoke test
+- [x] **Phase 0: Baseline** — commit design B + install Vitest + RTL + smoke test
 - [ ] **Phase 1: Dose records** — persist "Am dat doza" to localStorage
 - [ ] **Phase 2: Night timeline** — HomeB reads from real records
 - [ ] **Phase 3: Schedule engine** — `buildPlan()` uses `scheduleEngine.ts`
@@ -29,8 +29,8 @@ the subagent + review protocol.
 **Plans**: 2
 
 Plans:
-- [ ] 00-01: Commit design B baseline to a feature branch + open PR
-- [ ] 00-02: Install Vitest + React Testing Library, add smoke test, document conventions
+- [x] 00-01: Commit design B baseline to a feature branch + open PR
+- [x] 00-02: Install Vitest + React Testing Library, add smoke test, document conventions
 
 ### Phase 1: Dose records
 **Goal**: Tapping "Am dat doza" creates an `AdministeredDose` record in
@@ -88,7 +88,7 @@ Plans:
 
 | Phase | Plans Complete | Status      | Completed |
 |-------|----------------|-------------|-----------|
-| 0. Baseline           | 0/2 | Not started | - |
+| 0. Baseline           | 2/2 | Complete    | 2026-05-27 |
 | 1. Dose records       | 0/1 | Not started | - |
 | 2. Night timeline     | 0/1 | Not started | - |
 | 3. Schedule engine    | 0/2 | Not started | - |
