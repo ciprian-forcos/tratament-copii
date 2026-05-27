@@ -1,108 +1,19 @@
-import { useState, useEffect } from 'react'
-import { Calendar, Pill, Users, type LucideIcon } from 'lucide-react'
-import { useLocalStorage } from './hooks/useLocalStorage'
-import { CopiiTab } from './components/CopiiTab'
-import { MedicamenteTab } from './components/MedicamenteTab'
-import { ProgramTab } from './components/ProgramTab'
-import { DEFAULT_MEDICATIONS } from './data/medications'
-import type { Child, Medication } from './types'
+import { FlowProtoB } from './components/design/FlowProtoB'
 
-type Tab = 'program' | 'medicamente' | 'copii'
-
+/**
+ * App shell for design B (Plan tratament febră — B).
+ *
+ * The phone bezel is shown on desktop (>540px) via .stage / .phone-frame,
+ * full-bleed on small screens. All app chrome lives inside .phone.
+ */
 function App() {
-  const [activeTab, setActiveTab] = useState<Tab>('program')
-
-  const [children, setChildren] = useLocalStorage<Child[]>('tratament-copii-children', [])
-  const [activeChildId, setActiveChildId] = useLocalStorage<string | null>('tratament-copii-active-child', null)
-  const [medications, setMedications] = useLocalStorage<Medication[]>('tratament-copii-medications', DEFAULT_MEDICATIONS)
-
-  const [isHydrated, setIsHydrated] = useState(false)
-
-  useEffect(() => {
-    setIsHydrated(true)
-  }, [])
-
-  const activeChild = children.find(c => c.id === activeChildId) ?? null
-
-  const tabs: { id: Tab; label: string; Icon: LucideIcon }[] = [
-    { id: 'program', label: 'Program', Icon: Calendar },
-    { id: 'medicamente', label: 'Medicamente', Icon: Pill },
-    { id: 'copii', label: 'Copii', Icon: Users },
-  ]
-
-  if (!isHydrated) {
-    return (
-      <div className="flex items-center justify-center h-screen max-w-[480px] mx-auto bg-white">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-gray-500">Se încarcă...</p>
+  return (
+    <div className="stage">
+      <div className="phone-frame">
+        <div className="phone-inner">
+          <FlowProtoB />
         </div>
       </div>
-    )
-  }
-
-  return (
-    <div className="flex flex-col h-screen max-w-[480px] mx-auto bg-white shadow-sm">
-      {/* Top bar */}
-      <header className="flex items-center justify-between px-4 py-3 border-b bg-white sticky top-0 z-10">
-        <h1 className="text-lg font-semibold text-gray-900">Calculator Doze</h1>
-        <button
-          onClick={() => setActiveTab('copii')}
-          className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-            activeChild
-              ? 'text-white'
-              : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-          }`}
-          style={activeChild ? { backgroundColor: activeChild.color ?? '#6366f1' } : undefined}
-        >
-          {activeChild ? activeChild.name : 'Selectează copil'}
-        </button>
-      </header>
-
-      {/* Tab content */}
-      <main className="flex-1 overflow-y-auto">
-        {activeTab === 'program' && (
-          <ProgramTab
-            activeChild={activeChild}
-            medications={medications}
-            children={children}
-            setActiveChildId={setActiveChildId}
-          />
-        )}
-        {activeTab === 'medicamente' && (
-          <MedicamenteTab
-            medications={medications}
-            setMedications={setMedications}
-            activeChild={activeChild}
-            setChildren={setChildren}
-          />
-        )}
-        {activeTab === 'copii' && (
-          <CopiiTab
-            children={children}
-            setChildren={setChildren}
-            activeChildId={activeChildId}
-            setActiveChildId={setActiveChildId}
-            medications={medications}
-          />
-        )}
-      </main>
-
-      {/* Bottom navigation */}
-      <nav className="flex border-t bg-white sticky bottom-0 z-10" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-        {tabs.map(({ id, label, Icon }) => (
-          <button
-            key={id}
-            onClick={() => setActiveTab(id)}
-            className={`flex-1 flex flex-col items-center py-2 gap-1 text-xs font-medium transition-colors ${
-              activeTab === id ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            <Icon size={22} />
-            <span>{label}</span>
-          </button>
-        ))}
-      </nav>
     </div>
   )
 }

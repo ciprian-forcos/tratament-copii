@@ -98,6 +98,12 @@ export interface Child {
   height?: number      // cm (optional, estimated from weight if missing)
   color?: string
   enabledMedications: string[]  // list of medication IDs active for this child
+
+  // New (design B): friendlier age + per-child current measurement
+  years?: number
+  months?: number
+  initial?: string     // single-character avatar letter; derived from name on edit
+  temp?: number        // °C, last measured
 }
 
 // Administered dose record
