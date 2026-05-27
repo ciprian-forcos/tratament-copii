@@ -45,7 +45,7 @@ export const doseStore = {
   },
 
   list(): AdministeredDose[] {
-    return doses
+    return [...doses]
   },
 
   listFor(childId: string, options?: { since?: Date; until?: Date }): AdministeredDose[] {
