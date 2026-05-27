@@ -1,6 +1,7 @@
 import { StatusBar } from './StatusBar'
 import { activeChild, useChildren } from './childStore'
 import { buildPlan, diffHHMM, fmtHHMM } from './dosePlan'
+import { doseStore } from './doseStore'
 import type { Step2Value } from './Step2'
 
 interface Props {
@@ -154,7 +155,7 @@ export function PlanCard({ onBack, onDone, step2 }: Props) {
           gap: 10,
         }}
       >
-        <button className="btn-primary" onClick={() => onDone(now)}>
+        <button className="btn-primary" onClick={() => { doseStore.record({ childId: child.id, medicationId: plan.now.medId, scheduledAt: plan.now.when.toISOString(), administeredAt: new Date().toISOString() }); onDone(now) }}>
           Am dat doza <span className="arrow">✓</span>
         </button>
         <button className="btn-secondary btn-ghost" onClick={onBack}>
