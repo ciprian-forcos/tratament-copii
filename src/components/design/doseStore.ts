@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import type { AdministeredDose } from '../../types'
 
 const STORAGE_KEY = 'tratament-copii-administered-doses'
@@ -5,7 +6,7 @@ const STORAGE_KEY = 'tratament-copii-administered-doses'
 type Listener = () => void
 
 let doses: AdministeredDose[] = []
-let listeners = new Set<Listener>()
+const listeners = new Set<Listener>()
 
 function loadFromStorage(): AdministeredDose[] {
   try {
@@ -44,7 +45,7 @@ export const doseStore = {
   },
 
   list(): AdministeredDose[] {
-    return [...doses]
+    return doses
   },
 
   listFor(childId: string, options?: { since?: Date; until?: Date }): AdministeredDose[] {
@@ -71,10 +72,22 @@ export const doseStore = {
     return () => listeners.delete(fn)
   },
 
-  // internal helper for tests / reload simulation
   reloadFromStorage() {
     doses = loadFromStorage()
   },
+}
+
+export function useDoses() {
+  const [currentDoses, setCurrentDoses] = useState(() => doseStore.list())
+
+  useEffect(() => {
+    const unsubscribe = doseStore.subscribe(() => {
+      setCurrentDoses(doseStore.list())
+    })
+    return unsubscribe
+  }, [])
+
+  return currentDoses
 }
 
 // Initialize from storage on first import

@@ -63,17 +63,17 @@ describe('doseStore', () => {
       administeredAt: '2026-05-27T10:05:00.000Z',
     })
 
-    // Simulate module reload by clearing memory and forcing reload from storage
-    // @ts-ignore - test-only helper
-    doseStore.reloadFromStorage = () => {
-      // re-execute the load logic by clearing then re-recording is not ideal
-      // instead we directly test that localStorage contains the data
-    }
+    // Simulate reload: directly wipe in-memory state (bypass clear which removes from localStorage)
+    // @ts-ignore - internal for test
+    const originalDoses = (doseStore as any).doses
+    // @ts-ignore
+    ;(doseStore as any).doses = []
+    // @ts-ignore - test helper
+    doseStore.reloadFromStorage()
 
-    const raw = localStorage.getItem('tratament-copii-administered-doses')
-    expect(raw).not.toBeNull()
-    const parsed = JSON.parse(raw!)
-    expect(parsed).toHaveLength(1)
+    const reloaded = doseStore.list()
+    expect(reloaded).toHaveLength(1)
+    expect(reloaded[0].medicationId).toBe('nurofen')
   })
 
   it('subscribe(fn) fires on record() and clear()', () => {
@@ -110,6 +110,10 @@ describe('doseStore', () => {
 
   it('handles corrupted localStorage gracefully', () => {
     localStorage.setItem('tratament-copii-administered-doses', 'not-valid-json')
+
+    // Force reload so loadFromStorage runs against the corrupted value
+    // @ts-ignore - test helper
+    doseStore.reloadFromStorage()
 
     const doses = doseStore.list()
     expect(doses).toHaveLength(0)
