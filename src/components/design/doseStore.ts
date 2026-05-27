@@ -78,16 +78,16 @@ export const doseStore = {
 }
 
 export function useDoses() {
-  const [currentDoses, setCurrentDoses] = useState(() => doseStore.list())
+  const [current, setCurrent] = useState(() => doseStore.list())
 
   useEffect(() => {
     const unsubscribe = doseStore.subscribe(() => {
-      setCurrentDoses(doseStore.list())
+      setCurrent(doseStore.list())
     })
     return unsubscribe
   }, [])
 
-  return currentDoses
+  return current
 }
 
 // Initialize from storage on first import
