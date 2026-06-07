@@ -6,16 +6,17 @@ import { StatusBar } from './StatusBar'
 import { TempWheel } from './TempWheel'
 import { activeChild, childStore, useChildren } from './childStore'
 import { diffHHMM, fmtHHMM } from './dosePlan'
+import { useNightTimeline, anchorStrip } from './useNightTimeline'
 
 interface Props {
   onStart: () => void
+  /** Called when the ≡ menu button is tapped. */
+  onMenu?: () => void
   /** When the next planned dose should land. Falls back to "now + 2h". */
   nextDose?: { at: Date; med: string } | null
-  /** Recently administered doses for the night timeline. */
-  timeline?: { at: Date; med: string }[]
 }
 
-export function HomeB({ onStart, nextDose, timeline }: Props) {
+export function HomeB({ onStart, onMenu, nextDose }: Props) {
   const state = useChildren()
   const child = activeChild(state)
   const temp = child.temp ?? 0
@@ -26,9 +27,10 @@ export function HomeB({ onStart, nextDose, timeline }: Props) {
 
   const now = new Date()
   const next = nextDose ?? { at: new Date(now.getTime() + 2 * 3600_000), med: 'Panadol' }
+  const nightDoses = useNightTimeline(child.id, now)
   type Mark = { at: Date; med: string; next?: boolean }
   const marks: Mark[] = [
-    ...(timeline ?? defaultTimeline(now)),
+    ...nightDoses.map((d) => ({ at: d.at, med: d.med })),
     { at: next.at, med: next.med, next: true },
   ]
 
@@ -51,7 +53,7 @@ export function HomeB({ onStart, nextDose, timeline }: Props) {
         }}
       >
         <ChildPill onClick={() => setChildOpen(true)} />
-        <MenuBtn />
+        <MenuBtn onClick={onMenu} />
       </div>
 
       <div style={{ padding: '18px 18px 0', textAlign: 'center' }}>
@@ -180,20 +182,4 @@ export function HomeB({ onStart, nextDose, timeline }: Props) {
   )
 }
 
-/** Anchor the 12h strip to today's 21:00 (or yesterday's 21:00 if now < 21:00). */
-function anchorStrip(now: Date): Date {
-  const start = new Date(now)
-  start.setHours(21, 0, 0, 0)
-  if (now.getTime() < start.getTime()) start.setDate(start.getDate() - 1)
-  return start
-}
 
-/** Stub timeline used until administered doses are wired in. */
-function defaultTimeline(now: Date) {
-  const mk = (hOffset: number) => new Date(now.getTime() - hOffset * 3600_000)
-  return [
-    { at: mk(6), med: 'Nurofen' },
-    { at: mk(4), med: 'Panadol' },
-    { at: mk(0.5), med: 'Nurofen' },
-  ]
-}

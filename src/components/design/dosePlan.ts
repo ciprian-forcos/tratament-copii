@@ -1,11 +1,15 @@
 import type { Child, Medication } from '../../types'
 import { DEFAULT_MEDICATIONS } from '../../data/medications'
 import { calculateDose } from '../../utils/doseCalculation'
+import { nextDoseFor } from './scheduleAdapter'
 
 /** Choose the medication object by short id used in the design's MEDS list. */
 function findMed(id: string): Medication | undefined {
   return DEFAULT_MEDICATIONS.find((m) => m.id === id)
 }
+
+/** Minimum cross-drug spacing (ibuprofen ↔ paracetamol alternation policy). */
+const MIN_CROSS_DRUG_GAP_MS = 7_200_000 // 2 hours in ms
 
 export interface PlannedStep {
   medId: string
@@ -26,6 +30,9 @@ export interface Plan {
  *
  * If `lastMedId` is given, the "now" dose is the *other* of the pair.
  * If not (first treatment), start with Nurofen now.
+ *
+ * The "next" step time is driven by the schedule engine via nextDoseFor,
+ * with a 2h cross-drug spacing floor applied on top.
  */
 export function buildPlan({
   child,
@@ -59,11 +66,17 @@ export function buildPlan({
   }
 
   // "Now" step: target time is now (or +2h after lastAt if that's still in the future).
-  const nowTarget = lastAt ? new Date(Math.max(now.getTime(), lastAt.getTime() + 2 * 3600_000)) : now
+  const nowTarget = lastAt ? new Date(Math.max(now.getTime(), lastAt.getTime() + MIN_CROSS_DRUG_GAP_MS)) : now
 
-  // "Next" step: ~2h after the "now" step, alternating med.
+  // "Next" step: alternating med, scheduled by the engine.
+  // The 2h cross-drug spacing floor is a hard minimum; the engine-computed
+  // safe interval for the same drug (8h nurofen / 6h panadol) may be longer.
   const nextMedId = nowMedId === 'nurofen' ? 'panadol' : 'nurofen'
-  const nextTarget = new Date(nowTarget.getTime() + 2 * 3600_000)
+  const twoHFloor = new Date(nowTarget.getTime() + MIN_CROSS_DRUG_GAP_MS)
+  const engineNext = nextDoseFor({ medicationId: nextMedId, childId: child.id, now: twoHFloor })
+  const nextTarget = engineNext != null
+    ? new Date(Math.max(engineNext.getTime(), twoHFloor.getTime()))
+    : twoHFloor
 
   const nowMed = findMed(nowMedId)!
   const nextMed = findMed(nextMedId)!

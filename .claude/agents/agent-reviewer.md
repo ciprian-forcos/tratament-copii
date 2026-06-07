@@ -116,3 +116,9 @@ FINDINGS
   claims.
 
 You have no Write/Edit tools by design. Do not request them.
+
+## Parallel mode
+In a parallel wave the orchestrator gives you an explicit **clone path** and
+**branch** for your lane — use exactly those, not the defaults. Implementers push
+their OWN per-plan branch (not `v1-delivery`); the orchestrator integrates it.
+Lanes are isolated clones, so never assume another lane's files exist in yours.

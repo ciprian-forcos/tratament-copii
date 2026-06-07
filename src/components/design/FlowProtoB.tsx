@@ -1,11 +1,12 @@
 import { useState } from 'react'
+import { ChildrenScreen } from './ChildrenScreen'
 import { HomeB } from './HomeB'
 import { PlanCard } from './PlanCard'
 import { Step1 } from './Step1'
 import { Step2, type Step2Value } from './Step2'
 import { activeChild, childStore, useChildren } from './childStore'
 
-type Page = 'home' | 's1' | 's2' | 'done'
+type Page = 'home' | 's1' | 's2' | 'done' | 'children'
 
 /**
  * Variant B end-to-end:
@@ -25,7 +26,8 @@ export function FlowProtoB() {
 
   const goHome = () => setPage('home')
 
-  if (page === 'home') return <HomeB onStart={() => setPage('s1')} />
+  if (page === 'children') return <ChildrenScreen onBack={() => setPage('home')} />
+  if (page === 'home') return <HomeB onStart={() => setPage('s1')} onMenu={() => setPage('children')} />
   if (page === 's1')
     return (
       <Step1 value={temp} onChange={setTemp} onBack={goHome} onNext={() => setPage('s2')} />
