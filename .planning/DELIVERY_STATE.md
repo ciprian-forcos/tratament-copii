@@ -86,3 +86,11 @@ _(orchestrator stamps session + plan transition here)_
   interval rules; alternation + 2h floor stay in dosePlan; NO engine changes;
   Phase 3 stays 2 plans. Status: **done** (research, no gate/PR). Tip: 4173b3e.
 - **03-02 schedule-engine implementation** — implementing.
+- **03-02 schedule-engine impl** — Tier-1 green (type-check/lint/48 tests/
+  build), SHA matches, TDD clean, scope tight (4 plan files only). Tier-2
+  APPROVE: nextDoseFor reads doseStore + engine intervals; buildPlan next =
+  max(engine ceiling 8h/6h, 2h cross-drug floor); +2h hardcode removed;
+  Plan shape unchanged (no PlanCard regression); data-safe. nextDoseFor naming
+  reconciliation (vs FINDINGS earliestRepeat) documented. Status: **done**.
+  Tip: 0f173d5.  ===> PHASE 3 COMPLETE.
+- **04-01 children screen** — implementing.
