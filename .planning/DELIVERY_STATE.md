@@ -108,3 +108,11 @@ _(orchestrator stamps session + plan transition here)_
   Deviation: gzip deferred to keep API sync per the length test (JSON+base64url
   sufficient for V1). Status: **done**. Tip: 153baa5.
 - **05-02 share UI** — implementing.
+- **05-02 share UI** — Tier-1 green (type-check/build; new tests 23✓, full
+  suite 85 reported; full-run exceeds the 45s shell-call limit so verified via
+  targeted run + type-check/build), SHA matches, TDD clean, scope tight.
+  Tier-2 APPROVE: two-tap share (≡→Partajează), per-child + "toată aplicația"
+  override, copy + navigator.share, design-B sheet, Romanian. Data-safe: temp
+  absent from URL (decode-assert test), medications key read-only. Deviation:
+  clipboard-mock test workaround (test-infra only). Status: **done**. Tip: ba1d37b.
+- **05-03 share import/merge** — implementing (final plan).
