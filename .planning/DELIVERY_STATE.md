@@ -80,3 +80,9 @@ _(orchestrator stamps session + plan transition here)_
   does not affect the shipped bundle. Removed unused `timeline` prop (no caller).
   Status: **done**. Tip: a7c46a1.
 - **03-01 schedule-engine (research/adapter)** — implementing.
+- **03-01 schedule-engine research** — FINDINGS.md written; engine is a
+  forward projection (no AdministeredDose input). Decision: approve-as-proposed
+  — adapter `earliestRepeat()` bridges actual last-dose times to per-med
+  interval rules; alternation + 2h floor stay in dosePlan; NO engine changes;
+  Phase 3 stays 2 plans. Status: **done** (research, no gate/PR). Tip: 4173b3e.
+- **03-02 schedule-engine implementation** — implementing.
