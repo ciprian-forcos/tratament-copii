@@ -101,3 +101,10 @@ _(orchestrator stamps session + plan transition here)_
   back + BSA/height + active-meds), FlowProtoB routing no-regression, data-safe.
   No deviations. Status: **done**. Tip: 4fa6396.  ===> PHASE 4 COMPLETE.
 - **05-01 share encode/decode lib** — implementing.
+- **05-01 share encoder** — Tier-1 green (type-check/lint/72 tests/build), SHA
+  matches, TDD ([test]/[feat]/[refactor]), scope = share/ only, package.json
+  unchanged (no new deps). Tier-2 APPROVE: versioned encode/decode, URL-safe
+  base64, ShareDecodeError codes, and `temp` provably stripped (privacy).
+  Deviation: gzip deferred to keep API sync per the length test (JSON+base64url
+  sufficient for V1). Status: **done**. Tip: 153baa5.
+- **05-02 share UI** — implementing.
