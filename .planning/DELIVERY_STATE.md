@@ -55,3 +55,20 @@ plan, the finding, and what decision it needs from the human)_
 ## Last updated
 
 _(orchestrator stamps session + plan transition here)_
+
+## Run log (orchestrator-driven; appended each transition)
+
+- **Setup** — v1-delivery constructed = main + harness + phase-01 (merges
+  conflict-free). Gate green on base (type-check ✓, 11 tests ✓, build ✓).
+  Pushed to origin. Agent-tool spawn verified (Sonnet worker, sandbox+key OK).
+  Operational facts for this environment:
+  - Build clone: `/tmp/v1-build` (deploy key in `core.sshCommand`).
+  - Subagent Read/Edit tools do NOT reach `/tmp`; implementers author code via
+    shell (`cat`/`sed`/`python`) and read via `cat`.
+  - Gates run **synchronously** — backgrounded processes die between calls.
+  - The **orchestrator drives all spawns** (incl. the mechanical-review loop);
+    subagents cannot spawn subagents in Cowork.
+- **01-01 dose records** — Tier-2 APPROVE (inline Opus; code pre-vetted at
+  human checkpoint). intent/spec/ux/integration/data-safety all hold.
+  Status: **done**. Tip: 4adc761.
+- **02-01 night timeline** — implementing (Sonnet Implementer spawned).
