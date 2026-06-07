@@ -39,7 +39,7 @@ describe('HomeB night timeline', () => {
   })
 
   it('renders "noaptea asta" eyebrow', () => {
-    render(<HomeB onStart={vi.fn()} />)
+    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
     expect(screen.getByText('noaptea asta')).toBeInTheDocument()
   })
 
@@ -51,7 +51,7 @@ describe('HomeB night timeline', () => {
       doseStore.record({ childId: MAYA_ID, medicationId: 'panadol', scheduledAt: t2, administeredAt: t2 })
     })
 
-    render(<HomeB onStart={vi.fn()} />)
+    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
 
     // Short names from DEFAULT_MEDICATIONS should appear in the timeline
     expect(screen.getAllByText('Nurofen').length).toBeGreaterThanOrEqual(1)
@@ -68,7 +68,7 @@ describe('HomeB night timeline', () => {
 
     // Ensure Maya is active
     childStore.setActive(MAYA_ID)
-    render(<HomeB onStart={vi.fn()} />)
+    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
 
     // Nurofen should NOT appear in Maya's timeline
     // (The button "Următoarea doză" shows the next-dose med name, not past doses)
@@ -85,7 +85,7 @@ describe('HomeB night timeline', () => {
   it('shows nothing from defaultTimeline stub (stub is removed)', () => {
     // With no doses seeded and now=23:00, there should be NO past dose dots
     // The only mark on the strip should be the next-dose dot
-    render(<HomeB onStart={vi.fn()} />)
+    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
 
     // defaultTimeline stub added 'Nurofen' and 'Panadol' entries — verify they're gone
     // (the stub would render 3 dots: 2x Nurofen, 1x Panadol)

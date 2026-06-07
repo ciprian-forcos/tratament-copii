@@ -10,11 +10,13 @@ import { useNightTimeline, anchorStrip } from './useNightTimeline'
 
 interface Props {
   onStart: () => void
+  /** Called when the ≡ menu button is tapped. */
+  onMenu?: () => void
   /** When the next planned dose should land. Falls back to "now + 2h". */
   nextDose?: { at: Date; med: string } | null
 }
 
-export function HomeB({ onStart, nextDose }: Props) {
+export function HomeB({ onStart, onMenu, nextDose }: Props) {
   const state = useChildren()
   const child = activeChild(state)
   const temp = child.temp ?? 0
@@ -51,7 +53,7 @@ export function HomeB({ onStart, nextDose }: Props) {
         }}
       >
         <ChildPill onClick={() => setChildOpen(true)} />
-        <MenuBtn />
+        <MenuBtn onClick={onMenu} />
       </div>
 
       <div style={{ padding: '18px 18px 0', textAlign: 'center' }}>
