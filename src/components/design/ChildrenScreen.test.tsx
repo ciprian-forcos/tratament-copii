@@ -139,4 +139,13 @@ describe('ChildrenScreen', () => {
     // Should indicate no medications
     expect(screen.getByText(/niciun medicament/i)).toBeInTheDocument()
   })
+  it('tapping "Partajează" opens the ShareSheet (shows "Trimite toată aplicația")', async () => {
+    const user = userEvent.setup()
+    render(<ChildrenScreen onBack={vi.fn()} />)
+
+    const shareBtn = screen.getByRole('button', { name: /partajează/i })
+    await user.click(shareBtn)
+
+    expect(screen.getByText(/trimite toată aplicația/i)).toBeInTheDocument()
+  })
 })
