@@ -545,3 +545,63 @@ When `DELIVERY_STATE.md` shows every roadmap plan done, the orchestrator:
 
 Only then does the human step in — to QA the real product, then merge
 `v1-delivery` → `main`.
+---
+
+# Autonomous Delivery — Verified Cowork Facts & Parallelization
+
+The following were confirmed during the first full end-to-end run. Where they
+differ from assumptions earlier in this file, **these win**.
+
+## Verified execution facts
+
+1. **The orchestrator drives every spawn.** Cowork subagents cannot spawn
+   subagents. The Implementer does NOT spawn its own Agent-Reviewer — it hands
+   its status report back to the orchestrator, which spawns a fresh
+   Agent-Reviewer, relays any `FINDINGS`, and re-spawns the Implementer. The
+   Design-Reviewer is likewise orchestrator-spawned. The inner mechanical loop
+   is orchestrator-driven, not Implementer-driven.
+2. **All work happens in sandbox-native clones, never the mounted folder.** The
+   mounted Windows `.git` corrupts its index under load, and its `node_modules`
+   hold Windows binaries the Linux sandbox can't run (the gate would fail on a
+   native-module error, not a real one). Clone from origin into `/tmp/<lane>`
+   and work there. The mounted folder is only the human's checkout.
+3. **Gates run synchronously.** Backgrounded processes (`&`, `nohup`) are killed
+   between tool calls. Run `type-check`/`lint`/`test`/`build` in the foreground.
+   Once the suite is large it can exceed a single call's time limit — run it in
+   file-batched chunks (e.g. `npx vitest run <files...>`), but never background.
+4. **Subagent file tools don't reach `/tmp`.** Implementers author and edit code
+   via the shell (`cat`/`python3`/`sed`) and read via `cat`/`grep` — not the
+   Read/Edit/Write tools, which are scoped to the mounted folder.
+
+## Parallel execution (waves)
+
+Independent plans may run concurrently. A **wave** is a set of plans that
+(a) have all dependencies already `done`, and (b) declare **no overlapping
+`<files>`**. Any two plans that touch the same file are serialized, never
+batched.
+
+Mechanics (all orchestrator-driven):
+- **Spawn N Implementers in one turn** (N parallel Agent calls). Each lane gets
+  its **own clone** `/tmp/lane-<plan>` and its **own branch**
+  `phase-NN/NN-MM-<name>` cut from the current `v1-delivery` tip — parallel work
+  cannot share a working tree or the single integration branch. Each lane runs
+  its own `npm install` + gate and pushes its branch to origin.
+- **Reviews parallelize too.** The orchestrator spawns the Sonnet
+  Agent-Reviewers and the Opus Design-Reviewers for different plans
+  concurrently; they are read-only and operate in their own lane clones.
+- **Integration is always serial.** Once a plan holds `SIGNOFF` + `APPROVE`, the
+  orchestrator merges its branch into `v1-delivery` one at a time, in dependency
+  order, and re-runs the gate on `v1-delivery` after each merge. A conflict here
+  means the file-overlap check was too loose — resolve forward and tighten the
+  next wave's batching.
+- **Cap concurrency at ~2–3 lanes.** Each lane is a full clone + install + gate;
+  the sandbox has finite resources.
+
+Coordination substrate: the per-plan branches (code artifacts) + the
+`DELIVERY_STATE.md` ledger are sufficient — **no separate shared memory.** The
+ledger records each lane's clone path, branch, and status so a cold session can
+resume mid-wave.
+
+Reality for THIS roadmap: the dependency graph allows limited parallelism
+(Phase 4 is the main independent lane against Phases 2–3; Phase-5 plans are
+sequential). Roadmaps with independent feature areas gain much more.

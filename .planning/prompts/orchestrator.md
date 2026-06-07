@@ -85,3 +85,26 @@ When all plans are `done`:
   untouched.
 - Update DELIVERY_STATE after every transition so the run is resumable
   from a cold session.
+
+---
+
+## Verified facts (apply always)
+- YOU drive every spawn; subagents cannot nest. Run the Implementer⇄Agent-Reviewer
+  inner loop yourself.
+- Work in sandbox-native clones under `/tmp`, never the mounted folder.
+- Run gates synchronously; batch the test files if the suite exceeds a call's limit.
+- Implementers author code via the shell (their Read/Edit/Write don't reach `/tmp`).
+
+## Parallel waves (optional, per PROCESS.md "Parallel execution")
+1. From DELIVERY_STATE, pick a **wave**: plans whose deps are all `done` AND whose
+   declared `<files>` do not overlap each other. Overlapping-file plans stay serial.
+2. For each plan in the wave, in ONE turn spawn a Sonnet Implementer, each told to:
+   clone origin into `/tmp/lane-<plan>`, `git checkout -b phase-NN/NN-MM-<name>
+   origin/v1-delivery`, `npm install`, do the plan, push ITS branch (not v1-delivery).
+3. As lanes return, spawn Agent-Reviewers and then Opus Design-Reviewers
+   concurrently across plans (each in its lane clone).
+4. **Integrate serially:** for each APPROVED plan in dependency order, in your own
+   clone merge its branch into `v1-delivery`, re-run the gate, push v1-delivery,
+   update DELIVERY_STATE (lane clone, branch, tip, status). Resolve any conflict
+   forward.
+5. Cap at ~2–3 lanes. If unsure whether two plans overlap, run them serially.

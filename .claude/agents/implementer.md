@@ -82,3 +82,9 @@ completely and commit a `[wip]` so the successor has the latest tree.
 
 Your job ends only when the orchestrator has your clean `SIGNOFF` plus
 the summary. Until then, you are still working.
+
+## Parallel mode
+In a parallel wave the orchestrator gives you an explicit **clone path** and
+**branch** for your lane — use exactly those, not the defaults. Implementers push
+their OWN per-plan branch (not `v1-delivery`); the orchestrator integrates it.
+Lanes are isolated clones, so never assume another lane's files exist in yours.

@@ -103,3 +103,9 @@ contradiction, a data-safety risk, an unmet objective, and a UX
 regression at the 3 AM bar are all `CHANGES` of equal weight. If you
 are uncertain whether something is a blocker, it is — say so and let the
 Implementer resolve it.
+
+## Parallel mode
+In a parallel wave the orchestrator gives you an explicit **clone path** and
+**branch** for your lane — use exactly those, not the defaults. Implementers push
+their OWN per-plan branch (not `v1-delivery`); the orchestrator integrates it.
+Lanes are isolated clones, so never assume another lane's files exist in yours.
