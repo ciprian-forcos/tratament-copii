@@ -46,6 +46,44 @@ This file is the contract between the user (reviewer) and the subagent
 - Branches are based on `main` at the time of branch creation. If `main` has
   moved since the previous merged PR, rebase before opening the PR.
 
+## Versioning & releases
+
+We version the deployed app with semantic versioning, adapted for a local-first
+PWA. The compatibility contract that matters here is **persisted data**
+(localStorage keys + the share-URL format), not a public code API — so that is
+what drives the MAJOR axis.
+
+- **Branch names stay phase/plan-based** (see above). We do *not* name branches
+  after versions; the phase/plan scheme carries more meaning for this roadmap.
+- **The version lives in `package.json` and a matching git tag `vX.Y.Z` on
+  `main`.** Tags are the record of what was deployed and the rollback points.
+
+### Pre-1.0 (building V1 — current state)
+
+We are pre-release, so versions are `0.MINOR.PATCH`:
+
+- Each completed **roadmap phase** that merges to `main` = a **MINOR** bump
+  (Phase 0 → `0.1.0`, Phase 1 → `0.2.0`, … Phase 5 → `0.6.0`).
+- A fix-only deploy between phases = a **PATCH** bump (`0.2.1`).
+- When all of V1 scope ships and meets the BRIEF success criteria → **`1.0.0`**.
+
+### Post-1.0 (full semver)
+
+- **MAJOR** — a breaking change to persisted data: renaming/removing a
+  localStorage key or changing the share-URL schema so existing user data no
+  longer loads. (This is the same event the *Forbidden* section guards against.)
+- **MINOR** — a new user-facing feature, backward-compatible with stored data.
+- **PATCH** — a bug fix with no schema change.
+
+### Release steps (after a phase's PR squash-merges to `main`)
+
+1. On `main`: bump `version` in `package.json`.
+2. `git tag vX.Y.Z && git push --tags`.
+3. GitHub Pages auto-deploys from `main`; the tag marks exactly what is live.
+
+Optionally record user-facing changes per version in `CHANGELOG.md`
+(Keep a Changelog style).
+
 ## TDD workflow per plan
 
 1. **Read** the PLAN.md top to bottom. Read every `@file` referenced.
@@ -351,42 +389,4 @@ The Agent-Reviewer is **always fresh** for each cycle of the inner loop —
 context-management thresholds rarely apply because each cycle is short.
 If a single cycle exceeds the harness's context-pressure warning, the
 Agent-Reviewer must create a handoff file and spawn its successor before
-emitting `FINDINGS` or `SIGNOFF`. The successor finishes the
-verification.
-
-### Implementer Subagents
-On the first context-pressure warning from the harness during a plan, the
-Implementer must finish its current commit (do not leave the tree dirty),
-push, then create a handoff file and spawn a successor Implementer
-subagent. The successor reads the handoff plus the PLAN.md and resumes.
-
-### Context Compaction
-If the harness supports compaction (e.g. summarization), the agent may
-use it once per role per plan. If it doesn't help, hand off. Do not chain
-multiple compactions — quality degrades faster than the savings.
-
-### Handoff Procedure
-1. Save current tree state: commit any in-progress work to the branch
-   with a `[wip]` prefix (rebased away before opening the PR).
-2. Push the branch. Verify with `git ls-remote`.
-3. Create a handoff file under `.planning/handoffs/` using
-   `HANDOFF_TEMPLATE.md` as the template. Fill EVERY field; missing
-   fields force the successor to re-derive state from git and the
-   review history.
-4. The successor subagent is spawned with:
-   - The path to the handoff file
-   - The PLAN.md path
-   - The PROCESS.md path
-   - The most recent feedback message (Agent-Reviewer findings or
-     Human-Reviewer comments) if any.
-5. The successor's first action is to verify the handoff: pull the
-   branch, run the gate once, compare its output to what the handoff
-   claims. Any mismatch is reported back as if it were a regular
-   `FINDINGS` item.
-
-### When NOT to hand off
-- Mid-commit. Finish the commit first.
-- Mid-`git push`. Wait for it to complete.
-- When the only remaining work is a status report. Just finish the
-  report and emit it. A handoff to write a status report is more
-  expensive than writing the report.
+emitting `FINDINGS` or `SIGNOFF`. The successor finishes
