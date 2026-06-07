@@ -10,7 +10,7 @@
  * The 2h cross-drug spacing floor stays in buildPlan, so we test it here.
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import type { AdministeredDose, Child } from '../../types'
+import type { Child } from '../../types'
 
 vi.mock('./scheduleAdapter', () => ({
   nextDoseFor: vi.fn(),
@@ -27,20 +27,6 @@ const CHILD: Child = {
 }
 
 const NOW = new Date('2025-01-15T03:00:00.000Z')
-
-// Helper to build a fake administered dose record.
-function makeDose(
-  medicationId: string,
-  administeredAt: Date,
-): AdministeredDose {
-  return {
-    id: 'd1',
-    childId: CHILD.id,
-    medicationId,
-    scheduledAt: administeredAt.toISOString(),
-    administeredAt: administeredAt.toISOString(),
-  }
-}
 
 describe('buildPlan', () => {
   beforeEach(() => {
@@ -143,13 +129,7 @@ describe('buildPlan', () => {
   describe('with lastAtHHMM (explicit last time)', () => {
     it('now-step is deferred to max(now, lastAt + 2h) when lastAt was recent', () => {
       // lastAt = 30 min before NOW → now-step = lastAt + 2h (still in future)
-      const thirtyMinAgo = new Date(NOW.getTime() - 30 * 60_000)
-      const lastAtHH = `${String(thirtyMinAgo.getUTCHours()).padStart(2, '0')}:${String(thirtyMinAgo.getUTCMinutes()).padStart(2, '0')}`
-
-      // We can't easily use UTC time string with the local-time parser inside buildPlan,
-      // so we construct an HH:MM that buildPlan will parse in local time.
-      // Use a simpler approach: just verify the shape of behavior.
-      // Actually, test with a known local-time string:
+      // Use local-time Date objects so buildPlan's HH:MM parser works correctly.
       const localNow = new Date(2025, 0, 15, 3, 0, 0) // Jan 15 2025, 03:00 local
       const localLastAt = new Date(2025, 0, 15, 2, 30, 0) // 02:30 local (30min ago)
       const lastAtHHMM = '02:30'
