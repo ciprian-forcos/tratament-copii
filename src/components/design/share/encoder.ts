@@ -33,8 +33,7 @@ function fromBase64Url(b64: string): string {
 /** Strip the transient `temp` field — it's privacy-bearing and must never be shared. */
 function sanitizeChild(child: Child): Omit<Child, 'temp'> {
   // Explicit destructure ensures `temp` is never serialised even if the type evolves.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { temp, ...safe } = child
+  const { temp: _temp, ...safe } = child
   return safe
 }
 
