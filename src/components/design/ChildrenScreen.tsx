@@ -3,6 +3,7 @@ import { ChildEditor } from './ChildEditor'
 import { StatusBar } from './StatusBar'
 import { activeChild, ageWords, childStore, useChildren } from './childStore'
 import { DEFAULT_MEDICATIONS } from '../../data/medications'
+import { ShareSheet } from './share/ShareSheet'
 import { calculateBSA, estimateHeight } from '../../utils/doseCalculation'
 
 export interface ChildrenScreenProps {
@@ -13,6 +14,7 @@ export function ChildrenScreen({ onBack }: ChildrenScreenProps) {
   const state = useChildren()
   const active = activeChild(state)
   const [editorOpen, setEditorOpen] = useState(false)
+  const [shareOpen, setShareOpen] = useState(false)
 
   function handleAdd() {
     childStore.add()
@@ -47,12 +49,27 @@ export function ChildrenScreen({ onBack }: ChildrenScreenProps) {
         >
           ‹
         </span>
-        <div>
+        <div style={{ flex: 1 }}>
           <div className="eyebrow" style={{ color: 'var(--accent)' }}>
             gestionează
           </div>
           <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--ink)' }}>Copii</div>
         </div>
+        <button
+          onClick={() => setShareOpen(true)}
+          style={{
+            padding: '8px 14px',
+            borderRadius: 12,
+            border: '1.5px solid var(--line)',
+            background: 'var(--bg-3)',
+            color: 'var(--ink-2)',
+            fontSize: 13,
+            fontWeight: 600,
+            cursor: 'pointer',
+          }}
+        >
+          Partajează
+        </button>
       </div>
 
       {/* Children list */}
@@ -286,6 +303,9 @@ export function ChildrenScreen({ onBack }: ChildrenScreenProps) {
 
       {/* ChildEditor sheet */}
       <ChildEditor open={editorOpen} onClose={() => setEditorOpen(false)} />
+
+      {/* ShareSheet */}
+      <ShareSheet open={shareOpen} onClose={() => setShareOpen(false)} />
     </div>
   )
 }
