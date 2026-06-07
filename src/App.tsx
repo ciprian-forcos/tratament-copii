@@ -1,4 +1,5 @@
 import { FlowProtoB } from './components/design/FlowProtoB'
+import { ImportGate } from './components/design/share/ImportGate'
 
 /**
  * App shell for design B (Plan tratament febră — B).
@@ -11,7 +12,9 @@ function App() {
     <div className="stage">
       <div className="phone-frame">
         <div className="phone-inner">
-          <FlowProtoB />
+          <ImportGate>
+            <FlowProtoB />
+          </ImportGate>
         </div>
       </div>
     </div>
