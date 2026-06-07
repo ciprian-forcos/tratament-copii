@@ -605,3 +605,33 @@ resume mid-wave.
 Reality for THIS roadmap: the dependency graph allows limited parallelism
 (Phase 4 is the main independent lane against Phases 2–3; Phase-5 plans are
 sequential). Roadmaps with independent feature areas gain much more.
+
+## Hosting for QA (every version — required)
+
+This product is a **mobile PWA for parents**. "QA as a real user" therefore
+means **on a phone**, not on `npm run dev` at a desktop localhost. So at the end
+of every version, as part of the QA handoff, the orchestrator MUST get the build
+onto a **GitHub Pages URL reachable from a mobile device** and hand the human
+that URL (plus an "Add to Home Screen" note, since installability is part of the
+experience). A localhost dev server is not an acceptable substitute for the
+version gate.
+
+Confirm before handing off: the service-worker cache name was bumped for this
+build (automated by the Vite `sw-cache-version` plugin) so the phone fetches
+fresh assets, and `manifest.json` is served so the PWA is installable.
+
+Mechanism (GitHub Pages is one site per repo — pick per situation):
+- **Solo / pre-1.0 (simplest):** deploy the QA branch through the existing
+  `.github/workflows/deploy.yml` via its `workflow_dispatch` trigger (or merge
+  to `main`, which auto-deploys), then QA on the phone at the live URL
+  `https://ciprian-forcos.github.io/tratament-copii/`. Fix-forward if QA finds
+  issues. Acceptable while there is one user.
+- **Pre-merge preview (more robust, once it matters):** publish the QA branch to
+  a `/preview/` path on the Pages site via a separate workflow — build with
+  `--base=/tratament-copii/preview/` and push to a `gh-pages` branch using
+  `keep_files: true` + `destination_dir: preview` so it coexists with production
+  at `…/tratament-copii/preview/`. QA there without touching the live `main`
+  deployment, then merge.
+
+The QA handoff (and `V1_ACCEPTANCE.md` section E) is not complete until a
+mobile-reachable URL has been produced and verified to load on a phone.

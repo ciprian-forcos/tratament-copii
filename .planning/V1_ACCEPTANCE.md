@@ -62,6 +62,10 @@ behavior must hold on the final tip.
 - [ ] All user-facing copy is in Romanian and reads calm, not alarming.
 
 ## E. QA handoff produced (orchestrator)
+- [ ] **Hosted for mobile QA:** the version is deployed to a GitHub Pages
+      URL reachable from a phone (not just localhost), the human is given
+      that URL + an "Add to Home Screen" note, and it is confirmed to load
+      on a mobile device. See PROCESS.md "Hosting for QA".
 
 - [ ] `v1-delivery` exported (bundle copied to the user's folder, or
       pushed to origin) at a known SHA, recorded in `DELIVERY_STATE.md`.

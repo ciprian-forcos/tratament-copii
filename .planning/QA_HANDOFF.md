@@ -14,14 +14,16 @@ gate chain. V1 is feature-complete and gate-green on **`origin/v1-delivery`**
   retained; Romanian copy.
 - **C. Stopwatch criteria** + **manual flows** — YOUR QA below.
 
-## How to QA (≈10 min)
+## How to QA (≈10 min) — on a phone
 
-```bash
-git fetch origin
-git checkout v1-delivery
-npm install
-npm run dev
-```
+This is a mobile PWA, so QA on an actual phone, not localhost. Host the
+build on GitHub Pages first (see PROCESS.md "Hosting for QA"):
+
+- **Quickest (solo):** trigger `.github/workflows/deploy.yml` via
+  *Actions → Run workflow* on `v1-delivery` (or merge to `main`), then open
+  `https://ciprian-forcos.github.io/tratament-copii/` on your phone and
+  "Add to Home Screen".
+- Desktop sanity check only: `git checkout v1-delivery && npm install && npm run dev`.
 
 ### What to try — framed on the 3 AM use case
 1. **Calm setup (<60s):** ≡ → Copii → "+ Adaugă copil". Add a child (name,
