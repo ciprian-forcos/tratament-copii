@@ -72,3 +72,11 @@ _(orchestrator stamps session + plan transition here)_
   human checkpoint). intent/spec/ux/integration/data-safety all hold.
   Status: **done**. Tip: 4adc761.
 - **02-01 night timeline** — implementing (Sonnet Implementer spawned).
+- **02-01 night timeline** — Tier-1 gate verified green (type-check/lint/test
+  26✓/build), SHA matches remote, TDD rhythm clean. Tier-2 APPROVE (intent/
+  spec/ux/integration/data-safety all hold; reactive via doseStore.subscribe).
+  Deviation noted for human: added eslint.config.js + `typescript-eslint`
+  devDep to satisfy the required lint gate (repo had no lint config); dev-only,
+  does not affect the shipped bundle. Removed unused `timeline` prop (no caller).
+  Status: **done**. Tip: a7c46a1.
+- **03-01 schedule-engine (research/adapter)** — implementing.
