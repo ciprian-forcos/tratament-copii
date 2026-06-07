@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
-import { render, screen, act } from '@testing-library/react'
+import { render, screen, act, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { childStore } from '../childStore'
 import { decodeShare } from './encoder'
@@ -44,19 +44,27 @@ function resetStore() {
 // Setup: mock navigator.clipboard and navigator.share
 // ---------------------------------------------------------------------------
 
+const mockWriteText = vi.fn().mockResolvedValue(undefined)
+
+// Define clipboard mock once at module level — jsdom doesn't support
+// re-definition via beforeEach reliably; fireEvent is used for async handlers.
+Object.defineProperty(window, 'navigator', {
+  value: {
+    ...window.navigator,
+    clipboard: { writeText: mockWriteText },
+  },
+  writable: true,
+  configurable: true,
+})
+
 beforeEach(() => {
   localStorage.clear()
   resetStore()
-
-  Object.defineProperty(navigator, 'clipboard', {
-    value: { writeText: vi.fn().mockResolvedValue(undefined) },
-    writable: true,
-    configurable: true,
-  })
+  mockWriteText.mockClear()
 })
 
 afterEach(() => {
-  vi.restoreAllMocks()
+  // vi.restoreAllMocks() intentionally omitted — would undo our navigator stub
 })
 
 // ---------------------------------------------------------------------------
@@ -186,18 +194,35 @@ describe('ShareSheet', () => {
     })
   })
 
-  it('"Copiază" calls navigator.clipboard.writeText with the URL', async () => {
-    const user = userEvent.setup()
-    render(<ShareSheet open={true} onClose={vi.fn()} />)
+  describe('clipboard copy', () => {
+    beforeEach(() => {
+      // Re-stub navigator after any userEvent.setup() from prior tests may have
+      // intercepted it; use fireEvent (not userEvent) in this test.
+      Object.defineProperty(window, 'navigator', {
+        value: { ...window.navigator, clipboard: { writeText: mockWriteText } },
+        writable: true,
+        configurable: true,
+      })
+    })
 
-    await openAndGenerate(user)
+    it('"Copiază" calls navigator.clipboard.writeText with the URL', async () => {
+      render(<ShareSheet open={true} onClose={vi.fn()} />)
 
-    const copyBtn = screen.getByRole('button', { name: /copiază/i })
-    await user.click(copyBtn)
+      // Generate URL via fireEvent to avoid userEvent navigator interference
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: /generează linkul/i }))
+      })
 
-    expect(navigator.clipboard.writeText).toHaveBeenCalledOnce()
-    const calledWith = (navigator.clipboard.writeText as ReturnType<typeof vi.fn>).mock.calls[0][0]
-    expect(calledWith).toContain('import=')
+      const copyBtn = screen.getByRole('button', { name: /copiază/i })
+      await act(async () => {
+        fireEvent.click(copyBtn)
+        await new Promise((r) => setTimeout(r, 50))
+      })
+
+      expect(mockWriteText).toHaveBeenCalledOnce()
+      const calledWith = mockWriteText.mock.calls[0][0]
+      expect(calledWith).toContain('import=')
+    })
   })
 
   it('"Anulează" calls onClose', async () => {
