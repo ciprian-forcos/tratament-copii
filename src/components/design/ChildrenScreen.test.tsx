@@ -39,12 +39,6 @@ describe('ChildrenScreen', () => {
   beforeEach(() => {
     localStorage.clear()
     resetStore()
-    vi.useFakeTimers()
-    vi.setSystemTime(new Date('2026-06-07T20:00:00'))
-  })
-
-  afterEach(() => {
-    vi.useRealTimers()
   })
 
   it('renders all children', () => {
@@ -64,13 +58,15 @@ describe('ChildrenScreen', () => {
     render(<ChildrenScreen onBack={vi.fn()} />)
     // BSA values should appear — Maya 13kg → height 95cm → BSA ≈ 0.60
     // Luca 20kg → height 105cm → BSA ≈ 0.76
-    expect(screen.getByText(/BSA/i)).toBeInTheDocument()
+    const bsaElements = screen.getAllByText(/BSA/i)
+    expect(bsaElements.length).toBeGreaterThanOrEqual(1)
     // Should show cm height estimate somewhere
-    expect(screen.getByText(/cm/i)).toBeInTheDocument()
+    const cmElements = screen.getAllByText(/cm/i)
+    expect(cmElements.length).toBeGreaterThanOrEqual(1)
   })
 
   it('shows "Editează" button per child and opens ChildEditor on click', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    const user = userEvent.setup()
     render(<ChildrenScreen onBack={vi.fn()} />)
 
     const editButtons = screen.getAllByRole('button', { name: /editează/i })
@@ -90,7 +86,7 @@ describe('ChildrenScreen', () => {
   })
 
   it('tapping "Setează activ" changes the active child', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    const user = userEvent.setup()
     render(<ChildrenScreen onBack={vi.fn()} />)
 
     const setActive = screen.getByRole('button', { name: /setează activ/i })
@@ -100,7 +96,7 @@ describe('ChildrenScreen', () => {
   })
 
   it('tapping "+ Adaugă copil" calls childStore.add()', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    const user = userEvent.setup()
     const addSpy = vi.spyOn(childStore, 'add')
     render(<ChildrenScreen onBack={vi.fn()} />)
 
@@ -112,11 +108,12 @@ describe('ChildrenScreen', () => {
   })
 
   it('tapping "Înapoi" calls onBack', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    const user = userEvent.setup()
     const onBack = vi.fn()
     render(<ChildrenScreen onBack={onBack} />)
 
-    const backBtn = screen.getByRole('button', { name: /înapoi/i })
+    // Footer Înapoi button
+    const backBtn = screen.getByRole('button', { name: /^Înapoi$/i })
     await user.click(backBtn)
 
     expect(onBack).toHaveBeenCalledOnce()
