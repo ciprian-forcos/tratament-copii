@@ -116,3 +116,11 @@ _(orchestrator stamps session + plan transition here)_
   absent from URL (decode-assert test), medications key read-only. Deviation:
   clipboard-mock test workaround (test-infra only). Status: **done**. Tip: ba1d37b.
 - **05-03 share import/merge** — implementing (final plan).
+- **05-03 share import/merge** — Tier-1 green (type-check/lint/113 tests/build),
+  SHA matches, TDD clean, scope tight, no deviations. Tier-2 APPROVE: ImportGate
+  confirm-merge, URL cleaned on import/cancel/error, local temp preserved on
+  merge, mounted in App. Status: **done**. Tip: 99c4406.  ===> PHASE 5 COMPLETE.
+- **V1 ACCEPTANCE** — automated checks A/B/D PASS (gate green, scope clean,
+  data-safe). C (stopwatch) + manual flows = human QA. QA handoff written
+  (.planning/QA_HANDOFF.md). ===> V1 FEATURE-COMPLETE on origin/v1-delivery
+  @ 99c4406. Awaiting human QA + merge to main (then tag v1.0.0).
