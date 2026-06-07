@@ -73,7 +73,6 @@ export function useNightTimeline(childId: string, now: Date): NightTimelineEntry
       setEntries(getEntries())
     })
     return unsubscribe
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [childId, since.getTime()])
 
   return entries

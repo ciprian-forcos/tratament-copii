@@ -64,11 +64,9 @@ describe('doseStore', () => {
     })
 
     // Simulate reload: directly wipe in-memory state (bypass clear which removes from localStorage)
-    // @ts-ignore - internal for test
     const originalDoses = (doseStore as any).doses
-    // @ts-ignore
+    void originalDoses // suppress unused-var warning
     ;(doseStore as any).doses = []
-    // @ts-ignore - test helper
     doseStore.reloadFromStorage()
 
     const reloaded = doseStore.list()
@@ -112,7 +110,6 @@ describe('doseStore', () => {
     localStorage.setItem('tratament-copii-administered-doses', 'not-valid-json')
 
     // Force reload so loadFromStorage runs against the corrupted value
-    // @ts-ignore - test helper
     doseStore.reloadFromStorage()
 
     const doses = doseStore.list()

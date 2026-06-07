@@ -90,7 +90,6 @@ describe('HomeB night timeline', () => {
     // defaultTimeline stub added 'Nurofen' and 'Panadol' entries — verify they're gone
     // (the stub would render 3 dots: 2x Nurofen, 1x Panadol)
     // After removal, only the next-dose name appears in the button text, not on the strip
-    const stripContainer = document.querySelector('[style*="position: relative"][style*="height: 90"]')
     // Since no doses are seeded, there should be no past-dose labels in the timeline
     // "Panadol" might appear in the button label only
     const allNurofen = screen.queryAllByText('Nurofen')
