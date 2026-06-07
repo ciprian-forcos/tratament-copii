@@ -94,3 +94,10 @@ _(orchestrator stamps session + plan transition here)_
   reconciliation (vs FINDINGS earliestRepeat) documented. Status: **done**.
   Tip: 0f173d5.  ===> PHASE 3 COMPLETE.
 - **04-01 children screen** — implementing.
+- **04-01 children screen** — Tier-1 green (type-check/lint/60 tests/build),
+  SHA matches, TDD clean, scope tight (only plan files), no CopiiTab import,
+  no direct localStorage (uses childStore), legacy tabs intact. Tier-2 APPROVE:
+  ≡ opens calm-mode Copii screen (list/edit via ChildEditor/setActive/add/
+  back + BSA/height + active-meds), FlowProtoB routing no-regression, data-safe.
+  No deviations. Status: **done**. Tip: 4fa6396.  ===> PHASE 4 COMPLETE.
+- **05-01 share encode/decode lib** — implementing.
