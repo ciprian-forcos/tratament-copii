@@ -389,4 +389,159 @@ The Agent-Reviewer is **always fresh** for each cycle of the inner loop —
 context-management thresholds rarely apply because each cycle is short.
 If a single cycle exceeds the harness's context-pressure warning, the
 Agent-Reviewer must create a handoff file and spawn its successor before
-emitting `FINDINGS` or `SIGNOFF`. The successor finishes
+emitting `FINDINGS` or `SIGNOFF`. The successor finishes the cycle.
+
+---
+
+# Autonomous V1 Delivery
+
+Everything above describes **manual mode**: one plan, branch-per-plan, a
+PR, and a Human Reviewer gate. This section adds **autonomous mode** — a
+single orchestrated run that delivers the entire V1 roadmap
+(`.planning/ROADMAP.md`, Phases 1→5) without a human in the per-plan
+loop, and hands the Human Reviewer one finished, built V1 to QA as a real
+user. Manual mode still applies to any one-off plan; autonomous mode is
+the V1 push.
+
+## Three-Tier Review
+
+Autonomous mode replaces the single Human gate with three tiers, cheapest
+first. A plan advances only when each tier in turn passes.
+
+| Tier | Who | Model | Question it answers | Verdict |
+|------|-----|-------|---------------------|---------|
+| 1. Mechanical | Agent-Reviewer | Sonnet | Did the gate pass, SHAs match, TDD rhythm hold? | `SIGNOFF` / `FINDINGS` |
+| 2. Judgment | Design-Reviewer | Opus | Was the *right thing* built — intent, specs, UX-at-3AM, integration, data safety? | `APPROVE` / `CHANGES` |
+| 3. Acceptance | Human (you) | — | Does the finished V1 work for a real user? | runs **once**, at the end |
+
+Tier 1 is necessary but not sufficient for Tier 2; Tier 2 runs only on a
+Tier-1 `SIGNOFF`. The human never sees per-plan work — only the assembled
+V1. This is the cost shape: Sonnet does the labor, Sonnet gates the
+mechanics, Opus spends tokens only on judgment, the human spends time
+only on the final product.
+
+## Roles in autonomous mode
+
+- **Orchestrator** — the main Cowork session (Opus). Owns the run: reads
+  `DELIVERY_STATE.md`, selects the next plan honoring phase dependencies,
+  spawns the Implementer, shepherds it through both review tiers, records
+  the result, and repeats until V1 is accepted or a stop condition fires.
+  The orchestrator does **not** write feature code itself.
+- **Implementer** (`.claude/agents/implementer.md`, Sonnet) — one fresh
+  instance per plan. Does the TDD work, loops with the Agent-Reviewer to
+  `SIGNOFF`, hands back a summary.
+- **Agent-Reviewer** (`.claude/agents/agent-reviewer.md`, Sonnet) — fresh
+  per inner cycle. Mechanical verification only.
+- **Design-Reviewer** (`.claude/agents/design-reviewer.md`, Opus) — fresh
+  per plan, after `SIGNOFF`. Judgment verification.
+
+## The orchestration loop
+
+```
+load DELIVERY_STATE.md → pick next unblocked plan P
+repeat:
+  spawn Implementer(P) on the integration branch
+      ↳ inner loop: Implementer ⇄ fresh Agent-Reviewer until SIGNOFF
+  spawn Design-Reviewer(P, sha)
+      ↳ APPROVE  → record P done; advance
+      ↳ CHANGES  → hand findings back to a fresh Implementer; repeat
+  if same plan returns CHANGES 3× → STOP, escalate to human
+until all roadmap plans are done
+  → run V1 acceptance (.planning/V1_ACCEPTANCE.md)
+  → build + stage a QA preview, write QA handoff
+  → ping the Human Reviewer
+```
+
+A plan is "done" only when it holds **both** a Tier-1 `SIGNOFF` and a
+Tier-2 `APPROVE` on the same tip SHA.
+
+## Integration strategy — one branch, no per-plan PRs
+
+Because no human reviews per plan, per-plan branches + PRs add ceremony
+with no payoff, and per-plan merges/rebases are exactly the git
+operations that corrupt this repo's index on a mounted filesystem.
+Autonomous mode therefore uses **a single long-lived integration
+branch**, `v1-delivery`, cut from `main`:
+
+- Every plan's commits land sequentially on `v1-delivery`. The TDD commit
+  rhythm is still mandatory and still visible in history.
+- No rebases, no merges, no per-plan branch switching during the run —
+  only sequential commits, the operation that is reliable here.
+- "Base SHA" for a plan's Design-Review diff is the tip recorded for the
+  previously completed plan in `DELIVERY_STATE.md`.
+- At the end, the Human Reviewer is the one who merges `v1-delivery` →
+  `main` (which deploys via GitHub Pages). The harness never auto-merges
+  to `main`.
+
+## Execution environment — the build clone
+
+The mounted Windows working folder cannot be the build surface: its
+`.git` index corrupts under load, and its `node_modules` holds Windows
+binaries that the Linux sandbox can't run (the gate would fail on a
+native-module error, not a real one). So the run happens in a **clean
+clone on the sandbox's native filesystem**:
+
+```
+git clone <origin> /tmp/v1-build        # native FS: reliable git, fast
+cd /tmp/v1-build
+git checkout -b v1-delivery origin/main
+npm install                              # Linux binaries → gate runs for real
+```
+
+All Implementer/reviewer git and `npm` operations run in `/tmp/v1-build`.
+The user's mounted folder stays their untouched local checkout.
+
+Getting the result back to the user — pick one at run start:
+- **Bundle export (default, credential-free):** at V1-done, the
+  orchestrator runs `git bundle create` and copies the bundle plus the
+  built `dist/` into the user's folder. The user imports the bundle,
+  reviews, QAs, and merges. Nothing is pushed; no secret touches the
+  session.
+- **Push (needs credentials):** if the user provisions a sandbox
+  credential (SSH deploy key preferred — see "Git auth"), the
+  orchestrator pushes `v1-delivery` to origin instead, and the user
+  reviews/QAs/merges from there.
+
+Provisioning the chosen path is the **one prerequisite** to starting an
+autonomous run.
+
+## Stop & escalation conditions
+
+The orchestrator halts the run and pings the human when any of these hit
+— it does not push through:
+
+- A plan returns Tier-2 `CHANGES` three times (design churn it can't
+  resolve mechanically).
+- The Agent-Reviewer inner loop fails to reach `SIGNOFF` after a
+  reasonable number of cycles on one plan.
+- A `data-safety` finding appears (a change that could drop a returning
+  user's persisted data) — always escalates, never auto-resolves.
+- A plan needs a decision the specs/BRIEF don't answer (genuine product
+  ambiguity).
+- The gate cannot be made to pass for reasons outside the plan (toolchain,
+  flaky environment).
+
+On stop, the orchestrator records the blocker in `DELIVERY_STATE.md` and
+summarizes it for the human — it never fakes progress to keep going.
+
+## Resumability
+
+The run is cross-session. `.planning/DELIVERY_STATE.md` is the single
+source of truth for "where are we": per-plan status, the tip SHA of each
+completed plan, and any open blocker. A fresh orchestrator session reads
+it, re-establishes the build clone at the recorded `v1-delivery` tip, and
+continues. The orchestrator updates it after every plan transition.
+
+## V1 acceptance & QA handoff
+
+When `DELIVERY_STATE.md` shows every roadmap plan done, the orchestrator:
+
+1. Runs the full gate once more on the final `v1-delivery` tip.
+2. Walks `.planning/V1_ACCEPTANCE.md` — the concrete, user-level pass/fail
+   checklist derived from `BRIEF.md`. Any failure is a stop condition.
+3. Produces the QA handoff for the human: the bundle (or pushed branch),
+   the built preview to click through, the acceptance results, and a
+   short "what to try" script aimed at the 3 AM use case.
+
+Only then does the human step in — to QA the real product, then merge
+`v1-delivery` → `main`.
