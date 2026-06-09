@@ -1,0 +1,18 @@
+1. There is no button to set application as homescreen icon. Probably there is no test that checks such a button either. 
+2. the text "mai sunt 2h 0m" above the wachface is not relevant. and it has a default value it seems. it should only appear once a treatment  starts, not before. 
+3. the timeline spawns the glowing ball at the extreme right of the line. "Now time should spawn in the middle"
+Clickul pe butonul #root > div > div > div > div > div:nth-child(2) > button:nth-child(1)
+nu permite setarea temperaturii, desi o afisaza. 
+Ar trebui sa avem 3 butoane acolo. 
+-> Butonul de setare a temperaturii; butonul de varsta; butonul de selectat copilul
+4. Exista in dreapta sus niste iconite care nu au functionalitate - o baterie, o iconita de semna;; trei puncte. trebuie sa dispara
+5. Masoara din nou trebuie sa fie "Temperatura"
+6. There is no possibility to add medicines. not even the default ones. 
+7. The minimum time between nurofen /algin(ibuprofen) and panadol (paracetamol) is 4 hours. Each is administered every 8 hours, but the minimum time to pass between these two medicines is 4 hours
+8. WHat is the BSA in the "Copii" menu? BSA 0.59 m² · ~95 cm Not needed. to be removed. No automated test needs to be added for removed functionality. 
+9. In Pasul 2 din 3, la intrebarea "Ai mai dat ceva?" ar trebui sa fie "Ai mai administrat altceva?"
+10. La pasul 2 din 3, la intrebarea "Ai mai dat ceva?" nu se poate seta ora. exista niste butoane prestabilite si un buton alt... care nu face nimic. Ar trebui sa fie o rotita pentru ora si un calendar. Poate tratamentul a inceput acum 3 zile. Calculam de la primul tratament administrat. 
+11. Virodep nu este antitermic, nu este nevoie sa apara la pasul "Ultima doza a fost..."
+12. Mesajul "peste 39,5°C apeleaza 112/ pediatru" trebuie sa fie sters. Oricum nu e corect. 
+La peste 40 sau 41 parintii trebuie sa se alarmeze, iar atunci trebuie sa inceapa impachetarile / baie in apa la 37,5 C minim -> regula este sa fie cu 1 2 grate mai mica temp apei de baie decat temp copilului care are febra. Pentru moment putem doar sa scapam de mesaj 
+

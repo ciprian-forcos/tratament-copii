@@ -19,6 +19,9 @@ self-contained enough to hand to a fresh subagent.
 - [ ] **Phase 3: Schedule engine** — `buildPlan()` uses `scheduleEngine.ts`
 - [ ] **Phase 4: Children screen** — ≡ menu opens management view
 - [ ] **Phase 5: Share Tier 1** — URL-encoded state, per-child or whole
+- [ ] **Phase 6: V1 Hardening** — fix the 12 post-QA bugs (treatment-plan rule
+      correctness, Step-2 time entry, home-surface UX, chrome/scope cleanup,
+      PWA install). Base: `main`.
 
 ## Phase Details
 
@@ -84,6 +87,32 @@ Plans:
 - [ ] 05-02: Share UI in children screen (per-child + whole-state checkbox)
 - [ ] 05-03: Import flow on receiving device (confirm + merge)
 
+### Phase 6: V1 Hardening
+**Goal**: Fix the 12 bugs from manual phone QA of the deployed V1, so `v1.0.0`
+can be stamped. Computes the **treatment plan** (which antipyretic, when) —
+distinct from **dosage** (mg/kg in `doseCalculation.ts`); do not conflate them.
+Canonical spacing: **Nurofen 8h, Panadol 8h, minimum 4h between the two drugs**,
+sourced from `scheduleRules.ts`.
+**Depends on**: deployed V1 (`main`)
+**Plans**: 6 (run in 3 file-disjoint waves)
+
+Waves:
+- **Wave A (parallel)**: 06-01, 06-05, 06-06 — disjoint files
+- **Wave B (parallel)**: 06-02, 06-04 — Step2 vs HomeB, disjoint
+- **Wave C (serial)**: 06-03 — Step2 time picker (same file as 06-02; depends on
+  06-01's rule logic and 06-02's medication-list change)
+
+Plans:
+- [ ] 06-01: Treatment-plan rule correctness — `scheduleRules.ts` as source of
+      truth; remove inline 2h hardcode in `dosePlan.ts` (#7)
+- [ ] 06-02: Step 2 antipyretics only (drop Virodep) + title copy (#11, #9)
+- [ ] 06-03: Step 2 real multi-day last-dose datetime picker (#10)
+- [ ] 06-04: Home surface — no phantom countdown, now-centered timeline,
+      working temp/age/child controls, copy (#2, #3, #4a, #5)
+- [ ] 06-05: Chrome/scope cleanup — fake status icons, 112 banner; locate/triage
+      BSA line + add-medicine control (#4b, #12, #8, #6)
+- [ ] 06-06: PWA Add-to-Home-Screen (#1)
+
 ## Progress
 
 | Phase | Plans Complete | Status      | Completed |
@@ -94,6 +123,7 @@ Plans:
 | 3. Schedule engine    | 0/2 | Not started | - |
 | 4. Children screen    | 0/1 | Not started | - |
 | 5. Share Tier 1       | 0/3 | Not started | - |
+| 6. V1 Hardening       | 0/6 | Planned     | - |
 
 ## V2 Backlog (not planned, just remembered)
 
