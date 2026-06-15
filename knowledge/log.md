@@ -2,6 +2,7 @@
 
 ## 2026-06-15
 
+* **Process**: Added [Phase 06 parallel execution map](process/phase-06-parallel-execution-map.md) to define serial and parallel worker lanes before implementation continues.
 * **Process**: Added [Phase 06 fresh context execution](process/phase-06-fresh-context-execution.md) so implementation can spawn cold implementers and fresh reviewers from plan and graph nodes rather than chat history.
 * **UI graph refinement**: Added repeated-instance rules and placement/overflow notes to page nodes and repeated button/control template nodes.
 * **UI graph**: Added [UI interaction graph](ui/interaction-graph.md), feature nodes, functionality nodes, page/sheet nodes, and button/control nodes so implementation can trace specs to pages, controls, source functions, bugs, and Phase 06 plans.

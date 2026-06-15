@@ -32,7 +32,9 @@ bug, and feature links current.
 
 <execution_loop>
 Use `knowledge/process/phase-06-fresh-context-execution.md` for fresh-context
-implementer and reviewer spawning.
+implementer and reviewer spawning. Use
+`knowledge/process/phase-06-parallel-execution-map.md` for parallel lane
+ownership and sequencing.
 </execution_loop>
 
 <plans>

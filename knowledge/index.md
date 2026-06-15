@@ -11,6 +11,7 @@ graph surface.
 * [Phase 6 hardening bugs](process/phase6-hardening-bugs.md) - QA findings imported from the newer planning branch.
 * [V1 Phase 06 Hardening](process/v1-phase-06-hardening.md) - next development phase mapped from individual bug nodes.
 * [Phase 06 fresh context execution](process/phase-06-fresh-context-execution.md) - subagent context and review map for Phase 06.
+* [Phase 06 parallel execution map](process/phase-06-parallel-execution-map.md) - lane ownership and parallel subagent sequencing.
 * [Autonomous harness](process/autonomous-harness.md) - current implementation loop and review gates.
 * [Delivery loop evaluation](process/delivery-loop-evaluation.md) - whether the harness loop is still worth its overhead.
 * [Delivery loop roles](process/delivery-loop-roles.md) - role map for the process loop.

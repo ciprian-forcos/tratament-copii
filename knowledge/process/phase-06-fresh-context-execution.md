@@ -32,6 +32,10 @@ The main thread acts as [Orchestrator role](orchestrator-role.md):
 5. Update plan summary and knowledge graph only after the implementation is
    verified.
 
+Use [Phase 06 parallel execution map](phase-06-parallel-execution-map.md) to
+decide which implementers can run at the same time and which write scopes must
+stay serial.
+
 # Implementer Prompt Inputs
 
 Every implementer gets these paths:
@@ -79,8 +83,15 @@ It verifies scope, checks, TDD rhythm, and graph updates. It returns
   Design-Reviewer. This touches PWA install, medicine state, and restored
   navigation.
 
+# Parallelism
+
+Do not split `06-01`; it owns the Step2/PlanCard/dosePlan contract. After
+`06-01` is green, `06-02` and `06-03` can run as parallel lanes if their write
+sets stay disjoint. Run `06-04` last.
+
 # Citations
 
+* `knowledge/process/phase-06-parallel-execution-map.md`
 * `.planning/phases/06-hardening/06-00-OVERVIEW.md`
 * `.planning/phases/06-hardening/06-01-treatment-history-and-timing-PLAN.md`
 * `.planning/phases/06-hardening/06-02-home-screen-hardening-PLAN.md`

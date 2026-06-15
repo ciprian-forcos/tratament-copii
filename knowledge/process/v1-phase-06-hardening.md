@@ -27,7 +27,8 @@ This phase fixes QA hardening bugs imported from [Phase 6 hardening bugs](phase6
 
 Use [Phase 06 fresh context execution](phase-06-fresh-context-execution.md) to
 spawn one cold implementer per grouped plan and fresh reviewers per review
-cycle.
+cycle. Use [Phase 06 parallel execution map](phase-06-parallel-execution-map.md)
+to decide which lanes may run concurrently.
 
 # Product Decision
 
@@ -57,12 +58,11 @@ When a plan changes a page or button, update the matching `UI Page`,
 
 # Suggested Order
 
-Use the grouped implementation plans:
+Use the grouped implementation plans with parallel lanes:
 
 1. treatment history and timing,
-2. home screen hardening,
-3. UI cleanup,
-4. install affordance and restored medicines path.
+2. home screen hardening and UI cleanup in parallel when write sets are clear,
+3. install affordance and restored medicines path.
 
 # Citations
 
