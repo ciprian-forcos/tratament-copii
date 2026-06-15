@@ -3,8 +3,8 @@ type: UI Page
 title: Children Screen
 description: Calm-mode screen for child profiles, active child selection, active medications, and share entry.
 resource: src/components/design/ChildrenScreen.tsx
-tags: [ui, children, calm-mode, sharing, bsa]
-timestamp: 2026-06-15T19:00:00+03:00
+tags: [ui, children, calm-mode, sharing]
+timestamp: 2026-06-15T23:55:00+03:00
 ---
 
 # User Job
@@ -16,9 +16,8 @@ sharing from this screen. This is calm-mode work, not the panic flow itself.
 
 The active implementation is `src/components/design/ChildrenScreen.tsx`.
 
-Current QA issue:
-
-* BSA and estimated height are visible, but QA says this is not needed in the children menu.
+Child cards show the child identity, age, weight, active state, and row actions.
+BSA and estimated height are intentionally not shown in this menu.
 
 # Connected Concepts
 

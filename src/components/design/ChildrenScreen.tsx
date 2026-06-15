@@ -4,7 +4,6 @@ import { StatusBar } from './StatusBar'
 import { activeChild, ageWords, childStore, useChildren } from './childStore'
 import { DEFAULT_MEDICATIONS } from '../../data/medications'
 import { ShareSheet } from './share/ShareSheet'
-import { calculateBSA, estimateHeight } from '../../utils/doseCalculation'
 
 export interface ChildrenScreenProps {
   onBack: () => void
@@ -85,8 +84,6 @@ export function ChildrenScreen({ onBack }: ChildrenScreenProps) {
       >
         {state.children.map((child) => {
           const isActive = child.id === state.activeId
-          const height = estimateHeight(child.weight)
-          const bsa = calculateBSA(child.weight, height)
 
           return (
             <div
@@ -149,18 +146,6 @@ export function ChildrenScreen({ onBack }: ChildrenScreenProps) {
                     {ageWords(child)} · {child.weight} kg
                   </div>
                 </div>
-              </div>
-
-              {/* BSA + height */}
-              <div
-                className="mono"
-                style={{
-                  fontSize: 12,
-                  color: 'var(--ink-3)',
-                  paddingLeft: 46,
-                }}
-              >
-                BSA {bsa.toFixed(2)} m² · ~{height} cm
               </div>
 
               {/* Actions */}

@@ -149,21 +149,6 @@ export function PlanCard({ onBack, onDone, step2 }: Props) {
             </div>
           </div>
 
-          <div
-            style={{
-              display: 'flex',
-              gap: 8,
-              padding: '10px 12px',
-              background: 'var(--bg-3)',
-              borderRadius: 12,
-              color: 'var(--ink-2)',
-              fontSize: 12,
-              marginTop: 2,
-            }}
-          >
-            <span style={{ color: 'var(--accent)' }}>!</span>
-            <span>peste 39.5°C apelează 112 / pediatru. asta e ghidaj, nu rețetă.</span>
-          </div>
         </div>
       </div>
 

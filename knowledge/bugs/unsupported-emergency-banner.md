@@ -4,7 +4,7 @@ title: Unsupported Emergency Banner
 description: QA bug node for removing the unsupported 112/pediatrician banner from the plan card.
 resource: Bug reports/List
 tags: [bug, v1, phase-06-hardening, plan-card, safety-copy]
-timestamp: 2026-06-15T22:00:00+03:00
+timestamp: 2026-06-15T23:55:00+03:00
 ---
 
 # Bug
@@ -26,6 +26,11 @@ The `112 / pediatrician` banner should be removed.
 # Done When
 
 The plan card no longer shows the unsupported banner, and no replacement copy invents medical guidance.
+
+# Phase 06 Lane C State
+
+Implemented in `src/components/design/PlanCard.tsx`; the banner is removed and
+no replacement medical advice was added.
 
 # Citations
 
