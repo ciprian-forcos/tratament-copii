@@ -54,15 +54,10 @@ describe('ChildrenScreen', () => {
     expect(activMarker).toBeTruthy()
   })
 
-  it('renders BSA and estimated height for each child', () => {
+  it('does not render BSA or estimated height for children', () => {
     render(<ChildrenScreen onBack={vi.fn()} />)
-    // BSA values should appear — Maya 13kg → height 95cm → BSA ≈ 0.60
-    // Luca 20kg → height 105cm → BSA ≈ 0.76
-    const bsaElements = screen.getAllByText(/BSA/i)
-    expect(bsaElements.length).toBeGreaterThanOrEqual(1)
-    // Should show cm height estimate somewhere
-    const cmElements = screen.getAllByText(/cm/i)
-    expect(cmElements.length).toBeGreaterThanOrEqual(1)
+    expect(screen.queryAllByText(/BSA/i)).toHaveLength(0)
+    expect(screen.queryByText(/~\d+\s*cm/i)).not.toBeInTheDocument()
   })
 
   it('shows "Editează" button per child and opens ChildEditor on click', async () => {

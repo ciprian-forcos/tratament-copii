@@ -50,6 +50,19 @@ describe('PlanCard', () => {
     expect(onDone).toHaveBeenCalled()
   })
 
+  it('does not render unsupported emergency banner copy', () => {
+    render(
+      <PlanCard
+        step2={{ kind: 'first' }}
+        onBack={vi.fn()}
+        onDone={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByRole('button', { name: /am dat doza/i })).toBeInTheDocument()
+    expect(screen.queryByText(/112|pediatru/i)).not.toBeInTheDocument()
+  })
+
   it('does not allow recording a deferred first dose before its scheduled time', () => {
     vi.useFakeTimers()
     vi.setSystemTime(new Date(2025, 0, 15, 3, 0, 0))
