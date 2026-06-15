@@ -33,7 +33,7 @@ Example:
 
 * branch: `V1/phase-06-hardening`
 * folder: `.planning/phases/06-hardening/`
-* plan: `.planning/phases/06-hardening/06-01-PLAN.md`
+* plan: `.planning/phases/06-hardening/06-01-treatment-history-and-timing-PLAN.md`
 
 # Knowledge Graph Convention
 
@@ -52,15 +52,24 @@ the implementation source of truth, while `origin/harness/autonomous-v1-delivery
 contains newer hardening notes. Future branches should use the convention above
 instead of adding more unrelated naming schemes.
 
+# Superseded Planning Rule
+
+[Planning corpus](../sources/planning-corpus.md) records that `.planning/PROCESS.md`
+used `phase-{NN}/{plan-id}-{short-name}` branches and explicitly avoided version
+names. That rule is historical context only. New work should use the `V<version>/phase-<nn>-<slug>`
+shape from this page.
+
 # Connected Concepts
 
 * [Current repository branch state](repo-branch-state.md)
 * [Phase 6 hardening bugs](phase6-hardening-bugs.md)
 * [Autonomous harness](autonomous-harness.md)
+* [Planning corpus](../sources/planning-corpus.md)
 * [Ponytail audit observations](ponytail-audit-observations.md)
 
 # Citations
 
 * User note, 2026-06-15: branch naming should at least follow `Vx/phasexxx`.
 * `.planning/phases/*`
+* `.planning/PROCESS.md`
 * `git`

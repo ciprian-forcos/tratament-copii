@@ -2,6 +2,16 @@
 
 ## 2026-06-15
 
+* **Process**: Added [Phase 06 fresh context execution](process/phase-06-fresh-context-execution.md) so implementation can spawn cold implementers and fresh reviewers from plan and graph nodes rather than chat history.
+* **UI graph refinement**: Added repeated-instance rules and placement/overflow notes to page nodes and repeated button/control template nodes.
+* **UI graph**: Added [UI interaction graph](ui/interaction-graph.md), feature nodes, functionality nodes, page/sheet nodes, and button/control nodes so implementation can trace specs to pages, controls, source functions, bugs, and Phase 06 plans.
+* **Planning**: Added [V1 Phase 06 hardening overview](../.planning/phases/06-hardening/06-00-OVERVIEW.md) and grouped implementation plans for [treatment history/timing](../.planning/phases/06-hardening/06-01-treatment-history-and-timing-PLAN.md), [home screen hardening](../.planning/phases/06-hardening/06-02-home-screen-hardening-PLAN.md), [UI cleanup](../.planning/phases/06-hardening/06-03-ui-cleanup-PLAN.md), and [install/medicines](../.planning/phases/06-hardening/06-04-install-and-medicines-PLAN.md).
+* **Ingest**: Ran wiki scan and repo-wide wiki ingest over `.planning/`, `specs/`, `src/`, package/tooling files, deploy config, verification scripts, and agent prompts.
+* **Bug mapping**: Split [Phase 6 hardening bugs](process/phase6-hardening-bugs.md) into individual bug nodes under `bugs/` and mapped them to [V1 Phase 06 Hardening](process/v1-phase-06-hardening.md).
+* **Refactor**: Split process-loop role notes into [Delivery loop roles](process/delivery-loop-roles.md), [Orchestrator role](process/orchestrator-role.md), [Implementer role](process/implementer-role.md), [Agent-Reviewer role](process/agent-reviewer-role.md), [Design-Reviewer role](process/design-reviewer-role.md), and [Human Reviewer role](process/human-reviewer-role.md).
+* **Creation**: Added source-ingest nodes for [Repository source inventory](sources/repo-source-inventory.md), [Planning corpus](sources/planning-corpus.md), [Specs corpus](sources/specs-corpus.md), [Application source map](sources/app-source-map.md), and [Tooling and deploy source map](sources/tooling-and-deploy.md).
+* **Creation**: Added [Delivery loop evaluation](process/delivery-loop-evaluation.md) to capture the harness effectiveness/overhead tradeoff and a lighter future loop.
+* **Conflict ledger**: Planning/spec sources still contain old branch naming, stale roadmap state, legacy-tab retention constraints, and older `2h`/`6h` timing assumptions; current graph decisions supersede them where noted.
 * **Rename**: Standardized the product concept name as [3 AM use case](product/3am-use-case.md) across graph links.
 * **Decision**: Removed generated `knowledge/viz.html` from maintained graph artifacts; Obsidian is the maintained graph surface.
 * **Update**: Added [Ponytail audit observations](process/ponytail-audit-observations.md) from the first repo-wide simplification audit.

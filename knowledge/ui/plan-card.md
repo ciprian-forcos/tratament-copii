@@ -1,5 +1,5 @@
 ---
-type: UI Element
+type: UI Page
 title: Plan Card
 description: The generated result card that tells the parent what to administer now and records the administered dose.
 resource: src/components/design/PlanCard.tsx
@@ -28,8 +28,24 @@ events.
 # Connected Concepts
 
 * [3 AM use case](../product/3am-use-case.md)
+* [Panic treatment flow](../features/panic-treatment-flow.md)
+* [Dose plan generation](../functionality/dose-plan-generation.md)
+* [Dose recording](../functionality/dose-recording.md)
 * [Treatment plan rules](../medical/treatment-plan-rules.md)
 * [Dosage versus treatment plan](../medical/dosage-vs-treatment-plan.md)
+
+# Buttons
+
+* [Plan back button](buttons/plan-back-button.md)
+* [Plan record dose button](buttons/plan-record-dose-button.md)
+* [Plan change something button](buttons/plan-change-something-button.md)
+
+# Source Functions
+
+* `PlanCard`
+* `buildPlan`
+* `doseStore.record`
+* `onDone`
 
 # Citations
 

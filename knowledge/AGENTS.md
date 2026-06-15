@@ -23,9 +23,14 @@ Knowledge Format shape used by [Open Knowledge Format](references/open-knowledge
 Use the existing type vocabulary unless a new page clearly needs a new type:
 
 * Product Concept
+* Feature
+* UI Page
 * Medical Rule
 * Terminology
 * UI Element
+* UI Button
+* UI Control
+* UI Functionality
 * Implementation Module
 * Process Artifact
 * External Reference
@@ -41,6 +46,25 @@ Use the existing type vocabulary unless a new page clearly needs a new type:
   or [Autonomous harness](process/autonomous-harness.md) when they affect delivery flow.
 * Prefer updating an existing concept over adding a disconnected note.
 * When behavior changes, update both the implementation/UI node and `log.md`.
+
+# UI Graph Rules
+
+Treat the interface as a traceable graph:
+
+* General spec/product node -> feature node -> page/sheet node -> functionality
+  node -> button/control node -> source function/store/test/bug links.
+* Every routable page, sheet, modal, or import overlay gets a `UI Page` node.
+* Every distinct button role gets a `UI Button` node linked back to its page.
+  Repeated row buttons use one template node, not one node per rendered row.
+* Non-button interactive inputs such as checkboxes and clickable wheel values
+  get `UI Control` nodes when they drive important behavior.
+* Page nodes should list upstream features, downstream functionality,
+  buttons/controls, source components, relevant tests, and known bugs.
+* Button/control nodes should name their handler or source function when the
+  code has one.
+* Repeated button/control template nodes must explain where each instance
+  appears, what creates more instances, and how the page should behave when
+  there are many.
 
 # Citation Rule
 
