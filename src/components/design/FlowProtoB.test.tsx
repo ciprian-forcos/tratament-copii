@@ -1,11 +1,15 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { childStore } from './childStore'
 import { FlowProtoB } from './FlowProtoB'
+import { ImportGate } from './share/ImportGate'
+import { encodeShare } from './share/encoder'
+import type { SharePayload } from './share/types'
 
 beforeEach(() => {
   localStorage.clear()
+  window.history.pushState({}, '', '/')
   childStore.setState({
     children: [
       {
@@ -31,9 +35,9 @@ describe('FlowProtoB medicine routing', () => {
     await openMedicines(user)
 
     expect(screen.getByRole('button', { name: /adaug/i })).toBeInTheDocument()
-    expect(screen.getByText(/Nurofen/i)).toBeInTheDocument()
-    expect(screen.getByText(/Panadol/i)).toBeInTheDocument()
-    expect(screen.getByText(/Novocalmin/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/Nurofen/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Panadol/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Novocalmin/i).length).toBeGreaterThan(0)
   })
 
   it('persists a medicine added through Medicamente and reads it after remount', async () => {
@@ -52,6 +56,38 @@ describe('FlowProtoB medicine routing', () => {
     await openMedicines(user)
 
     expect(screen.getByText('Test sirop')).toBeInTheDocument()
+  })
+
+  it('shows imported medicines without requiring a reload', async () => {
+    const user = userEvent.setup()
+    const payload: SharePayload = {
+      v: 1,
+      children: childStore.get().children,
+      medications: [
+        {
+          id: 'imported-med',
+          name: 'Import sirop',
+          doseType: 'fixed',
+          doseConfig: { type: 'fixed', amount: '5', unit: 'ml' },
+          color: '#3b82f6',
+          notes: '',
+        },
+      ],
+      sentAt: new Date().toISOString(),
+    }
+    window.history.pushState({}, '', `?import=${encodeURIComponent(encodeShare(payload))}`)
+
+    render(
+      <ImportGate>
+        <FlowProtoB />
+      </ImportGate>,
+    )
+
+    await waitFor(() => screen.getByRole('button', { name: /^importă$/i }))
+    await user.click(screen.getByRole('button', { name: /^importă$/i }))
+    await openMedicines(user)
+
+    expect(screen.getByText('Import sirop')).toBeInTheDocument()
   })
 })
 
