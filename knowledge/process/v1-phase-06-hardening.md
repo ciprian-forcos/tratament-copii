@@ -23,6 +23,13 @@ This phase fixes QA hardening bugs imported from [Phase 6 hardening bugs](phase6
 * [06-03 UI cleanup](../../.planning/phases/06-hardening/06-03-ui-cleanup-PLAN.md)
 * [06-04 install and medicines](../../.planning/phases/06-hardening/06-04-install-and-medicines-PLAN.md)
 
+# Summary Files
+
+* [06-01 treatment history and timing summary](../../.planning/phases/06-hardening/06-01-treatment-history-and-timing-SUMMARY.md)
+* [06-02 home screen hardening summary](../../.planning/phases/06-hardening/06-02-home-screen-hardening-SUMMARY.md)
+* [06-03 UI cleanup summary](../../.planning/phases/06-hardening/06-03-ui-cleanup-SUMMARY.md)
+* [06-04 install and medicines summary](../../.planning/phases/06-hardening/06-04-install-and-medicines-SUMMARY.md)
+
 # Execution
 
 Use [Phase 06 fresh context execution](phase-06-fresh-context-execution.md) to

@@ -22,6 +22,7 @@ timestamp: 2026-06-15T22:30:00+03:00
 # Source Functions
 
 * `handleGenerate`
+* `customMedicationsForShare`
 * `buildShareUrl`
 * `handleCopy`
 * `handleNativeShare`
@@ -29,4 +30,5 @@ timestamp: 2026-06-15T22:30:00+03:00
 # Citations
 
 * `src/components/design/share/ShareSheet.tsx`
+* `src/components/design/medicineStorage.ts`
 * `src/components/design/share/encoder.ts`

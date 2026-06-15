@@ -49,10 +49,11 @@ functions, stores, tests, and bug nodes.
 * [Medicine editing](../functionality/medicine-editing.md)
 * [PWA install entry](../functionality/pwa-install-entry.md)
 
-# Current Caveat
+# Current State
 
-This graph records both current source facts and Phase 06 planned changes. Nodes
-mark planned-only buttons or behavior explicitly.
+This graph records current source facts and completed Phase 06 hardening
+decisions. Repeated row/button instances are documented as reusable button or
+control templates rather than one node per rendered instance.
 
 # Citations
 

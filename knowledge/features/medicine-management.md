@@ -3,7 +3,7 @@ type: Feature
 title: Medicine Management
 description: Medicine add, edit, delete, and dose configuration through the restored medicines path.
 resource: src/components/MedicamenteTab.tsx
-tags: [feature, medicines, planned, phase-06-hardening]
+tags: [feature, medicines, phase-06-hardening]
 timestamp: 2026-06-15T22:30:00+03:00
 ---
 
@@ -11,6 +11,12 @@ timestamp: 2026-06-15T22:30:00+03:00
 
 Restores the existing medicine editor instead of building a second one. Phase 06
 decides that antipyretics must be available in this path.
+
+# Phase 06 Lane D State
+
+Implemented through the existing `MedicamenteTab` only. The active route lives
+in `FlowProtoB`, and medicine state is loaded/saved through the shared
+`tratament-copii-medications` key. No second custom medicine editor was added.
 
 # Source Spec
 
@@ -28,6 +34,9 @@ decides that antipyretics must be available in this path.
 # Source Functions
 
 * `MedicamenteTab`
+* `loadMedications`
+* `saveMedications`
+* `notifyMedicationsChanged`
 * `openAdd`
 * `openEdit`
 * `handleSave`
@@ -41,3 +50,5 @@ decides that antipyretics must be available in this path.
 * `specs/no-duplicate-medications.md`
 * [Medicine add flow](../bugs/medicine-add-flow.md)
 * `.planning/phases/06-hardening/06-04-install-and-medicines-PLAN.md`
+* `src/components/design/FlowProtoB.tsx`
+* `src/components/design/medicineStorage.ts`

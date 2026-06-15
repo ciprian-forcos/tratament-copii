@@ -1,7 +1,7 @@
 import { defineConfig, Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-import { readFileSync, writeFileSync, readdirSync } from 'fs'
+import { copyFileSync, readFileSync, writeFileSync, readdirSync } from 'fs'
 import { resolve } from 'path'
 
 function swCacheVersionPlugin(): Plugin {
@@ -34,6 +34,10 @@ function swCacheVersionPlugin(): Plugin {
         if (updated !== sw) {
           writeFileSync(swPath, updated)
           console.log(`[sw-cache-version] cache name → tratament-copii-${hash}`)
+        }
+        writeFileSync(resolve('dist', 'sw.js'), updated)
+        for (const file of ['manifest.json', 'icon-192.png', 'icon-512.png']) {
+          copyFileSync(resolve(file), resolve('dist', file))
         }
       } catch {
         // sw.js not present — skip

@@ -47,11 +47,18 @@ Phase 06 Lane B state:
 * [Home menu button](buttons/home-menu-button.md)
 * [Home temperature button](buttons/home-temperature-button.md)
 * [Home start treatment button](buttons/home-start-treatment-button.md)
-* [Home install button](buttons/home-install-button.md) - planned in Phase 06.
+* [Home install button](buttons/home-install-button.md)
+
+# Phase 06 Lane D State
+
+Home includes the PWA install entry in the footer above the treatment-start
+button. It is hidden in standalone mode and falls back to manual browser-menu
+guidance when the native install prompt is unavailable.
 
 # Source Functions
 
 * `HomeB`
+* `handleInstall`
 * `ChildPill`
 * `MenuBtn`
 * `TempWheel`

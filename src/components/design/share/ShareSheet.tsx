@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import { activeChild, ageWords, useChildren } from '../childStore'
+import { customMedicationsForShare } from '../medicineStorage'
 import { buildShareUrl } from './encoder'
 import type { SharePayload } from './types'
-import { DEFAULT_MEDICATIONS } from '../../../data/medications'
-
-const MEDICATIONS_KEY = 'tratament-copii-medications'
 
 interface Props {
   open: boolean
@@ -58,25 +56,12 @@ export function ShareSheet({ open, onClose }: Props) {
     onClose()
   }
 
-  function getCustomMedications() {
-    try {
-      const raw = window.localStorage.getItem(MEDICATIONS_KEY)
-      if (!raw) return undefined
-      const stored = JSON.parse(raw)
-      // Deep-equal check: if identical to defaults, omit
-      if (JSON.stringify(stored) === JSON.stringify(DEFAULT_MEDICATIONS)) return undefined
-      return stored
-    } catch {
-      return undefined
-    }
-  }
-
   function handleGenerate() {
     const childrenToShare = shareAll
       ? state.children
       : state.children.filter((c) => selected.has(c.id))
 
-    const customMeds = shareAll ? getCustomMedications() : undefined
+    const customMeds = shareAll ? customMedicationsForShare() : undefined
 
     const payload: SharePayload = {
       v: 1,

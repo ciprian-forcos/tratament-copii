@@ -15,9 +15,12 @@ calculation, and Tier 1 share-by-URL.
 
 # Excluded
 
-Cloud sync, accounts, live multi-device state, reminders, notifications, custom
-medication editing surfaced in the active UI, and broad vitamin/cough-syrup
-program management are outside V1.
+Cloud sync, accounts, live multi-device state, reminders, notifications, and
+broad vitamin/cough-syrup program management are outside V1.
+
+Phase 06 exception: the existing `MedicamenteTab` medicine editor is restored so
+parents can add/edit medicines and verify default antipyretics. This is not a
+new broad treatment-program surface.
 
 # Why This Matters
 

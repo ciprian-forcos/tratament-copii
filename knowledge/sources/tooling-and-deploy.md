@@ -26,7 +26,11 @@ The app is a Vite React TypeScript PWA:
 * The deployed base path is `/tratament-copii/`.
 * `manifest.json` declares the Romanian PWA metadata and icon paths.
 * `sw.js` is a network-first service worker with cache fallback.
-* The custom Vite `sw-cache-version` plugin mutates `sw.js` after build so the cache name tracks the built JS hash.
+* `src/main.tsx` registers `sw.js` in production.
+* The custom Vite `sw-cache-version` plugin mutates `sw.js` after build so the cache name tracks the built JS hash and copies the service worker, manifest, and root icons into `dist/` for GitHub Pages.
+* The production manifest is served from `/tratament-copii/manifest.json` so
+  `start_url`, `scope`, and icon URLs resolve at the app root rather than under
+  hashed asset paths.
 
 # Deployment
 
@@ -52,6 +56,7 @@ current branch naming policy is [Version and phase branch naming](../process/ver
 
 * `package.json`
 * `vite.config.ts`
+* `src/main.tsx`
 * `vitest.config.ts`
 * `eslint.config.js`
 * `manifest.json`

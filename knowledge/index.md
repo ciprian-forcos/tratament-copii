@@ -69,7 +69,7 @@ graph surface.
 * [Temperature picker sheet](ui/temperature-picker-sheet.md) - home temperature wheel sheet.
 * [Share sheet](ui/share-sheet.md) - URL export/import mental model.
 * [Import gate sheets](ui/import-gate-sheets.md) - share URL import confirm/error sheets.
-* [Medicines page](ui/medicines-page.md) - planned restored `MedicamenteTab` page.
+* [Medicines page](ui/medicines-page.md) - restored `MedicamenteTab` page.
 
 # Feature Graph
 

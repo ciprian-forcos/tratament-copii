@@ -1,9 +1,9 @@
 ---
 type: UI Page
 title: Medicines Page
-description: Planned restored medicine management page backed by the existing MedicamenteTab component.
+description: Restored medicine management page backed by the existing MedicamenteTab component.
 resource: src/components/MedicamenteTab.tsx
-tags: [ui, page, medicines, planned, phase-06-hardening]
+tags: [ui, page, medicines, phase-06-hardening]
 timestamp: 2026-06-15T22:30:00+03:00
 ---
 
@@ -11,10 +11,12 @@ timestamp: 2026-06-15T22:30:00+03:00
 
 Add, edit, and delete medicines, with antipyretics available by default.
 
-# Current Status
+# Current Implementation
 
-`MedicamenteTab` exists but is not reachable from the current Design B route.
-Phase 06 restores this path instead of building a new medicine editor.
+`FlowProtoB` routes Children -> `Medicamente` to the existing
+`MedicamenteTab`. Phase 06 restores this path instead of building a new
+medicine editor. Default antipyretics are loaded from the shared medicine
+storage helper when no custom medicine state exists.
 
 # Feature And Functionality
 
@@ -46,6 +48,8 @@ The dialog body scrolls when the dynamic dose-form fields exceed the viewport.
 # Source Functions
 
 * `MedicamenteTab`
+* `loadMedications`
+* `saveMedications`
 * `openAdd`
 * `openEdit`
 * `closeDialog`
@@ -57,6 +61,8 @@ The dialog body scrolls when the dynamic dose-form fields exceed the viewport.
 # Citations
 
 * `src/components/MedicamenteTab.tsx`
+* `src/components/design/FlowProtoB.tsx`
+* `src/components/design/medicineStorage.ts`
 * `specs/medications.md`
 * `specs/no-duplicate-medications.md`
 * `.planning/phases/06-hardening/06-04-install-and-medicines-PLAN.md`

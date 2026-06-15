@@ -28,7 +28,17 @@ The app has no visible add-to-home-screen affordance.
 
 The parent has a simple path to install/open the PWA from the home flow, without adding accounts, cloud, or notification scope.
 
+# Phase 06 Lane D State
+
+Implemented in `src/components/design/HomeB.tsx`. Home shows `Instalează aplicația`
+when the app is not already running standalone, uses `beforeinstallprompt` when
+the browser provides it, and shows short manual add-to-home-screen guidance
+otherwise. Production builds register and deploy `sw.js`.
+
 # Citations
 
 * [Phase 6 hardening bugs](../process/phase6-hardening-bugs.md)
 * `manifest.json`
+* `src/components/design/HomeB.tsx`
+* `src/main.tsx`
+* `vite.config.ts`

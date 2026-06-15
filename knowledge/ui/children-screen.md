@@ -19,6 +19,10 @@ The active implementation is `src/components/design/ChildrenScreen.tsx`.
 Child cards show the child identity, age, weight, active state, and row actions.
 BSA and estimated height are intentionally not shown in this menu.
 
+Phase 06 Lane D adds a footer `Medicamente` button that routes to the restored
+medicine editor. If there are many children, the child list scrolls and the
+footer actions remain after the list and active-medicine section.
+
 # Connected Concepts
 
 * [V1 scope](../product/v1-scope.md)
@@ -36,7 +40,7 @@ BSA and estimated height are intentionally not shown in this menu.
 * [Children set active button](buttons/children-set-active-button.md)
 * [Children add child button](buttons/children-add-child-button.md)
 * [Children back button](buttons/children-back-button.md)
-* [Children medicines button](buttons/children-medicines-button.md) - planned in Phase 06.
+* [Children medicines button](buttons/children-medicines-button.md)
 
 # Repeated Instances
 
@@ -50,6 +54,7 @@ actions remain after the list content.
 
 * `ChildrenScreen`
 * `handleAdd`
+* `onMedicines`
 * `childStore.setActive`
 * `ShareSheet`
 * `ChildEditor`

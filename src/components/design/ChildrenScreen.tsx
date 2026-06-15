@@ -2,14 +2,21 @@ import { useState } from 'react'
 import { ChildEditor } from './ChildEditor'
 import { StatusBar } from './StatusBar'
 import { activeChild, ageWords, childStore, useChildren } from './childStore'
-import { DEFAULT_MEDICATIONS } from '../../data/medications'
+import { loadMedications } from './medicineStorage'
 import { ShareSheet } from './share/ShareSheet'
+import type { Medication } from '../../types'
 
 export interface ChildrenScreenProps {
   onBack: () => void
+  onMedicines?: () => void
+  medications?: Medication[]
 }
 
-export function ChildrenScreen({ onBack }: ChildrenScreenProps) {
+export function ChildrenScreen({
+  onBack,
+  onMedicines,
+  medications = loadMedications(),
+}: ChildrenScreenProps) {
   const state = useChildren()
   const active = activeChild(state)
   const [editorOpen, setEditorOpen] = useState(false)
@@ -20,7 +27,7 @@ export function ChildrenScreen({ onBack }: ChildrenScreenProps) {
     setEditorOpen(true)
   }
 
-  const enabledMeds = DEFAULT_MEDICATIONS.filter((m) =>
+  const enabledMeds = medications.filter((m) =>
     active.enabledMedications.includes(m.id),
   )
 
@@ -270,6 +277,23 @@ export function ChildrenScreen({ onBack }: ChildrenScreenProps) {
         >
           + Adaugă copil
         </button>
+        {onMedicines && (
+          <button
+            onClick={onMedicines}
+            style={{
+              padding: '13px',
+              borderRadius: 14,
+              border: '1.5px solid var(--accent)',
+              background: 'rgba(245,177,74,0.08)',
+              color: 'var(--accent)',
+              fontSize: 15,
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            Medicamente
+          </button>
+        )}
         <button
           onClick={onBack}
           style={{

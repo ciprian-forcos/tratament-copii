@@ -24,10 +24,14 @@ timestamp: 2026-06-15T22:30:00+03:00
 * `decodeShare`
 * `mergeChildren`
 * `mergeMedications`
+* `loadMedications`
+* `saveMedications`
+* `notifyMedicationsChanged`
 * `handleImport`
 * `cleanUrl`
 
 # Citations
 
 * `src/components/design/share/ImportGate.tsx`
+* `src/components/design/medicineStorage.ts`
 * `src/components/design/share/merge.ts`

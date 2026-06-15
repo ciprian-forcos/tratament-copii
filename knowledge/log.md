@@ -2,6 +2,7 @@
 
 ## 2026-06-15
 
+* **Phase 06 Lane D**: Added the Home PWA install affordance, registered/copied the service worker for Pages builds, restored the `MedicamenteTab` route from Children, centralized medicine persistence under `tratament-copii-medications`, and verified default antipyretics in the restored path.
 * **Phase 06 Lane B**: Hardened Home by removing phantom next-dose state, centering the `acum` marker, splitting child/profile/temperature controls, changing Home temperature copy to `Temperatura`, and removing fake status icons.
 * **Phase 06 Lane C**: Removed Children screen BSA/estimated-height display and the unsupported PlanCard `112 / pediatrician` banner.
 * **Phase 06 Lane A review fix**: Added PlanCard guard for deferred first doses so the card shows the scheduled time and disables `Am dat doza` until the 4h floor is due.

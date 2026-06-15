@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnalogClock } from './AnalogClock'
 import { ChildEditor } from './ChildEditor'
 import { ChildPill, MenuBtn } from './ChildPill'
@@ -7,6 +7,10 @@ import { TempWheel } from './TempWheel'
 import { activeChild, childStore, useChildren } from './childStore'
 import { diffHHMM, fmtHHMM } from './dosePlan'
 import { useNightTimeline } from './useNightTimeline'
+
+type BeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>
+}
 
 interface Props {
   onStart: () => void
@@ -22,9 +26,43 @@ export function HomeB({ onStart, onMenu, nextDose }: Props) {
   const temp = child.temp ?? 0
   const [pickerOpen, setPickerOpen] = useState(false)
   const [childOpen, setChildOpen] = useState(false)
+  const installPrompt = useRef<BeforeInstallPromptEvent | null>(null)
+  const [manualInstallOpen, setManualInstallOpen] = useState(false)
+  const [standalone, setStandalone] = useState(isStandaloneDisplay)
 
   const setTemp = (v: number) => childStore.patchActive({ temp: v })
   const openPicker = () => setPickerOpen(true)
+
+  useEffect(() => {
+    setStandalone(isStandaloneDisplay())
+    const onBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault()
+      installPrompt.current = event as BeforeInstallPromptEvent
+      setManualInstallOpen(false)
+    }
+    const onInstalled = () => {
+      setStandalone(true)
+      installPrompt.current = null
+      setManualInstallOpen(false)
+    }
+
+    window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt)
+    window.addEventListener('appinstalled', onInstalled)
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt)
+      window.removeEventListener('appinstalled', onInstalled)
+    }
+  }, [])
+
+  function handleInstall() {
+    if (installPrompt.current) {
+      const prompt = installPrompt.current
+      installPrompt.current = null
+      void prompt.prompt()
+      return
+    }
+    setManualInstallOpen((open) => !open)
+  }
 
   const now = new Date()
   const next = nextDose ?? null
@@ -163,10 +201,52 @@ export function HomeB({ onStart, onMenu, nextDose }: Props) {
       </div>
 
       <div style={{ padding: '0 18px 22px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {!standalone && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <button
+              type="button"
+              onClick={handleInstall}
+              style={{
+                padding: '11px 13px',
+                borderRadius: 14,
+                border: '1.5px solid var(--line)',
+                background: 'var(--bg-3)',
+                color: 'var(--ink-2)',
+                fontSize: 14,
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              Instalează aplicația
+            </button>
+            {manualInstallOpen && (
+              <div
+                style={{
+                  padding: '10px 12px',
+                  borderRadius: 12,
+                  border: '1.5px dashed var(--line)',
+                  background: 'var(--bg-2)',
+                  color: 'var(--ink-3)',
+                  fontSize: 13,
+                  lineHeight: 1.35,
+                }}
+              >
+                Adaugă pe ecranul principal din meniul browserului.
+              </div>
+            )}
+          </div>
+        )}
         <button className="btn-primary btn-wait" onClick={onStart}>
           {next ? `Următoarea doză · ${fmtHHMM(next.at)} →` : 'Începe tratamentul'}
         </button>
       </div>
     </div>
+  )
+}
+
+function isStandaloneDisplay() {
+  return (
+    window.matchMedia?.('(display-mode: standalone)').matches ||
+    (navigator as Navigator & { standalone?: boolean }).standalone === true
   )
 }

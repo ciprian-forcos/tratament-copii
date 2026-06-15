@@ -19,7 +19,9 @@ QA says there is no possibility to add medicines.
 
 # Scope Conflict
 
-[V1 scope](../product/v1-scope.md) excludes surfaced custom medication editing, while the bug asks for medicine add capability. This needs an explicit product decision before implementation.
+[V1 scope](../product/v1-scope.md) generally excludes broad medicine-program
+management. Phase 06 records an exception: restore the existing `MedicamenteTab`
+path so parents can add/edit medicines without creating a second editor.
 
 # Touchpoints
 
@@ -32,8 +34,17 @@ QA says there is no possibility to add medicines.
 
 Either a minimal V1 medicine-add path exists, or the phase records a deliberate deferral with copy that avoids making the app feel broken.
 
+# Phase 06 Lane D State
+
+Implemented by routing Children -> `Medicamente` -> `MedicamenteTab`. The editor
+uses the existing add/edit/delete flow and persists through
+`tratament-copii-medications`; default antipyretics are present when the key is
+absent.
+
 # Citations
 
 * [Phase 6 hardening bugs](../process/phase6-hardening-bugs.md)
 * [V1 scope](../product/v1-scope.md)
 * `src/components/MedicamenteTab.tsx`
+* `src/components/design/FlowProtoB.tsx`
+* `src/components/design/medicineStorage.ts`

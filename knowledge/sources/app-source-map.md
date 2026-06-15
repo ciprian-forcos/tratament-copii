@@ -13,7 +13,8 @@ timestamp: 2026-06-15T21:30:00+03:00
 
 * `ImportGate`
 * `FlowProtoB`
-* `HomeB`, `Step1`, `Step2`, `PlanCard`, and `ChildrenScreen`
+* `HomeB`, `Step1`, `Step2`, `PlanCard`, `ChildrenScreen`, and the restored
+  `MedicamenteTab` route
 
 This is the active Design B flow, not the older three-tab app described in
 `specs/app-overview.md`.
@@ -22,6 +23,7 @@ This is the active Design B flow, not the older three-tab app described in
 
 * `childStore.ts` owns child profiles and active child using the protected keys `tratament-copii-children` and `tratament-copii-active-child`.
 * `doseStore.ts` owns administered doses using `tratament-copii-administered-doses`.
+* `medicineStorage.ts` owns restored medicine reads/writes using `tratament-copii-medications`.
 * `types.ts` defines child, medication, dose, and schedule-rule shapes.
 * [Local storage and app state](../implementation/app-state-local-storage.md) is the data-safety node for these contracts.
 
@@ -46,17 +48,17 @@ The share flow lives under `src/components/design/share/`:
 
 See [Share URL import and merge](../implementation/share-url-import-merge.md).
 
-# Legacy Retained Source
+# Restored And Legacy Source
 
-`ProgramTab.tsx`, `MedicamenteTab.tsx`, `CopiiTab.tsx`, and
-`hooks/useLocalStorage.ts` remain in `src/` but are not routed by `App.tsx`.
-They preserve the broader tabbed app behavior and old management UI. They are
-therefore reference source unless a future phase explicitly restores or removes
-them.
+`MedicamenteTab.tsx` is restored through the active Design B route for medicine
+add/edit/delete. `ProgramTab.tsx`, `CopiiTab.tsx`, and `hooks/useLocalStorage.ts`
+remain retained reference source unless a future phase explicitly restores or
+removes them.
 
 # Tests
 
-The repo has 14 co-located Vitest test files under `src/components/design/`.
+The repo has co-located Vitest test files under `src/components/design/` plus
+focused component/helper tests for restored medicines.
 The main gate commands are `npm run type-check`, `npm run test`, and
 `npm run build`.
 
@@ -68,9 +70,10 @@ The main gate commands are `npm run type-check`, `npm run test`, and
 * `src/components/design/PlanCard.tsx`
 * `src/components/design/childStore.ts`
 * `src/components/design/doseStore.ts`
+* `src/components/design/medicineStorage.ts`
 * `src/components/design/share/*`
-* `src/components/ProgramTab.tsx`
 * `src/components/MedicamenteTab.tsx`
+* `src/components/ProgramTab.tsx`
 * `src/components/CopiiTab.tsx`
 * `src/**/*.test.ts`
 * `src/**/*.test.tsx`

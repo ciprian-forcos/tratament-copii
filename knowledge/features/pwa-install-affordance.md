@@ -1,9 +1,9 @@
 ---
 type: Feature
 title: PWA Install Affordance
-description: Visible add-to-home-screen entry planned for the home flow.
+description: Visible add-to-home-screen entry in the home flow.
 resource: manifest.json
-tags: [feature, pwa, install, planned, phase-06-hardening]
+tags: [feature, pwa, install, phase-06-hardening]
 timestamp: 2026-06-15T22:30:00+03:00
 ---
 
@@ -11,6 +11,15 @@ timestamp: 2026-06-15T22:30:00+03:00
 
 Make the existing PWA installability discoverable from the app instead of only
 depending on browser chrome.
+
+# Phase 06 Lane D State
+
+Home exposes `Instalează aplicația` when the app is not running standalone. On
+install-capable browsers it captures `beforeinstallprompt` and calls the native
+prompt. On unsupported browsers the same entry opens short manual guidance. The
+entry is hidden in standalone display mode. Production builds serve the manifest
+and icons from the app root so the browser can evaluate installability on GitHub
+Pages.
 
 # Source Spec
 
@@ -34,3 +43,4 @@ depending on browser chrome.
 * `specs/app-overview.md`
 * [Missing add-to-home-screen affordance](../bugs/missing-add-to-home-screen-affordance.md)
 * `.planning/phases/06-hardening/06-04-install-and-medicines-PLAN.md`
+* `src/components/design/HomeB.tsx`

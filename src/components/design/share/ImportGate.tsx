@@ -1,16 +1,10 @@
 import { type ReactNode, useEffect, useState } from 'react'
 import { childStore } from '../childStore'
+import { loadMedications, notifyMedicationsChanged, saveMedications } from '../medicineStorage'
 import { decodeShare, ShareDecodeError } from './encoder'
 import { mergeChildren, mergeMedications } from './merge'
 import type { MergeSummary } from './merge'
 import type { SharePayload } from './types'
-import type { Medication } from '../../../types'
-
-// ---------------------------------------------------------------------------
-// Constants
-// ---------------------------------------------------------------------------
-
-const MEDICATIONS_KEY = 'tratament-copii-medications'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -27,15 +21,6 @@ type GateState =
 
 function cleanUrl() {
   window.history.replaceState(null, '', window.location.pathname)
-}
-
-function loadLocalMedications(): Medication[] {
-  try {
-    const raw = window.localStorage.getItem(MEDICATIONS_KEY)
-    return raw ? (JSON.parse(raw) as Medication[]) : []
-  } catch {
-    return []
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -98,13 +83,10 @@ export function ImportGate({ children }: Props) {
 
     // Apply medications merge if payload carries them
     if (payload.medications && payload.medications.length > 0) {
-      const localMeds = loadLocalMedications()
+      const localMeds = loadMedications()
       const mergedMeds = mergeMedications(localMeds, payload.medications)
-      try {
-        window.localStorage.setItem(MEDICATIONS_KEY, JSON.stringify(mergedMeds))
-      } catch {
-        /* storage quota — ignore */
-      }
+      saveMedications(mergedMeds)
+      notifyMedicationsChanged()
     }
 
     cleanUrl()
