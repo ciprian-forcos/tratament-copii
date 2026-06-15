@@ -9,7 +9,7 @@ function findMed(id: string): Medication | undefined {
 }
 
 /** Minimum cross-drug spacing (ibuprofen ↔ paracetamol alternation policy). */
-const MIN_CROSS_DRUG_GAP_MS = 7_200_000 // 2 hours in ms
+const MIN_CROSS_DRUG_GAP_MS = 4 * 3600_000
 
 export interface PlannedStep {
   medId: string
@@ -26,24 +26,24 @@ export interface Plan {
 }
 
 /**
- * Decide the alternation rule: ibuprofen ↔ paracetamol, ~2h spacing.
+ * Decide the alternation rule: ibuprofen/paracetamol, 4h minimum spacing.
  *
  * If `lastMedId` is given, the "now" dose is the *other* of the pair.
  * If not (first treatment), start with Nurofen now.
  *
  * The "next" step time is driven by the schedule engine via nextDoseFor,
- * with a 2h cross-drug spacing floor applied on top.
+ * with a 4h cross-drug spacing floor applied on top.
  */
 export function buildPlan({
   child,
   now,
   lastMedId,
-  lastAtHHMM,
+  lastAt,
 }: {
   child: Child
   now: Date
   lastMedId?: string
-  lastAtHHMM?: string
+  lastAt?: Date
 }): Plan {
   const isIbu = (id?: string) => id === 'nurofen'
   const isPara = (id?: string) => id === 'panadol'
@@ -53,30 +53,23 @@ export function buildPlan({
   if (isIbu(lastMedId)) nowMedId = 'panadol'
   else if (isPara(lastMedId)) nowMedId = 'nurofen'
 
-  // Honour the explicit "last given at" time when computing the next slot.
-  // Otherwise, "now" is now.
-  let lastAt: Date | null = null
-  if (lastAtHHMM && /^\d{1,2}:\d{2}$/.test(lastAtHHMM)) {
-    const [h, m] = lastAtHHMM.split(':').map((x) => parseInt(x, 10))
-    const d = new Date(now)
-    d.setHours(h, m, 0, 0)
-    // If the "last" time is in the future today, treat it as yesterday.
-    if (d.getTime() > now.getTime()) d.setDate(d.getDate() - 1)
-    lastAt = d
-  }
+  const safeLastAt =
+    lastAt != null && !Number.isNaN(lastAt.getTime()) ? lastAt : null
 
-  // "Now" step: target time is now (or +2h after lastAt if that's still in the future).
-  const nowTarget = lastAt ? new Date(Math.max(now.getTime(), lastAt.getTime() + MIN_CROSS_DRUG_GAP_MS)) : now
+  // "Now" step: target time is now, or lastAt + 4h if that is still ahead.
+  const nowTarget = safeLastAt
+    ? new Date(Math.max(now.getTime(), safeLastAt.getTime() + MIN_CROSS_DRUG_GAP_MS))
+    : now
 
   // "Next" step: alternating med, scheduled by the engine.
-  // The 2h cross-drug spacing floor is a hard minimum; the engine-computed
-  // safe interval for the same drug (8h nurofen / 6h panadol) may be longer.
+  // The 4h cross-drug spacing floor is a hard minimum; the engine-computed
+  // safe interval for the same drug (8h nurofen / 8h panadol) may be longer.
   const nextMedId = nowMedId === 'nurofen' ? 'panadol' : 'nurofen'
-  const twoHFloor = new Date(nowTarget.getTime() + MIN_CROSS_DRUG_GAP_MS)
-  const engineNext = nextDoseFor({ medicationId: nextMedId, childId: child.id, now: twoHFloor })
+  const crossDrugFloor = new Date(nowTarget.getTime() + MIN_CROSS_DRUG_GAP_MS)
+  const engineNext = nextDoseFor({ medicationId: nextMedId, childId: child.id, now: crossDrugFloor })
   const nextTarget = engineNext != null
-    ? new Date(Math.max(engineNext.getTime(), twoHFloor.getTime()))
-    : twoHFloor
+    ? new Date(Math.max(engineNext.getTime(), crossDrugFloor.getTime()))
+    : crossDrugFloor
 
   const nowMed = findMed(nowMedId)!
   const nextMed = findMed(nextMedId)!

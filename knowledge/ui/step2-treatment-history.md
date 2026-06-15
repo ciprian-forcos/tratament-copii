@@ -4,7 +4,7 @@ title: Step 2 Treatment History
 description: The panic-flow step where a parent says whether and when antipyretic treatment was already administered.
 resource: src/components/design/Step2.tsx
 tags: [ui, panic-flow, treatment-history, datetime, medication]
-timestamp: 2026-06-15T19:00:00+03:00
+timestamp: 2026-06-15T23:10:00+03:00
 ---
 
 # User Job
@@ -18,12 +18,14 @@ The parent must be able to say either:
 
 The active implementation is `src/components/design/Step2.tsx`.
 
-Known issues:
+Implemented behavior:
 
-* Title is "Ai mai dat ceva?"; QA wants "Ai mai administrat altceva?"
-* Virodep is offered even though [Treatment plan rules](../medical/treatment-plan-rules.md) say it is not an antipyretic.
-* Time choices are fixed to a few same-night values plus `alt...`.
-* There is no working multi-day date/time entry, even though treatment may have started days ago.
+* The step title is `Ai mai administrat altceva?`.
+* First-treatment mode records that no prior antipyretic dose exists.
+* Previous-dose mode asks which timed antipyretic was used and when it was administered.
+* Previous-dose medication choices are Nurofen and Panadol only.
+* Previous-dose timing is captured with a native `datetime-local` input bound to `lastAt`.
+* Virodep and Novocalmin are not shown as previous-dose choices.
 
 # Desired Knowledge Links
 
@@ -42,15 +44,15 @@ This node should always link to:
 * [Step 2 first treatment button](buttons/step2-first-treatment-button.md)
 * [Step 2 last dose button](buttons/step2-last-dose-button.md)
 * [Step 2 medication choice button](buttons/step2-medication-choice-button.md)
-* [Step 2 time choice button](buttons/step2-time-choice-button.md)
+* [Step 2 datetime input control](buttons/step2-time-choice-button.md)
 * [Step shell primary CTA button](buttons/step-shell-primary-cta-button.md)
 
 # Repeated Instances
 
 Medication choices render as a two-column grid under the previous-dose path.
-Current time chips render as a four-column grid under the medication choices.
-Phase 06 should replace the time-chip template with real date/time entry, so
-the repeated-time behavior is a current bug, not a target pattern.
+There are no per-time repeated button instances for previous-dose timing.
+The old repeated time-choice button node is retained only as a control/template
+node for the single native date/time input.
 
 # Source Functions
 
@@ -61,8 +63,9 @@ the repeated-time behavior is a current bug, not a target pattern.
 
 # Ponytail Constraint
 
-Before adding a custom time wheel, test whether native date/time inputs can do
-the job on the target phones. See [Ponytail simplification discipline](../references/ponytail.md).
+Native date/time entry is the intended simple control; do not add a custom time
+wheel unless target-phone testing proves the native control insufficient. See
+[Ponytail simplification discipline](../references/ponytail.md).
 
 # Citations
 

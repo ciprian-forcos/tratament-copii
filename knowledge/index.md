@@ -107,7 +107,7 @@ graph surface.
 * [Step 2 first treatment button](ui/buttons/step2-first-treatment-button.md)
 * [Step 2 last dose button](ui/buttons/step2-last-dose-button.md)
 * [Step 2 medication choice button](ui/buttons/step2-medication-choice-button.md)
-* [Step 2 time choice button](ui/buttons/step2-time-choice-button.md)
+* [Step 2 datetime input control](ui/buttons/step2-time-choice-button.md)
 * [Plan back button](ui/buttons/plan-back-button.md)
 * [Plan record dose button](ui/buttons/plan-record-dose-button.md)
 * [Plan change something button](ui/buttons/plan-change-something-button.md)

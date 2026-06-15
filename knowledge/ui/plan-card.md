@@ -4,7 +4,7 @@ title: Plan Card
 description: The generated result card that tells the parent what to administer now and records the administered dose.
 resource: src/components/design/PlanCard.tsx
 tags: [ui, plan-card, dose-recording, safety]
-timestamp: 2026-06-15T19:00:00+03:00
+timestamp: 2026-06-15T23:35:00+03:00
 ---
 
 # User Job
@@ -20,10 +20,14 @@ The card records an administered dose through `doseStore.record(...)`. That is
 the connection that allows [Home screen](home-screen.md) to show real timeline
 events.
 
+If the first planned dose is deferred by the 4h cross-drug floor, the card shows
+the scheduled time instead of `acum` and disables `Am dat doza` until that time
+is due.
+
 # Known Issues
 
 * The 112 / pediatrician banner is flagged for removal by QA because the rule is unsupported and not correct as written.
-* Treatment timing depends on [Schedule adapter and treatment plan](../implementation/schedule-adapter-and-dose-plan.md), which currently conflicts with the latest QA target.
+* Treatment timing depends on [Schedule adapter and treatment plan](../implementation/schedule-adapter-and-dose-plan.md).
 
 # Connected Concepts
 

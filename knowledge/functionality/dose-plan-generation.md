@@ -4,7 +4,7 @@ title: Dose Plan Generation
 description: Converts active child, temperature context, and treatment history into the generated plan card.
 resource: src/components/design/dosePlan.ts
 tags: [functionality, plan, schedule, medical-rules]
-timestamp: 2026-06-15T22:30:00+03:00
+timestamp: 2026-06-15T23:10:00+03:00
 ---
 
 # Pages
@@ -23,9 +23,13 @@ timestamp: 2026-06-15T22:30:00+03:00
 * `nextDoseFor`
 * `calculateDose`
 
-# Known Bug
+# Timing Policy
 
-* [Treatment timing policy mismatch](../bugs/treatment-timing-policy-mismatch.md)
+Dose scheduling uses:
+
+* Nurofen same-drug interval: 8h.
+* Panadol same-drug interval: 8h.
+* Cross-drug floor between Nurofen and Panadol: 4h.
 
 # Citations
 

@@ -4,7 +4,7 @@ title: Specs Corpus
 description: Ingest summary for specs/ and its relationship to the narrower V1 graph.
 resource: specs/
 tags: [sources, specs, product, domain]
-timestamp: 2026-06-15T21:30:00+03:00
+timestamp: 2026-06-15T23:40:00+03:00
 ---
 
 # What It Contains
@@ -35,7 +35,8 @@ flow centered on the [3 AM use case](../product/3am-use-case.md).
 
 # Known Drift
 
-* `specs/scheduling.md` and `src/data/scheduleRules.ts` still list Panadol at `6h`.
+* `specs/scheduling.md` still lists historical Panadol `6h` timing.
+* Active `src/data/scheduleRules.ts` now follows the Phase 06 hardening target.
 * [Treatment plan rules](../medical/treatment-plan-rules.md) records the newer hardening target: Nurofen `8h`, Panadol `8h`, and `4h` cross-drug spacing.
 * Specs describe the legacy tabs, while `src/App.tsx` routes to Design B through [Application source map](app-source-map.md).
 

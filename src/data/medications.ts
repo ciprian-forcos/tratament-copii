@@ -12,7 +12,7 @@ export const DEFAULT_MEDICATIONS: Medication[] = [
       unit: 'ml',
     },
     color: '#3b82f6',
-    notes: 'La 8 ore; min 2h de la Panadol daca febra persista',
+    notes: 'La 8 ore; min 4h de la Panadol daca febra persista',
   },
   {
     id: 'panadol',
@@ -25,7 +25,7 @@ export const DEFAULT_MEDICATIONS: Medication[] = [
       unit: 'ml',
     },
     color: '#f97316',
-    notes: 'La 6 ore; min 2h de la Nurofen',
+    notes: 'La 8 ore; min 4h de la Nurofen',
   },
   {
     id: 'diclofenac',

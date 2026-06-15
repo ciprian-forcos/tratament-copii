@@ -2,6 +2,8 @@
 
 ## 2026-06-15
 
+* **Phase 06 Lane A review fix**: Added PlanCard guard for deferred first doses so the card shows the scheduled time and disables `Am dat doza` until the 4h floor is due.
+* **Phase 06 Lane A**: Updated Step 2 treatment-history and dose-plan graph nodes after timing implementation: title copy is `Ai mai administrat altceva?`, previous-dose timing uses native `datetime-local` `lastAt`, previous-dose choices are Nurofen/Panadol only, and scheduling documents 8h same-drug plus 4h cross-drug timing.
 * **Process**: Added [Phase 06 parallel execution map](process/phase-06-parallel-execution-map.md) to define serial and parallel worker lanes before implementation continues.
 * **Process**: Added [Phase 06 fresh context execution](process/phase-06-fresh-context-execution.md) so implementation can spawn cold implementers and fresh reviewers from plan and graph nodes rather than chat history.
 * **UI graph refinement**: Added repeated-instance rules and placement/overflow notes to page nodes and repeated button/control template nodes.

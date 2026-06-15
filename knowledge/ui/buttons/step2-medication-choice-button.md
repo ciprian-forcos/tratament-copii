@@ -4,7 +4,7 @@ title: Step 2 Medication Choice Button
 description: Repeated medication choice button for the previous-dose path.
 resource: src/components/design/Step2.tsx
 tags: [button, step2, medication, template]
-timestamp: 2026-06-15T22:30:00+03:00
+timestamp: 2026-06-15T23:35:00+03:00
 ---
 
 # Page
@@ -22,12 +22,13 @@ Each medication button calls `set({ med: m.id })`.
 # Instances And Placement
 
 One instance renders for each item in Step 2's medication list, currently in a
-two-column grid under the `medicament` label. Phase 06 should keep this as a
-template but remove non-antipyretic instances such as Virodep.
+two-column grid under the `medicament` label. The implemented previous-dose
+list renders Nurofen and Panadol only.
 
-# Known Bug
+# Phase 06 State
 
-* [Step 2 Virodep choice](../../bugs/step2-virodep-choice.md)
+[Step 2 Virodep choice](../../bugs/step2-virodep-choice.md) is resolved for
+the previous-dose path; Virodep is not rendered there.
 
 # Citations
 

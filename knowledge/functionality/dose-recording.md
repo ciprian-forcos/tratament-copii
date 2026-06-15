@@ -4,7 +4,7 @@ title: Dose Recording
 description: Records the administered dose so later home timeline and schedule checks use real history.
 resource: src/components/design/PlanCard.tsx
 tags: [functionality, dose-recording, timeline]
-timestamp: 2026-06-15T22:30:00+03:00
+timestamp: 2026-06-15T23:35:00+03:00
 ---
 
 # Page
@@ -20,6 +20,12 @@ timestamp: 2026-06-15T22:30:00+03:00
 * `doseStore.record`
 * `PlanCard`
 * `onDone`
+
+# Current Behavior
+
+`PlanCard` records only when the planned first dose is due. When `buildPlan`
+defers the first dose into the future, the record button is disabled and no
+administered dose is written early.
 
 # Implementation
 

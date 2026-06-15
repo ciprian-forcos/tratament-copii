@@ -4,7 +4,7 @@ title: Treatment Plan Rules
 description: Project timing assumptions for the app's small fever-helper flow, kept explicit so code and UI stay consistent.
 resource: src/data/scheduleRules.ts
 tags: [medical, timing, schedule, prototype, assumptions]
-timestamp: 2026-06-15T19:00:00+03:00
+timestamp: 2026-06-15T23:40:00+03:00
 ---
 
 # Project Rule
@@ -32,16 +32,20 @@ This is a project rule from human QA/domain judgment. External references in
 do not override the project's chosen simplification and they do not turn this
 repo into formal medical guidance.
 
-# Implementation Impact
+# Implementation State
 
 The timing path flows through [Schedule adapter and treatment plan](../implementation/schedule-adapter-and-dose-plan.md).
 
-Known mismatches in latest `main`:
+Phase 06 Lane A aligns the panic-flow planner with this rule:
 
-* `src/data/scheduleRules.ts` still has Panadol at 6 hours.
-* `src/components/design/dosePlan.ts` still has a 2-hour cross-drug floor.
-* `src/components/design/HomeB.tsx` still uses a 2-hour fallback countdown.
-* `src/components/design/Step2.tsx` still includes Virodep.
+* `src/data/scheduleRules.ts` uses 8h for Panadol and Nurofen.
+* `src/components/design/dosePlan.ts` uses a 4h cross-drug floor.
+* `src/components/design/Step2.tsx` excludes Virodep from previous-dose choices.
+* `src/components/design/PlanCard.tsx` prevents recording a deferred first dose early.
+
+Still open for Phase 06 Lane B:
+
+* `src/components/design/HomeB.tsx` fallback/countdown behavior.
 
 # Connected UI
 

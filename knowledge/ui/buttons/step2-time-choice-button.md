@@ -1,10 +1,10 @@
 ---
-type: UI Button
-title: Step 2 Time Choice Button
-description: Current repeated time chip for previous-dose timing.
+type: UI Control
+title: Step 2 Datetime Input Control
+description: Native previous-dose datetime input replacing the old repeated time-choice button template.
 resource: src/components/design/Step2.tsx
-tags: [button, step2, time, template, current-bug]
-timestamp: 2026-06-15T22:30:00+03:00
+tags: [control, step2, time, template, datetime]
+timestamp: 2026-06-15T23:10:00+03:00
 ---
 
 # Page
@@ -17,21 +17,17 @@ timestamp: 2026-06-15T22:30:00+03:00
 
 # Handler
 
-Each time chip calls `set({ time: t })`.
+The active control is a single native `datetime-local` input bound to `lastAt`.
 
 # Instances And Placement
 
-One instance renders for each item in the current `TIMES` array, in a
-four-column grid under the `la ce ora` label. This template is scheduled for
-replacement by native real date/time entry in Phase 06.
+Do not create per-rendered-instance nodes for previous-dose times. This node
+documents the single native datetime input control that replaced the old
+repeated time-chip template.
 
-# Phase 06 Direction
+# Phase 06 State
 
-Replace this with native real date/time entry.
-
-# Known Bug
-
-* [Step 2 real date/time entry](../../bugs/step2-real-datetime-entry.md)
+Native real date/time entry is implemented for previous-dose timing.
 
 # Citations
 

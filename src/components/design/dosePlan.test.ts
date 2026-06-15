@@ -48,7 +48,7 @@ describe('buildPlan', () => {
     })
 
     it('next-step is Panadol at the engine-computed time', () => {
-      const engineTime = new Date(NOW.getTime() + 2 * 3600_000)
+      const engineTime = new Date(NOW.getTime() + 5 * 3600_000)
       vi.mocked(nextDoseFor).mockReturnValue(engineTime)
 
       const plan = buildPlan({ child: CHILD, now: NOW })

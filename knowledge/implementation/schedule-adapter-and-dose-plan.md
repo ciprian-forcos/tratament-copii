@@ -4,7 +4,7 @@ title: Schedule Adapter And Treatment Plan
 description: The active timing path maps dose history and schedule rules into the next treatment plan shown to the parent.
 resource: src/components/design/dosePlan.ts
 tags: [implementation, schedule, treatment-plan, medical-rules]
-timestamp: 2026-06-15T19:00:00+03:00
+timestamp: 2026-06-15T23:35:00+03:00
 ---
 
 # Responsibility
@@ -19,14 +19,17 @@ given, and what amount appears in the [Plan card](../ui/plan-card.md).
 * `src/components/design/scheduleAdapter.ts`
 * `src/components/design/dosePlan.ts`
 
-# Current Mismatches
+# Phase 06 Lane A State
 
-Against [Treatment plan rules](../medical/treatment-plan-rules.md), latest
-`main` still has:
+Lane A aligns the panic-flow treatment planner with
+[Treatment plan rules](../medical/treatment-plan-rules.md):
 
-* Panadol recurring rule: 6 hours.
-* Cross-drug floor in `dosePlan.ts`: 2 hours.
-* Home fallback countdown: 2 hours.
+* Nurofen recurring rule: 8 hours.
+* Panadol recurring rule: 8 hours.
+* Cross-drug floor in `dosePlan.ts`: 4 hours.
+* Step 2 passes an absolute previous-dose datetime through `lastAt`.
+
+Home fallback countdown behavior is covered separately by Phase 06 Lane B.
 
 # Design Boundary
 

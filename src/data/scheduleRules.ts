@@ -13,13 +13,13 @@ export const defaultScheduleRules: ScheduleRule[] = [
     type: 'after_medication',
     medicationId: 'panadol',
     afterMedicationId: 'nurofen',
-    hoursAfter: 3,
+    hoursAfter: 4,
   },
   {
     id: 'r3',
     type: 'every_n_hours',
     medicationId: 'panadol',
-    everyNHours: 6,
+    everyNHours: 8,
   },
   {
     id: 'r4',

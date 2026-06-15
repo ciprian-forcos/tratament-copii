@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { StatusBar } from './StatusBar'
 import { activeChild, useChildren } from './childStore'
 import { buildPlan, diffHHMM, fmtHHMM } from './dosePlan'
@@ -14,18 +15,40 @@ interface Props {
 export function PlanCard({ onBack, onDone, step2 }: Props) {
   const state = useChildren()
   const child = activeChild(state)
-  const now = new Date()
+  const [now, setNow] = useState(() => new Date())
+
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 30_000)
+    return () => window.clearInterval(id)
+  }, [])
+
   const plan = buildPlan({
     child,
     now,
     lastMedId: step2.kind === 'last' ? step2.med : undefined,
-    lastAtHHMM: step2.kind === 'last' ? step2.time : undefined,
+    lastAt: step2.kind === 'last' && step2.lastAt ? new Date(step2.lastAt) : undefined,
   })
 
   const nowAmount =
     plan.now.amount === 'sub_doza' ? 'sub doza' : `${plan.now.amount} ${plan.now.unit}`
   const nextAmount =
     plan.next.amount === 'sub_doza' ? 'sub doza' : `${plan.next.amount} ${plan.next.unit}`
+  const canRecordNow = plan.now.when.getTime() <= now.getTime()
+  const nowTimingLabel = canRecordNow ? 'acum' : `la ${fmtHHMM(plan.now.when)}`
+  const nowRowLabel = canRecordNow ? 'acum' : 'urmează'
+
+  function recordDose() {
+    if (!canRecordNow) return
+
+    const administeredAt = new Date()
+    doseStore.record({
+      childId: child.id,
+      medicationId: plan.now.medId,
+      scheduledAt: plan.now.when.toISOString(),
+      administeredAt: administeredAt.toISOString(),
+    })
+    onDone(administeredAt)
+  }
 
   return (
     <div className="phone">
@@ -68,12 +91,13 @@ export function PlanCard({ onBack, onDone, step2 }: Props) {
             fontSize: 30,
             lineHeight: 1.08,
             fontWeight: 700,
-            letterSpacing: '-0.02em',
+            letterSpacing: 0,
             margin: '6px 0 6px',
             color: 'var(--ink)',
           }}
         >
-          Dă <span style={{ color: 'var(--accent)' }}>{plan.now.medName} {nowAmount}</span> acum.
+          Dă <span style={{ color: 'var(--accent)' }}>{plan.now.medName} {nowAmount}</span>{' '}
+          {nowTimingLabel}.
         </h1>
         <div className="hand" style={{ fontSize: 22, color: 'var(--ink-2)' }}>
           atât, nimic altceva.
@@ -93,12 +117,11 @@ export function PlanCard({ onBack, onDone, step2 }: Props) {
             position: 'relative',
           }}
         >
-          {/* "now" row */}
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
             <NumberBubble n={1} highlight />
             <div style={{ flex: 1 }}>
               <div className="eyebrow" style={{ color: 'var(--accent)' }}>
-                acum · {fmtHHMM(plan.now.when)}
+                {nowRowLabel} · {fmtHHMM(plan.now.when)}
               </div>
               <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--ink)', marginTop: 2 }}>
                 {plan.now.medName} — <span className="mono">{nowAmount}</span>
@@ -111,7 +134,6 @@ export function PlanCard({ onBack, onDone, step2 }: Props) {
 
           <div style={{ borderTop: '1.5px dashed var(--line)' }} />
 
-          {/* "next" row */}
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
             <NumberBubble n={2} />
             <div style={{ flex: 1 }}>
@@ -155,7 +177,12 @@ export function PlanCard({ onBack, onDone, step2 }: Props) {
           gap: 10,
         }}
       >
-        <button className="btn-primary" onClick={() => { doseStore.record({ childId: child.id, medicationId: plan.now.medId, scheduledAt: plan.now.when.toISOString(), administeredAt: new Date().toISOString() }); onDone(now) }}>
+        <button
+          className="btn-primary"
+          disabled={!canRecordNow}
+          style={!canRecordNow ? { opacity: 0.4, cursor: 'not-allowed' } : undefined}
+          onClick={recordDose}
+        >
           Am dat doza <span className="arrow">✓</span>
         </button>
         <button className="btn-secondary btn-ghost" onClick={onBack}>

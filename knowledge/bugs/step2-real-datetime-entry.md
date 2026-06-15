@@ -4,7 +4,7 @@ title: Step 2 Real Date/Time Entry
 description: QA bug node for replacing fixed hour chips with real date/time entry.
 resource: Bug reports/List
 tags: [bug, v1, phase-06-hardening, step2, datetime]
-timestamp: 2026-06-15T22:00:00+03:00
+timestamp: 2026-06-15T23:35:00+03:00
 ---
 
 # Bug
@@ -27,6 +27,11 @@ Step 2 needs real date/time entry because treatment may have started days ago.
 # Done When
 
 The parent can enter a real previous administration date and time, and treatment planning uses that datetime rather than a same-day `HH:MM` guess.
+
+# Phase 06 Lane A State
+
+Implemented with a native `datetime-local` input bound to `lastAt`; `PlanCard`
+passes that value to `buildPlan` as an absolute `Date`.
 
 # Citations
 

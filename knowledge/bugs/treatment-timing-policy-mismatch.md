@@ -4,7 +4,7 @@ title: Treatment Timing Policy Mismatch
 description: QA bug node for Nurofen/Panadol spacing mismatches against current project timing rules.
 resource: Bug reports/List
 tags: [bug, v1, phase-06-hardening, medical-rules, schedule]
-timestamp: 2026-06-15T22:00:00+03:00
+timestamp: 2026-06-15T23:35:00+03:00
 ---
 
 # Bug
@@ -17,11 +17,17 @@ Treatment timing must follow [Treatment plan rules](../medical/treatment-plan-ru
 * Suggested branch: `V1/phase-06-hardening/timing-policy`
 * Suggested plan: `.planning/phases/06-hardening/06-01-treatment-history-and-timing-PLAN.md`
 
-# Current Mismatches
+# Phase 06 Lane A State
 
-* `src/data/scheduleRules.ts` still has Panadol at `6h`.
-* `src/components/design/dosePlan.ts` still uses a `2h` cross-drug floor.
-* `src/components/design/HomeB.tsx` still has a `2h` fallback countdown.
+Implemented in Lane A:
+
+* `src/data/scheduleRules.ts` uses 8h recurrence for Nurofen and Panadol.
+* `src/components/design/dosePlan.ts` uses a 4h cross-drug floor.
+* `src/components/design/PlanCard.tsx` does not allow recording a deferred first dose early.
+
+Still covered by Lane B:
+
+* `src/components/design/HomeB.tsx` fallback/countdown behavior.
 
 # Touchpoints
 

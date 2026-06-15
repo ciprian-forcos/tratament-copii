@@ -3,14 +3,12 @@ import { StepShell } from './StepShell'
 const MEDS = [
   { id: 'nurofen', label: 'Nurofen', sub: 'ibuprofen' },
   { id: 'panadol', label: 'Panadol', sub: 'paracetamol' },
-  { id: 'diclofenac', label: 'Novocalmin', sub: 'supozitor diclofenac' },
-  { id: 'virodep', label: 'Virodep', sub: 'vit D + C' },
 ]
 
 export interface Step2Value {
   kind: 'first' | 'last'
   med?: string
-  time?: string
+  lastAt?: string
 }
 
 interface Props {
@@ -20,17 +18,15 @@ interface Props {
   onNext: () => void
 }
 
-const TIMES = ['00:00', '01:00', '02:00', '03:00', 'alt...']
-
 export function Step2({ value, onChange, onBack, onNext }: Props) {
   const v = value
   const set = (patch: Partial<Step2Value>) => onChange({ ...v, ...patch })
-  const disabled = v.kind === 'last' && (!v.med || !v.time)
+  const disabled = v.kind === 'last' && (!v.med || !v.lastAt)
 
   return (
     <StepShell
       step={2}
-      title="Ai mai dat ceva?"
+      title="Ai mai administrat altceva?"
       hint="ca să nu suprapunem."
       onBack={onBack}
       onNext={onNext}
@@ -56,7 +52,7 @@ export function Step2({ value, onChange, onBack, onNext }: Props) {
         >
           <span className="radio-dot" />
           <div>
-            <div className="chip-title">Ultima doză a fost…</div>
+            <div className="chip-title">Ultima doză a fost...</div>
             <div className="chip-sub">spune-mi ce și când</div>
           </div>
         </button>
@@ -96,30 +92,25 @@ export function Step2({ value, onChange, onBack, onNext }: Props) {
             })}
           </div>
 
-          <div className="field-label">la ce oră</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
-            {TIMES.map((t) => {
-              const active = v.time === t
-              return (
-                <button
-                  key={t}
-                  onClick={() => set({ time: t })}
-                  className="mono"
-                  style={{
-                    padding: '12px 0',
-                    borderRadius: 12,
-                    border: '1.5px solid ' + (active ? 'var(--accent)' : 'var(--line)'),
-                    background: active ? 'rgba(245,177,74,0.10)' : 'var(--bg-2)',
-                    color: active ? 'var(--accent)' : 'var(--ink)',
-                    fontSize: 14,
-                    cursor: 'pointer',
-                  }}
-                >
-                  {t}
-                </button>
-              )
-            })}
-          </div>
+          <label style={{ display: 'block' }}>
+            <span className="field-label">data si ora</span>
+            <input
+              aria-label="data si ora"
+              type="datetime-local"
+              value={v.lastAt ?? ''}
+              onChange={(event) => set({ lastAt: event.target.value })}
+              style={{
+                width: '100%',
+                boxSizing: 'border-box',
+                padding: '12px 14px',
+                borderRadius: 12,
+                border: '1.5px solid var(--line)',
+                background: 'var(--bg-2)',
+                color: 'var(--ink)',
+                font: 'inherit',
+              }}
+            />
+          </label>
         </div>
       )}
 
