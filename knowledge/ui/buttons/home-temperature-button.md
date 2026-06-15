@@ -4,7 +4,7 @@ title: Home Temperature Button
 description: Opens the temperature picker sheet from Home.
 resource: src/components/design/HomeB.tsx
 tags: [button, home, temperature]
-timestamp: 2026-06-15T22:30:00+03:00
+timestamp: 2026-06-15T23:58:00+03:00
 ---
 
 # Page
@@ -21,11 +21,12 @@ timestamp: 2026-06-15T22:30:00+03:00
 
 # Handler
 
-`HomeB` sets `pickerOpen` and renders `TempWheel`.
+`ChildPill` calls `onTemperatureClick`; `HomeB` sets `pickerOpen` and renders
+`TempWheel`. The visible control label is `Temperatura`.
 
-# Known Bug
+# Phase 06 Lane B State
 
-* [Temperature copy](../../bugs/temperature-copy.md)
+[Temperature copy](../../bugs/temperature-copy.md) is implemented for Home.
 
 # Citations
 

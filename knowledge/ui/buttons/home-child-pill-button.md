@@ -1,23 +1,28 @@
 ---
 type: UI Button
-title: Home Child Pill Button
-description: Opens the child profile editor from the home screen.
+title: Home Child Identity Button
+description: Opens the children management screen from Home through the child identity control.
 resource: src/components/design/ChildPill.tsx
-tags: [button, home, child-profile]
-timestamp: 2026-06-15T22:30:00+03:00
+tags: [button, home, child-profile, navigation]
+timestamp: 2026-06-15T23:58:00+03:00
 ---
 
 # Page
 
 * [Home screen](../home-screen.md)
 
-# Functionality
+# Destination
 
-* [Child profile editing](../../functionality/child-profile-editing.md)
+* [Children screen](../children-screen.md)
 
 # Handler
 
-`ChildPill` calls `onClick`; `HomeB` sets `childOpen` to show `ChildEditor`.
+`ChildPill` calls `onChildClick`; `HomeB` delegates to `onMenu`.
+
+# Related Controls
+
+* [Home profile button](home-profile-button.md)
+* [Home temperature button](home-temperature-button.md)
 
 # Citations
 

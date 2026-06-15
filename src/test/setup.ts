@@ -31,3 +31,7 @@ Object.defineProperty(window, 'localStorage', {
   value: localStorageShim,
   configurable: true,
 })
+
+if (!HTMLElement.prototype.scrollTo) {
+  HTMLElement.prototype.scrollTo = function scrollTo() {}
+}

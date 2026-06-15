@@ -21,11 +21,6 @@ export function StatusBar({ stripe, timeLabel }: Props) {
           {stripe}
         </span>
       )}
-      <div className="right">
-        <span style={{ fontSize: 11 }}>●●●</span>
-        <span style={{ fontSize: 11 }}>📶</span>
-        <span className="battery" />
-      </div>
     </div>
   )
 }

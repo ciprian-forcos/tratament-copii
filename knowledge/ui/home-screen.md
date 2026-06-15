@@ -4,7 +4,7 @@ title: Home Screen
 description: Main panic-mode surface with active child, temperature entry, countdown, clock, and night timeline.
 resource: src/components/design/HomeB.tsx
 tags: [ui, home, panic-flow, countdown, timeline]
-timestamp: 2026-06-15T19:00:00+03:00
+timestamp: 2026-06-15T23:58:00+03:00
 ---
 
 # User Job
@@ -16,12 +16,13 @@ temperature, what happened tonight, and what action starts the panic flow.
 
 The active implementation is `src/components/design/HomeB.tsx`.
 
-Current issues from [Phase 6 hardening bugs](../process/phase6-hardening-bugs.md):
+Phase 06 Lane B state:
 
-* A phantom countdown appears before a treatment exists.
-* The "now" marker is anchored by the 21:00 to 09:00 strip and can appear at an edge.
-* Temperature, age, and child selection are not separated into the expected three controls.
-* Copy says "masoara din nou"; QA wants "Temperatura".
+* No countdown or next-dose marker renders before a real `nextDose` exists.
+* The timeline frames `acum` in the center of the 12-hour strip.
+* Child identity/menu, profile details, and temperature editing are separate controls.
+* Temperature copy is `Temperatura`.
+* `StatusBar` keeps time text and does not render fake signal/battery icons.
 
 # Connected Implementation
 
@@ -42,6 +43,7 @@ Current issues from [Phase 6 hardening bugs](../process/phase6-hardening-bugs.md
 # Buttons
 
 * [Home child pill button](buttons/home-child-pill-button.md)
+* [Home profile button](buttons/home-profile-button.md)
 * [Home menu button](buttons/home-menu-button.md)
 * [Home temperature button](buttons/home-temperature-button.md)
 * [Home start treatment button](buttons/home-start-treatment-button.md)

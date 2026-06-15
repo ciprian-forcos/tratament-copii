@@ -4,7 +4,7 @@ title: Temperature Entry
 description: Captures and persists the active child's current temperature.
 resource: src/components/design/Step1.tsx
 tags: [functionality, temperature, child-state]
-timestamp: 2026-06-15T22:30:00+03:00
+timestamp: 2026-06-15T23:58:00+03:00
 ---
 
 # Pages
@@ -27,6 +27,11 @@ timestamp: 2026-06-15T22:30:00+03:00
 * `PersistTempOnChange`
 * `TempWheel`
 * `childStore.patchActive`
+
+# Current Behavior
+
+Home exposes a distinct `Temperatura` control that opens `TempWheel`; Step 1
+keeps the panic-flow temperature entry.
 
 # Citations
 

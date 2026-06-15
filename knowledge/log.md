@@ -2,6 +2,7 @@
 
 ## 2026-06-15
 
+* **Phase 06 Lane B**: Hardened Home by removing phantom next-dose state, centering the `acum` marker, splitting child/profile/temperature controls, changing Home temperature copy to `Temperatura`, and removing fake status icons.
 * **Phase 06 Lane C**: Removed Children screen BSA/estimated-height display and the unsupported PlanCard `112 / pediatrician` banner.
 * **Phase 06 Lane A review fix**: Added PlanCard guard for deferred first doses so the card shows the scheduled time and disables `Am dat doza` until the 4h floor is due.
 * **Phase 06 Lane A**: Updated Step 2 treatment-history and dose-plan graph nodes after timing implementation: title copy is `Ai mai administrat altceva?`, previous-dose timing uses native `datetime-local` `lastAt`, previous-dose choices are Nurofen/Panadol only, and scheduling documents 8h same-drug plus 4h cross-drug timing.

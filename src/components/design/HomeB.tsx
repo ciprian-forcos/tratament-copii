@@ -6,13 +6,13 @@ import { StatusBar } from './StatusBar'
 import { TempWheel } from './TempWheel'
 import { activeChild, childStore, useChildren } from './childStore'
 import { diffHHMM, fmtHHMM } from './dosePlan'
-import { useNightTimeline, anchorStrip } from './useNightTimeline'
+import { useNightTimeline } from './useNightTimeline'
 
 interface Props {
   onStart: () => void
   /** Called when the ≡ menu button is tapped. */
   onMenu?: () => void
-  /** When the next planned dose should land. Falls back to "now + 2h". */
+  /** When the next planned dose should land. Omitted before treatment exists. */
   nextDose?: { at: Date; med: string } | null
 }
 
@@ -24,18 +24,19 @@ export function HomeB({ onStart, onMenu, nextDose }: Props) {
   const [childOpen, setChildOpen] = useState(false)
 
   const setTemp = (v: number) => childStore.patchActive({ temp: v })
+  const openPicker = () => setPickerOpen(true)
 
   const now = new Date()
-  const next = nextDose ?? { at: new Date(now.getTime() + 2 * 3600_000), med: 'Panadol' }
+  const next = nextDose ?? null
   const nightDoses = useNightTimeline(child.id, now)
   type Mark = { at: Date; med: string; next?: boolean }
   const marks: Mark[] = [
     ...nightDoses.map((d) => ({ at: d.at, med: d.med })),
-    { at: next.at, med: next.med, next: true },
+    ...(next ? [{ at: next.at, med: next.med, next: true }] : []),
   ]
 
-  // 12-hour strip anchored at 21:00 → 09:00.
-  const stripStart = anchorStrip(now)
+  // Keep the useful 12-hour span, but frame the current moment in the center.
+  const stripStart = new Date(now.getTime() - 6 * 3600_000)
   const toPct = (d: Date) => {
     const dt = (d.getTime() - stripStart.getTime()) / (12 * 3600_000)
     return Math.max(0, Math.min(1, dt)) * 100
@@ -52,33 +53,21 @@ export function HomeB({ onStart, onMenu, nextDose }: Props) {
           alignItems: 'center',
         }}
       >
-        <ChildPill onClick={() => setChildOpen(true)} />
+        <ChildPill
+          onChildClick={() => onMenu?.()}
+          onProfileClick={() => setChildOpen(true)}
+          onTemperatureClick={openPicker}
+        />
         <MenuBtn onClick={onMenu} />
       </div>
 
-      <div style={{ padding: '18px 18px 0', textAlign: 'center' }}>
-        <div className="hand" style={{ fontSize: 26, color: 'var(--accent-2)' }}>
-          mai sunt <span className="underline-hand">{diffHHMM(now, next.at)}</span>
+      {next && (
+        <div style={{ padding: '18px 18px 0', textAlign: 'center' }}>
+          <div className="hand" style={{ fontSize: 26, color: 'var(--accent-2)' }}>
+            mai sunt <span className="underline-hand">{diffHHMM(now, next.at)}</span>
+          </div>
         </div>
-        <button
-          onClick={() => setPickerOpen(true)}
-          className="eyebrow"
-          style={{
-            marginTop: 6,
-            background: 'transparent',
-            border: 'none',
-            color: 'var(--ink-3)',
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 6,
-            font: 'inherit',
-          }}
-        >
-          măsoară din nou
-          <span style={{ fontSize: 11 }}>✎</span>
-        </button>
-      </div>
+      )}
 
       <TempWheel
         open={pickerOpen}
@@ -93,8 +82,8 @@ export function HomeB({ onStart, onMenu, nextDose }: Props) {
           size={220}
           hour={now.getHours()}
           minute={now.getMinutes()}
-          nextHour={next.at.getHours()}
-          nextMinute={next.at.getMinutes()}
+          nextHour={next?.at.getHours() ?? null}
+          nextMinute={next?.at.getMinutes() ?? null}
         />
       </div>
 
@@ -175,11 +164,9 @@ export function HomeB({ onStart, onMenu, nextDose }: Props) {
 
       <div style={{ padding: '0 18px 22px', display: 'flex', flexDirection: 'column', gap: 10 }}>
         <button className="btn-primary btn-wait" onClick={onStart}>
-          Următoarea doză · {fmtHHMM(next.at)} →
+          {next ? `Următoarea doză · ${fmtHHMM(next.at)} →` : 'Începe tratamentul'}
         </button>
       </div>
     </div>
   )
 }
-
-

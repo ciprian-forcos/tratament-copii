@@ -4,7 +4,7 @@ title: Home Controls And Fake Status Icons
 description: QA bug node for merged child/temp/age controls and fake statusbar icons.
 resource: Bug reports/List
 tags: [bug, v1, phase-06-hardening, home-screen, controls]
-timestamp: 2026-06-15T22:00:00+03:00
+timestamp: 2026-06-15T23:58:00+03:00
 ---
 
 # Bug
@@ -25,11 +25,17 @@ Temperature, age, and child controls need to be separate. Fake status icons shou
 
 # Source Fact
 
-`ChildPill.tsx` currently combines child name, age, and temperature. `StatusBar.tsx` renders fake signal/battery icons.
+The old `ChildPill.tsx` combined child name, age, and temperature.
+The old `StatusBar.tsx` rendered fake signal/battery icons.
 
 # Done When
 
 Child identity, age/profile editing, and temperature editing are visibly distinct controls, and fake device status icons are gone.
+
+# Phase 06 Lane B State
+
+Implemented in `src/components/design/ChildPill.tsx`,
+`src/components/design/HomeB.tsx`, and `src/components/design/StatusBar.tsx`.
 
 # Citations
 

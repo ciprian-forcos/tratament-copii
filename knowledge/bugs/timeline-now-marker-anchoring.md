@@ -4,7 +4,7 @@ title: Timeline Now Marker Anchoring
 description: QA bug node for the night timeline now marker appearing at the far right.
 resource: Bug reports/List
 tags: [bug, v1, phase-06-hardening, home-screen, timeline]
-timestamp: 2026-06-15T22:00:00+03:00
+timestamp: 2026-06-15T23:58:00+03:00
 ---
 
 # Bug
@@ -26,6 +26,11 @@ The timeline `now` marker appears at the far right; QA expects middle anchoring.
 # Done When
 
 The strip frames recent/pending treatment around the current moment instead of pushing `now` to the edge.
+
+# Phase 06 Lane B State
+
+Implemented in `src/components/design/HomeB.tsx`; the strip starts six hours
+before `now`, putting the `acum` marker at 50%.
 
 # Citations
 

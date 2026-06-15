@@ -95,6 +95,7 @@ graph surface.
 # Button And Control Nodes
 
 * [Home child pill button](ui/buttons/home-child-pill-button.md)
+* [Home profile button](ui/buttons/home-profile-button.md)
 * [Home menu button](ui/buttons/home-menu-button.md)
 * [Home temperature button](ui/buttons/home-temperature-button.md)
 * [Home start treatment button](ui/buttons/home-start-treatment-button.md)

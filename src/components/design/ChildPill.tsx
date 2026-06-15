@@ -1,25 +1,97 @@
 import { activeChild, ageWords, useChildren } from './childStore'
 
 interface Props {
-  onClick: () => void
+  onChildClick: () => void
+  onProfileClick: () => void
+  onTemperatureClick: () => void
 }
 
-/** 4-segment chip: [initial] · Name · age in words · temperature. */
-export function ChildPill({ onClick }: Props) {
+/** Compact home controls for identity/menu, profile details, and temperature. */
+export function ChildPill({ onChildClick, onProfileClick, onTemperatureClick }: Props) {
   const state = useChildren()
   const child = activeChild(state)
   const temp = child.temp ?? 0
   const fever = temp >= 38
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={`${child.name}, editează profilul`}
+    <div
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        gap: 0,
+        gap: 6,
+        minWidth: 0,
+      }}
+    >
+      <button
+        type="button"
+        onClick={onChildClick}
+        aria-label={`copil ${child.name}`}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 8,
+          padding: '4px 10px 4px 4px',
+          borderRadius: 999,
+          border: '1.5px solid var(--line)',
+          background: 'var(--bg-2)',
+          cursor: 'pointer',
+          color: 'var(--ink-2)',
+          font: 'inherit',
+        }}
+      >
+        <span
+          style={{
+            width: 28,
+            height: 28,
+            borderRadius: 999,
+            background: 'var(--bg-3)',
+            border: '1.5px solid var(--line)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontFamily: 'var(--font-hand)',
+            fontSize: 18,
+            color: 'var(--ink)',
+            flex: '0 0 auto',
+          }}
+        >
+          {child.initial ?? child.name.trim()[0]?.toUpperCase() ?? '?'}
+        </span>
+        <strong style={{ fontWeight: 600, color: 'var(--ink)', fontSize: 13 }}>{child.name}</strong>
+      </button>
+
+      <ChipButton onClick={onProfileClick} ariaLabel={`profil ${child.name}`}>
+        {ageWords(child)}
+      </ChipButton>
+
+      <ChipButton onClick={onTemperatureClick} ariaLabel={`temperatura ${child.name}`}>
+        <span style={{ color: 'var(--ink-3)', fontFamily: 'var(--font-body)' }}>Temperatura</span>
+        <span style={{ color: fever ? 'var(--danger)' : 'var(--ink)' }} className="mono">
+          {temp.toFixed(1)}°
+        </span>
+      </ChipButton>
+    </div>
+  )
+}
+
+function ChipButton({
+  children,
+  onClick,
+  ariaLabel,
+}: {
+  children: React.ReactNode
+  onClick: () => void
+  ariaLabel: string
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={ariaLabel}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 6,
         padding: '4px',
         borderRadius: 999,
         border: '1.5px solid var(--line)',
@@ -29,38 +101,7 @@ export function ChildPill({ onClick }: Props) {
         font: 'inherit',
       }}
     >
-      <span
-        style={{
-          width: 28,
-          height: 28,
-          borderRadius: 999,
-          background: 'var(--bg-3)',
-          border: '1.5px solid var(--line)',
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontFamily: 'var(--font-hand)',
-          fontSize: 18,
-          color: 'var(--ink)',
-          flex: '0 0 auto',
-        }}
-      >
-        {child.initial ?? child.name.trim()[0]?.toUpperCase() ?? '?'}
-      </span>
-
-      <Seg color="var(--ink)">
-        <strong style={{ fontWeight: 600 }}>{child.name}</strong>
-      </Seg>
-      <Sep />
-      <Seg>{ageWords(child)}</Seg>
-      <Sep />
-      <Seg mono color={fever ? 'var(--danger)' : 'var(--ink)'}>
-        {Math.floor(temp)}
-        <span style={{ color: 'var(--ink-3)' }}>:</span>
-        {Math.round((temp - Math.floor(temp)) * 10)}°
-      </Seg>
-
-      <span style={{ marginLeft: 4, marginRight: 6, color: 'var(--ink-3)', fontSize: 12 }}>✎</span>
+      <Seg>{children}</Seg>
     </button>
   )
 }
@@ -89,15 +130,6 @@ function Seg({
     >
       {children}
     </span>
-  )
-}
-
-function Sep() {
-  return (
-    <span
-      aria-hidden="true"
-      style={{ width: 1, height: 14, background: 'var(--line)', flex: '0 0 auto' }}
-    />
   )
 }
 

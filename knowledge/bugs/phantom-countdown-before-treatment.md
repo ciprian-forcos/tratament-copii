@@ -4,7 +4,7 @@ title: Phantom Countdown Before Treatment Starts
 description: QA bug node for HomeB showing a next-dose countdown before treatment exists.
 resource: Bug reports/List
 tags: [bug, v1, phase-06-hardening, home-screen, countdown]
-timestamp: 2026-06-15T22:00:00+03:00
+timestamp: 2026-06-15T23:58:00+03:00
 ---
 
 # Bug
@@ -24,11 +24,16 @@ timestamp: 2026-06-15T22:00:00+03:00
 
 # Source Fact
 
-`HomeB.tsx` currently falls back to `now + 2h` and `Panadol` when `nextDose` is missing.
+The old `HomeB.tsx` fallback used `now + 2h` and `Panadol` when `nextDose` was missing.
 
 # Done When
 
 No next-dose countdown appears until there is an actual plan or recorded treatment history.
+
+# Phase 06 Lane B State
+
+Implemented in `src/components/design/HomeB.tsx`; missing `nextDose` renders
+no countdown, no next marker, and no next-dose time CTA.
 
 # Citations
 

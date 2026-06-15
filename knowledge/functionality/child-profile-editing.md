@@ -4,7 +4,7 @@ title: Child Profile Editing
 description: Adds, selects, edits, and removes child profiles used by dose calculations.
 resource: src/components/design/childStore.ts
 tags: [functionality, children, profiles]
-timestamp: 2026-06-15T22:30:00+03:00
+timestamp: 2026-06-15T23:58:00+03:00
 ---
 
 # Pages
@@ -16,6 +16,7 @@ timestamp: 2026-06-15T22:30:00+03:00
 # Buttons
 
 * [Home child pill button](../ui/buttons/home-child-pill-button.md)
+* [Home profile button](../ui/buttons/home-profile-button.md)
 * [Children add child button](../ui/buttons/children-add-child-button.md)
 * [Children edit child button](../ui/buttons/children-edit-child-button.md)
 * [Children set active button](../ui/buttons/children-set-active-button.md)

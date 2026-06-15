@@ -4,7 +4,7 @@ title: Timeline And Next Dose Display
 description: Shows recorded doses, current time, and the next planned dose on the home screen.
 resource: src/components/design/HomeB.tsx
 tags: [functionality, timeline, next-dose, home]
-timestamp: 2026-06-15T22:30:00+03:00
+timestamp: 2026-06-15T23:58:00+03:00
 ---
 
 # Page
@@ -23,10 +23,11 @@ timestamp: 2026-06-15T22:30:00+03:00
 * `diffHHMM`
 * `fmtHHMM`
 
-# Known Bugs
+# Current Behavior
 
-* [Phantom countdown before treatment starts](../bugs/phantom-countdown-before-treatment.md)
-* [Timeline now marker anchoring](../bugs/timeline-now-marker-anchoring.md)
+Home shows no fake next-dose countdown before treatment exists. When a real
+`nextDose` is provided, it renders the countdown, next marker, and next-dose CTA
+time. The timeline frames `acum` at the center of the strip.
 
 # Citations
 
