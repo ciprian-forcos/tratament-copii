@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
-import { render, screen, act } from '@testing-library/react'
+import { fireEvent, render, screen, act } from '@testing-library/react'
 import { doseStore } from './doseStore'
 import { childStore } from './childStore'
 import { HomeB } from './HomeB'
@@ -94,5 +94,33 @@ describe('HomeB night timeline', () => {
     // "Panadol" might appear in the button label only
     const allNurofen = screen.queryAllByText('Nurofen')
     expect(allNurofen).toHaveLength(0)
+  })
+
+  it('does not show a countdown, next marker, or fake Panadol before treatment exists', () => {
+    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
+
+    expect(screen.queryByText(/mai sunt/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Panadol/i)).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /urm/i })).not.toBeInTheDocument()
+  })
+
+  it('keeps the now marker centered in the normal home timeline', () => {
+    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
+
+    expect(screen.getByText('acum').parentElement).toHaveStyle({ left: '50%' })
+  })
+
+  it('renders separate child, profile, and temperature controls', () => {
+    const onMenu = vi.fn()
+    render(<HomeB onStart={vi.fn()} onMenu={onMenu} />)
+
+    fireEvent.click(screen.getByRole('button', { name: /copil maya/i }))
+    expect(onMenu).toHaveBeenCalledOnce()
+
+    fireEvent.click(screen.getByRole('button', { name: /profil/i }))
+    expect(screen.getByText(/profil copil/i)).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: /temperatura/i }))
+    expect(screen.getByText(/salveaz/i)).toBeInTheDocument()
   })
 })
