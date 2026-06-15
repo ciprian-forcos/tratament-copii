@@ -58,7 +58,7 @@ describe('nextDoseFor', () => {
     expect(result!.getTime()).toBeGreaterThan(NOW.getTime())
   })
 
-  it('returns lastAdministeredAt + 6h for panadol given 30 min ago (not yet elapsed)', () => {
+  it('returns lastAdministeredAt + 8h for panadol given 30 min ago (not yet elapsed)', () => {
     const thirtyMinAgo = new Date(NOW.getTime() - 30 * 60_000)
     vi.mocked(doseStore.listFor).mockReturnValue([
       makeDose('panadol', thirtyMinAgo),
@@ -66,8 +66,8 @@ describe('nextDoseFor', () => {
 
     const result = nextDoseFor({ medicationId: 'panadol', childId: CHILD_ID, now: NOW })
 
-    // Panadol rule: every 6h. Next dose = thirtyMinAgo + 6h
-    const expected = new Date(thirtyMinAgo.getTime() + 6 * 3600_000)
+    // Panadol rule: every 8h. Next dose = thirtyMinAgo + 8h
+    const expected = new Date(thirtyMinAgo.getTime() + 8 * 3600_000)
     expect(result).toEqual(expected)
     expect(result!.getTime()).toBeGreaterThan(NOW.getTime())
   })
@@ -84,10 +84,10 @@ describe('nextDoseFor', () => {
     expect(result).toEqual(NOW)
   })
 
-  it('returns now when panadol interval has already elapsed (6h+ ago)', () => {
-    const sevenHoursAgo = new Date(NOW.getTime() - 7 * 3600_000)
+  it('returns now when panadol interval has already elapsed (8h+ ago)', () => {
+    const nineHoursAgo = new Date(NOW.getTime() - 9 * 3600_000)
     vi.mocked(doseStore.listFor).mockReturnValue([
-      makeDose('panadol', sevenHoursAgo),
+      makeDose('panadol', nineHoursAgo),
     ])
 
     const result = nextDoseFor({ medicationId: 'panadol', childId: CHILD_ID, now: NOW })
