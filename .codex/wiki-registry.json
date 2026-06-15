@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "project_root": "C:\\AI Work\\projects\\tratament-febra-copii",
+  "generated_at": "2026-06-15T18:00:49.381187+00:00",
+  "registry_path": ".codex/wiki-registry.json",
+  "wikis": [
+    {
+      "id": "knowledge",
+      "path": "knowledge",
+      "schema": "AGENTS.md",
+      "index": "index.md",
+      "log": "log.md",
+      "schema_title": "Tratament Febra Copii Knowledge Schema",
+      "confidence": "high",
+      "status": "active"
+    }
+  ],
+  "excluded": [],
+  "command_policy": {
+    "wiki-query": "read active wiki indexes before answering",
+    "wiki-lint": "lint active registered wikis unless the user names one",
+    "wiki-ingest": "select the registered wiki before editing"
+  }
+}
