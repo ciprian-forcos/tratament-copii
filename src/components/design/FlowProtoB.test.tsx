@@ -23,6 +23,43 @@ beforeEach(() => {
   })
 })
 
+describe('FlowProtoB medicine routing', () => {
+  it('opens the restored Medicamente route from ChildrenScreen', async () => {
+    const user = userEvent.setup()
+    render(<FlowProtoB />)
+
+    await openMedicines(user)
+
+    expect(screen.getByRole('button', { name: /adaug/i })).toBeInTheDocument()
+    expect(screen.getByText(/Nurofen/i)).toBeInTheDocument()
+    expect(screen.getByText(/Panadol/i)).toBeInTheDocument()
+    expect(screen.getByText(/Novocalmin/i)).toBeInTheDocument()
+  })
+
+  it('persists a medicine added through Medicamente and reads it after remount', async () => {
+    const user = userEvent.setup()
+    const { unmount } = render(<FlowProtoB />)
+
+    await openMedicines(user)
+    await user.click(screen.getByRole('button', { name: /adaug/i }))
+    await user.type(screen.getByPlaceholderText(/ibuprofen/i), 'Test sirop')
+    await user.click(screen.getByRole('button', { name: /salveaz/i }))
+
+    expect(localStorage.getItem('tratament-copii-medications')).toContain('Test sirop')
+
+    unmount()
+    render(<FlowProtoB />)
+    await openMedicines(user)
+
+    expect(screen.getByText('Test sirop')).toBeInTheDocument()
+  })
+})
+
+async function openMedicines(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(screen.getByRole('button', { name: /meniu/i }))
+  await user.click(screen.getByRole('button', { name: /medicamente/i }))
+}
+
 describe('FlowProtoB ≡ menu routing', () => {
   it('tapping ≡ opens ChildrenScreen', async () => {
     const user = userEvent.setup()

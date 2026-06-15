@@ -143,4 +143,14 @@ describe('ChildrenScreen', () => {
 
     expect(screen.getByText(/trimite toată aplicația/i)).toBeInTheDocument()
   })
+
+  it('tapping "Medicamente" opens the restored medicines path', async () => {
+    const user = userEvent.setup()
+    const onMedicines = vi.fn()
+    render(<ChildrenScreen onBack={vi.fn()} onMedicines={onMedicines} />)
+
+    await user.click(screen.getByRole('button', { name: /medicamente/i }))
+
+    expect(onMedicines).toHaveBeenCalledOnce()
+  })
 })

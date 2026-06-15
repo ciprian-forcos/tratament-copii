@@ -32,6 +32,7 @@ describe('HomeB night timeline', () => {
     vi.useFakeTimers()
     // now = 2026-06-07 23:00 local — inside window starting 21:00
     vi.setSystemTime(new Date('2026-06-07T23:00:00'))
+    setStandalone(false)
   })
 
   afterEach(() => {
@@ -123,4 +124,51 @@ describe('HomeB night timeline', () => {
     fireEvent.click(screen.getByRole('button', { name: /temperatura/i }))
     expect(screen.getByText(/salveaz/i)).toBeInTheDocument()
   })
+
+  it('prompts install when beforeinstallprompt is available', () => {
+    const prompt = vi.fn().mockResolvedValue(undefined)
+    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
+
+    const event = new Event('beforeinstallprompt') as Event & { prompt: () => Promise<void> }
+    Object.assign(event, { prompt })
+    const preventDefault = vi.spyOn(event, 'preventDefault')
+    window.dispatchEvent(event)
+
+    expect(preventDefault).toHaveBeenCalledOnce()
+    fireEvent.click(screen.getByRole('button', { name: /instaleaz/i }))
+    expect(prompt).toHaveBeenCalledOnce()
+  })
+
+  it('shows manual install guidance when install prompt is unsupported', () => {
+    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
+
+    fireEvent.click(screen.getByRole('button', { name: /instaleaz/i }))
+
+    expect(screen.getByText(/adaug/i)).toBeInTheDocument()
+    expect(screen.getByText(/ecran/i)).toBeInTheDocument()
+  })
+
+  it('hides install affordance when already running standalone', () => {
+    setStandalone(true)
+
+    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
+
+    expect(screen.queryByRole('button', { name: /instaleaz/i })).not.toBeInTheDocument()
+  })
 })
+
+function setStandalone(matches: boolean) {
+  Object.defineProperty(window, 'matchMedia', {
+    value: vi.fn().mockImplementation((query: string) => ({
+      matches: query === '(display-mode: standalone)' ? matches : false,
+      media: query,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+    configurable: true,
+  })
+}
