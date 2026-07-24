@@ -28,14 +28,26 @@ Status: `pending` → `implementing` → `signoff` (Tier-1) → `done` (Tier-2)
 
 | Phase | Plan | Depends on | Status | Tip SHA | Blocker |
 |-------|------|------------|--------|---------|---------|
-| 1. Dose records   | 01-01 | —     | implemented, needs Tier-2 | _(origin/phase-01 tip)_ | — |
-| 2. Night timeline | 02-01 | 01-01 | pending | — | — |
-| 3. Schedule engine| 03-01 | 01-01 | pending | — | — |
-| 3. Schedule engine| 03-02 | 03-01 | pending | — | — |
-| 4. Children screen| 04-01 | —     | pending | — | — |
-| 5. Share Tier 1   | 05-01 | 04-01 | pending | — | — |
-| 5. Share Tier 1   | 05-02 | 05-01 | pending | — | — |
-| 5. Share Tier 1   | 05-03 | 05-02 | pending | — | — |
+| 1. Dose records   | 01-01 | —     | done | 4adc761 | — |
+| 2. Night timeline | 02-01 | 01-01 | done | a7c46a1 | — |
+| 3. Schedule engine| 03-01 | 01-01 | done (research) | 4173b3e | — |
+| 3. Schedule engine| 03-02 | 03-01 | done | 0f173d5 | — |
+| 4. Children screen| 04-01 | —     | done | 4fa6396 | — |
+| 5. Share Tier 1   | 05-01 | 04-01 | done | 153baa5 | — |
+| 5. Share Tier 1   | 05-02 | 05-01 | done | ba1d37b | — |
+| 5. Share Tier 1   | 05-03 | 05-02 | done | 99c4406 | — |
+
+### Phase 06 hardening ledger (post-QA, implemented on `main`)
+
+| Phase | Plan | Status | Evidence |
+|-------|------|--------|----------|
+| 6. Hardening | 06-01 treatment history + timing | done | `06-01-...-SUMMARY.md` (2026-06-15) |
+| 6. Hardening | 06-02 home screen hardening      | done | `06-02-...-SUMMARY.md` (2026-06-15) |
+| 6. Hardening | 06-03 UI cleanup                 | done | `06-03-...-SUMMARY.md` (2026-06-15) |
+| 6. Hardening | 06-04 install and medicines      | done | `06-04-...-SUMMARY.md` (2026-06-15) |
+
+All 12 imported QA bugs (`knowledge/process/phase6-hardening-bugs.md`) are
+covered by the four summaries above.
 
 Dependency notes (from ROADMAP.md): Phase 2 and Phase 3 both need Phase 1's
 real "last dose" data. Phase 5 needs Phase 4's children screen. Phase 4
@@ -49,12 +61,16 @@ it; pick an order that keeps each Design-Review diff small.
 
 ## Open blockers / escalations
 
-_(none yet — the orchestrator appends here on any stop condition, with the
-plan, the finding, and what decision it needs from the human)_
+_(none — 2026-07-25 kimi lane: no other agent lanes were recorded here when
+checked; if your parallel agent claims a lane, record it here)_
 
 ## Last updated
 
-_(orchestrator stamps session + plan transition here)_
+- 2026-07-25 (kimi session): ledger backfilled — phases 1–5 marked `done` with
+  their recorded tip SHAs, phase 06 hardening ledger added, run declared
+  complete. Gate re-verified green on `main@54be582` (type-check ✓, lint ✓,
+  135 tests / 18 files ✓, build ✓). Remaining before `v1.0.0`: final human
+  phone QA of the hardened build, then tag per PROCESS.md release steps.
 
 ## Run log (orchestrator-driven; appended each transition)
 
@@ -124,3 +140,13 @@ _(orchestrator stamps session + plan transition here)_
   data-safe). C (stopwatch) + manual flows = human QA. QA handoff written
   (.planning/QA_HANDOFF.md). ===> V1 FEATURE-COMPLETE on origin/v1-delivery
   @ 99c4406. Awaiting human QA + merge to main (then tag v1.0.0).
+- **V1 merged** — human merged `v1-delivery` → `main` (3f35710, 2026-06-07)
+  and QAd on phone; 12 bugs filed into `knowledge/bugs/`.
+- **PHASE 06 hardening** — 06-01 → 06-04 implemented directly on `main`
+  (2026-06-15), each with PLAN + SUMMARY; 12/12 QA bugs addressed; suite grew
+  to 135 tests / 18 files. ===> PHASE 6 COMPLETE. V1 scope fully implemented.
+- **2026-07-25 (kimi session)** — bookkeeping catch-up: this ledger backfilled,
+  ROADMAP marked complete, version bumped 0.1.0 → 0.7.0 on
+  `kimi/v1-phase06-release-prep`. Gate re-verified green on `main@54be582`.
+  Next: human merges the kimi PRs, runs final phone QA, then bumps to `1.0.0`
+  + tag.
