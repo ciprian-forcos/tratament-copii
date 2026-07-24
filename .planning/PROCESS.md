@@ -21,6 +21,38 @@ This file is the contract between the user (reviewer) and the subagent
   repeats until `SIGNOFF`. Only then is the work presented to the Human
   Reviewer.
 
+## Loop tiers — light by default, heavy for risk
+
+The full machinery below (per-plan branches, Agent-Reviewer loops, verbatim
+status reports, three-tier review) was built for the high-risk autonomous V1
+push. The post-V1 evaluation
+(`knowledge/process/delivery-loop-evaluation.md`) found it heavier than
+day-to-day maintenance needs. Pick the tier per change:
+
+### Light loop (default)
+
+Use for: copy fixes, UI polish, small behavior tweaks, docs/knowledge updates.
+
+1. Branch (`<agent-prefix>/<task>` or `V<version>/phase-<nn>-<slug>`).
+2. One short plan only if behavior changes; otherwise just commit.
+3. Implement the smallest working change (TDD still preferred for logic).
+4. Run `npm run type-check`, `npm run test`, `npm run build` (lint if touched
+   files are lint-covered).
+5. Update the knowledge graph + `ROADMAP.md`/`DELIVERY_STATE.md` if facts
+   changed.
+6. Open the PR. Human review only; no Agent-Reviewer cycle required.
+
+### Heavy loop (this document's full protocol)
+
+Mandatory when a change combines any of: **medical timing/dosing logic,
+persisted-data migrations, share-URL format changes, release/deploy work, or
+broad multi-file refactors.** Then follow the TDD workflow, pre-PR gate,
+Status Report Honesty, Implementer ↔ Agent-Reviewer loop, and PR template
+below verbatim.
+
+When in doubt, treat the change as heavy. Underestimating risk on a
+medication-dosing app is the failure mode this harness exists to prevent.
+
 ## Definitions
 
 - **Requirement**: any numbered or bulleted item in a Human-Reviewer or
@@ -45,6 +77,27 @@ This file is the contract between the user (reviewer) and the subagent
   `phase-01/01-01-dose-records`).
 - Branches are based on `main` at the time of branch creation. If `main` has
   moved since the previous merged PR, rebase before opening the PR.
+
+### Multiple agents working in parallel (branch namespacing)
+
+More than one agent/harness may work on this repo at the same time (e.g. a
+local Claude/Codex session and a remote Kimi session). To prevent collisions:
+
+- **Every autonomous agent namespaces its branches with its own prefix:**
+  `kimi/<task>`, `claude/<task>`, `codex/<task>`, etc. An agent MUST NOT
+  create, commit to, rebase, or force-push branches outside its own prefix,
+  and MUST NOT push to `main` or to another agent's branches.
+- **Claim work before starting it.** Announce the lane by appending one line
+  to `DELIVERY_STATE.md` ("Open blockers / escalations" or the run log) on
+  the agent's own branch, and check that file on `main` first: if another
+  agent has an open lane on the same files/plan, pick different work or
+  coordinate via the human.
+- **No file-level locks exist** — the only synchronization primitives are the
+  branch namespace and the ledger. If two lanes turn out to touch the same
+  files, the second to merge rebases onto the new `main` and re-runs the
+  gate.
+- **Merges to `main` stay human-gated** regardless of which agent produced
+  the branch. Agents open PRs; the human merges.
 
 ## Versioning & releases
 
