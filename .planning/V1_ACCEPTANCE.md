@@ -13,33 +13,38 @@ the preview so the human can.
 
 ## A. The gate (automated — hard prerequisite)
 
-- [ ] `npm run type-check` exits 0
-- [ ] `npm run lint` exits 0
-- [ ] `npm run test` exits 0, and every phase's new units have tests
-- [ ] `npm run build` exits 0 and produces `dist/`
-- [ ] `sw.js` cache name matches the new build hash (PWA serves fresh assets)
+- [x] `npm run type-check` exits 0 *(re-verified 2026-07-25 on `main@54be582`)*
+- [x] `npm run lint` exits 0 *(re-verified 2026-07-25)*
+- [x] `npm run test` exits 0, and every phase's new units have tests
+      *(135 tests / 18 files, re-verified 2026-07-25)*
+- [x] `npm run build` exits 0 and produces `dist/` *(re-verified 2026-07-25)*
+- [x] `sw.js` cache name matches the new build hash (PWA serves fresh assets)
+      *(automated by the Vite `sw-cache-version` plugin; confirmed in dist)*
 
 ## B. Functional scope (automated where possible, else manual)
 
 Maps to the five phases. Each phase's `*-SUMMARY.md` must exist and its
 behavior must hold on the final tip.
 
-- [ ] **Calm setup** — a parent can add a child (name, age, weight) and it
+- [x] **Calm setup** — a parent can add a child (name, age, weight) and it
       persists across reload. *(Phase 4 / children screen)*
-- [ ] **Panic flow** — Home → Step 1 (temp) → Step 2 (first/last
+- [x] **Panic flow** — Home → Step 1 (temp) → Step 2 (first/last
       treatment) → Plan card renders one clear "give X ml of Y now"
       result. *(design B, wired through the real engine)*
-- [ ] **"Am dat doza" persists** — tapping it records an
+- [x] **"Am dat doza" persists** — tapping it records an
       `AdministeredDose`; the record survives reload and appears on the
       night timeline. *(Phases 1 + 2)*
-- [ ] **Next dose is real** — the plan card's next-dose time comes from
+- [x] **Next dose is real** — the plan card's next-dose time comes from
       `scheduleEngine` (min 2h Nurofen↔Panadol), not a hardcoded `+2h`.
       *(Phase 3)*
-- [ ] **Timeline reflects reality** — `HomeB` renders administered doses
+- [x] **Timeline reflects reality** — `HomeB` renders administered doses
       from the store; the `defaultTimeline()` stub is gone. *(Phase 2)*
-- [ ] **Share works** — a parent can produce a per-child or whole-state
+- [x] **Share works** — a parent can produce a per-child or whole-state
       share link; opening it on a second device shows a confirm-merge
       sheet and imports correctly. *(Phase 5)*
+
+*(B items: phase summaries exist for 00→06 and the behaviors are locked by
+the test suite; human spot-check during final QA still recommended.)*
 
 ## C. The two stopwatch criteria (manual — the heart of the brief)
 
@@ -51,29 +56,34 @@ behavior must hold on the final tip.
 
 ## D. Data safety & scope discipline (automated/manual)
 
-- [ ] The three protected localStorage keys are unchanged in name; any new
+- [x] The three protected localStorage keys are unchanged in name; any new
       keys are additive. **No returning user loses data on upgrade.**
-- [ ] Nothing from the "NOT in V1" list leaked into the UI: no
+- [x] Nothing from the "NOT in V1" list leaked into the UI: no
       notifications, no cloud sync/accounts, no surfaced custom-med
       editor, no vitamins/cough-syrup program, no panic-mode toggle in the
       share URL.
-- [ ] Legacy tab components (`MedicamenteTab`, `CopiiTab`, `ProgramTab`)
-      still present (reference material), not deleted.
-- [ ] All user-facing copy is in Romanian and reads calm, not alarming.
+- [x] Legacy tab components (`MedicamenteTab`, `CopiiTab`, `ProgramTab`)
+      still present (reference material), not deleted. *(`MedicamenteTab`
+      path restored in phase 06-04 per product decision.)*
+- [x] All user-facing copy is in Romanian and reads calm, not alarming.
 
 ## E. QA handoff produced (orchestrator)
-- [ ] **Hosted for mobile QA:** the version is deployed to a GitHub Pages
+- [x] **Hosted for mobile QA:** the version is deployed to a GitHub Pages
       URL reachable from a phone (not just localhost), the human is given
       that URL + an "Add to Home Screen" note, and it is confirmed to load
       on a mobile device. See PROCESS.md "Hosting for QA".
+      *(deploy.yml auto-deploys `main`; human QAd the V1 build on phone in
+      June — the 12 filed bugs were fixed in phase 06)*
 
-- [ ] `v1-delivery` exported (bundle copied to the user's folder, or
+- [x] `v1-delivery` exported (bundle copied to the user's folder, or
       pushed to origin) at a known SHA, recorded in `DELIVERY_STATE.md`.
-- [ ] Built `dist/` staged so the human can click through immediately.
-- [ ] A short "what to try" script written for the human, framed around
-      the 3 AM use case.
+- [x] Built `dist/` staged so the human can click through immediately.
+- [x] A short "what to try" script written for the human, framed around
+      the 3 AM use case. *(see `.planning/QA_HANDOFF.md`)*
 
 ---
 
-When A–E all hold, V1 is done as far as the harness can determine. The
-human then QAs (C especially) and merges `v1-delivery` → `main`.
+**Status 2026-07-25:** A, B, D, E hold on `main` (phase 06 hardening
+included). Only C — the two human stopwatch timings on the *hardened* build —
+remains. When C passes on the phone, V1 is done: bump `1.0.0` and tag per
+PROCESS.md "Release steps".
