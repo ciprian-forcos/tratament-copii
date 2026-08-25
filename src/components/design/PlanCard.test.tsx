@@ -87,4 +87,72 @@ describe('PlanCard', () => {
     expect(doseStore.list()).toHaveLength(0)
     expect(onDone).not.toHaveBeenCalled()
   })
+
+  it('continues from stored history even when Step 2 still says first treatment', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date(2025, 0, 15, 3, 0, 0))
+    const lastAt = new Date(2025, 0, 15, 1, 0, 0)
+    doseStore.record({
+      childId: 'maya',
+      medicationId: 'nurofen',
+      scheduledAt: lastAt.toISOString(),
+      administeredAt: lastAt.toISOString(),
+    })
+
+    render(
+      <PlanCard
+        step2={{ kind: 'first' }}
+        onBack={vi.fn()}
+        onDone={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByRole('heading', { name: /Panadol/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /la 05:00/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /am dat doza/i })).toBeDisabled()
+  })
+
+  it('persists the Step 2 last dose and goes home when the parent waits', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date(2025, 0, 15, 3, 0, 0))
+    const onWait = vi.fn()
+    const onDone = vi.fn()
+
+    render(
+      <PlanCard
+        step2={{ kind: 'last', med: 'nurofen', lastAt: '2025-01-15T02:30' }}
+        onBack={vi.fn()}
+        onDone={onDone}
+        onWait={onWait}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: /voi aștepta/i }))
+
+    const doses = doseStore.list()
+    expect(doses).toHaveLength(1)
+    expect(doses[0].medicationId).toBe('nurofen')
+    expect(onWait).toHaveBeenCalledOnce()
+    expect(onDone).not.toHaveBeenCalled()
+  })
+
+  it('records the Step 2 last dose together with the given dose', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date(2025, 0, 15, 8, 0, 0))
+    const onDone = vi.fn()
+
+    render(
+      <PlanCard
+        step2={{ kind: 'last', med: 'nurofen', lastAt: '2025-01-15T02:30' }}
+        onBack={vi.fn()}
+        onDone={onDone}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: /am dat doza/i }))
+
+    const doses = doseStore.list()
+    expect(doses.map((d) => d.medicationId).sort()).toEqual(['nurofen', 'panadol'])
+    expect(onDone).toHaveBeenCalledOnce()
+  })
 })

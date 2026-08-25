@@ -11,6 +11,8 @@ timestamp: 2026-06-15T22:30:00+03:00
 
 Implements the [3 AM use case](../product/3am-use-case.md): confirm child and
 temperature, answer treatment history, get one action, then record the dose.
+Later doses in the same 24h episode skip the wizard and open the plan card
+from Home.
 
 # Source Spec
 

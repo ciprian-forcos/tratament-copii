@@ -21,6 +21,7 @@ timestamp: 2026-06-15T23:10:00+03:00
 
 * `buildPlan`
 * `nextDoseFor`
+* `lastDoseInEpisode`
 * `calculateDose`
 
 # Timing Policy

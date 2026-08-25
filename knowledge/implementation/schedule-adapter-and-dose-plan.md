@@ -19,6 +19,7 @@ given, and what amount appears in the [Plan card](../ui/plan-card.md).
 * `src/components/design/scheduleAdapter.ts`
 * `src/components/design/dosePlan.ts`
 * `src/components/design/nextPlannedDose.ts`
+* `src/components/design/episode.ts`
 
 # Phase 06 Lane A State
 

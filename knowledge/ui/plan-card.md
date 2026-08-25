@@ -20,9 +20,13 @@ The card records an administered dose through `doseStore.record(...)`. That is
 the connection that allows [Home screen](home-screen.md) to show real timeline
 events.
 
+The card prefers recorded episode history over leftover Step 2 state. Step 2
+last-dose answers are a seed: they are written to the store when the parent
+records or taps `Voi aștepta`.
+
 If the first planned dose is deferred by the 4h cross-drug floor, the card shows
-the scheduled time instead of `acum` and disables `Am dat doza` until that time
-is due.
+the scheduled time instead of `acum`, disables `Am dat doza` until that time
+is due, and offers `Voi aștepta` so the parent can return Home with a countdown.
 
 # Current Notes
 
@@ -42,6 +46,7 @@ is due.
 
 * [Plan back button](buttons/plan-back-button.md)
 * [Plan record dose button](buttons/plan-record-dose-button.md)
+* [Plan wait button](buttons/plan-wait-button.md)
 * [Plan change something button](buttons/plan-change-something-button.md)
 
 # Source Functions

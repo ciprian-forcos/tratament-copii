@@ -23,9 +23,10 @@ timestamp: 2026-06-15T23:35:00+03:00
 
 # Current Behavior
 
-`PlanCard` records only when the planned first dose is due. When `buildPlan`
-defers the first dose into the future, the record button is disabled and no
-administered dose is written early.
+`PlanCard` records the due dose when the parent taps `Am dat doza`. A Step 2
+last dose is stored at the same time if it is not already in history. When
+`buildPlan` defers the next dose, `Am dat doza` stays disabled; `Voi aștepta`
+stores the last dose (if seeded) and returns Home.
 
 # Implementation
 

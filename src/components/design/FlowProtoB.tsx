@@ -8,13 +8,16 @@ import { Step1 } from './Step1'
 import { Step2, type Step2Value } from './Step2'
 import { StatusBar } from './StatusBar'
 import { activeChild, childStore, useChildren } from './childStore'
+import { doseStore } from './doseStore'
 import { MEDICATIONS_CHANGED_EVENT, loadMedications, saveMedications } from './medicineStorage'
+import { nextPlannedDose } from './nextPlannedDose'
 
 type Page = 'home' | 's1' | 's2' | 'done' | 'children' | 'medicines'
 
 /**
- * Variant B end-to-end:
- *   HomeB → Step 1 (temperature) → Step 2 (first / last) → Plan card.
+ * Fever episode:
+ *   start → Step 1 (temperature) → Step 2 (history) → Plan card
+ *   continue → Plan card from Home when a dose exists in the last 24h
  *
  * The active child's `temp` lives in the global child store, so HomeB
  * and Step1 stay in sync when either updates.
@@ -30,6 +33,25 @@ export function FlowProtoB() {
   const setTemp = (v: number) => childStore.patchActive({ temp: v })
 
   const goHome = () => setPage('home')
+
+  function inEpisode() {
+    return (
+      nextPlannedDose({
+        child,
+        now: new Date(),
+        doses: doseStore.list(),
+      }) != null
+    )
+  }
+
+  function startFromHome() {
+    if (inEpisode()) {
+      setPage('done')
+      return
+    }
+    setS2({ kind: 'first' })
+    setPage('s1')
+  }
 
   useEffect(() => {
     const reloadMedications = () => setMedicationState(loadMedications())
@@ -109,7 +131,8 @@ export function FlowProtoB() {
         </div>
       </div>
     )
-  if (page === 'home') return <HomeB onStart={() => setPage('s1')} onMenu={() => setPage('children')} />
+  if (page === 'home')
+    return <HomeB onStart={startFromHome} onMenu={() => setPage('children')} />
   if (page === 's1')
     return (
       <Step1 value={temp} onChange={setTemp} onBack={goHome} onNext={() => setPage('s2')} />
@@ -126,10 +149,9 @@ export function FlowProtoB() {
   return (
     <PlanCard
       step2={s2}
-      onBack={() => setPage('s2')}
-      onDone={() => {
-        goHome()
-      }}
+      onBack={() => setPage(inEpisode() ? 'home' : 's2')}
+      onDone={goHome}
+      onWait={goHome}
     />
   )
 }

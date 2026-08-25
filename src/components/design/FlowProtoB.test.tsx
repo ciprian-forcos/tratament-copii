@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { childStore } from './childStore'
+import { doseStore } from './doseStore'
 import { FlowProtoB } from './FlowProtoB'
 import { ImportGate } from './share/ImportGate'
 import { encodeShare } from './share/encoder'
@@ -9,6 +10,7 @@ import type { SharePayload } from './share/types'
 
 beforeEach(() => {
   localStorage.clear()
+  doseStore.clear()
   window.history.pushState({}, '', '/')
   childStore.setState({
     children: [
@@ -127,5 +129,51 @@ describe('FlowProtoB ≡ menu routing', () => {
 
     // Back on home screen
     expect(screen.getByText('noaptea asta')).toBeInTheDocument()
+  })
+})
+
+describe('FlowProtoB treatment episode', () => {
+  it('starts the wizard when there is no in-episode history', async () => {
+    const user = userEvent.setup()
+    render(<FlowProtoB />)
+
+    await user.click(screen.getByRole('button', { name: /începe tratamentul/i }))
+
+    expect(screen.getByText(/cât are acum/i)).toBeInTheDocument()
+  })
+
+  it('opens the plan card from Home when a recent dose exists', async () => {
+    const user = userEvent.setup()
+    const lastAt = new Date(Date.now() - 30 * 60_000).toISOString()
+    doseStore.record({
+      childId: 'maya',
+      medicationId: 'nurofen',
+      scheduledAt: lastAt,
+      administeredAt: lastAt,
+    })
+
+    render(<FlowProtoB />)
+
+    await user.click(screen.getByRole('button', { name: /urm/i }))
+
+    expect(screen.getByRole('heading', { name: /Panadol/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /am dat doza/i })).toBeDisabled()
+  })
+
+  it('after recording the first dose, Home continues the episode', async () => {
+    const user = userEvent.setup()
+    render(<FlowProtoB />)
+
+    await user.click(screen.getByRole('button', { name: /începe tratamentul/i }))
+    await user.click(screen.getByRole('button', { name: /continuă/i }))
+    await user.click(screen.getByRole('button', { name: /generează planul/i }))
+    await user.click(screen.getByRole('button', { name: /am dat doza/i }))
+
+    expect(screen.getByText('noaptea asta')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /urm/i })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /urm/i }))
+
+    expect(screen.getByRole('heading', { name: /Panadol/i })).toBeInTheDocument()
   })
 })

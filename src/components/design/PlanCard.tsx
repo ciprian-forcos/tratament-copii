@@ -2,19 +2,23 @@ import { useEffect, useState } from 'react'
 import { StatusBar } from './StatusBar'
 import { activeChild, useChildren } from './childStore'
 import { buildPlan, diffHHMM, fmtHHMM } from './dosePlan'
-import { doseStore } from './doseStore'
+import { doseStore, useDoses } from './doseStore'
+import { alreadyRecorded, lastDoseInEpisode, seedFromStep2 } from './episode'
 import type { Step2Value } from './Step2'
 
 interface Props {
   onBack: () => void
   /** Called when the parent confirms "Am dat doza". */
   onDone: (now: Date) => void
+  /** Called when the next dose is still deferred and the parent waits. */
+  onWait?: () => void
   step2: Step2Value
 }
 
-export function PlanCard({ onBack, onDone, step2 }: Props) {
+export function PlanCard({ onBack, onDone, onWait, step2 }: Props) {
   const state = useChildren()
   const child = activeChild(state)
+  const doses = useDoses()
   const [now, setNow] = useState(() => new Date())
 
   useEffect(() => {
@@ -22,11 +26,13 @@ export function PlanCard({ onBack, onDone, step2 }: Props) {
     return () => window.clearInterval(id)
   }, [])
 
+  const seed = seedFromStep2(step2)
+  const last = lastDoseInEpisode({ now, doses, childId: child.id, seed })
   const plan = buildPlan({
     child,
     now,
-    lastMedId: step2.kind === 'last' ? step2.med : undefined,
-    lastAt: step2.kind === 'last' && step2.lastAt ? new Date(step2.lastAt) : undefined,
+    lastMedId: last?.medicationId,
+    lastAt: last?.at,
   })
 
   const nowAmount =
@@ -37,9 +43,20 @@ export function PlanCard({ onBack, onDone, step2 }: Props) {
   const nowTimingLabel = canRecordNow ? 'acum' : `la ${fmtHHMM(plan.now.when)}`
   const nowRowLabel = canRecordNow ? 'acum' : 'urmează'
 
+  function persistSeed() {
+    if (!seed || alreadyRecorded(doseStore.list(), child.id, seed)) return
+    doseStore.record({
+      childId: child.id,
+      medicationId: seed.medicationId,
+      scheduledAt: seed.at.toISOString(),
+      administeredAt: seed.at.toISOString(),
+    })
+  }
+
   function recordDose() {
     if (!canRecordNow) return
 
+    persistSeed()
     const administeredAt = new Date()
     doseStore.record({
       childId: child.id,
@@ -48,6 +65,12 @@ export function PlanCard({ onBack, onDone, step2 }: Props) {
       administeredAt: administeredAt.toISOString(),
     })
     onDone(administeredAt)
+  }
+
+  function waitForDose() {
+    if (canRecordNow || !onWait) return
+    persistSeed()
+    onWait()
   }
 
   return (
@@ -170,6 +193,11 @@ export function PlanCard({ onBack, onDone, step2 }: Props) {
         >
           Am dat doza <span className="arrow">✓</span>
         </button>
+        {!canRecordNow && onWait && (
+          <button className="btn-secondary" onClick={waitForDose}>
+            Voi aștepta
+          </button>
+        )}
         <button className="btn-secondary btn-ghost" onClick={onBack}>
           ← Schimbă ceva
         </button>

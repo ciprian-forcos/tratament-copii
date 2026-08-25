@@ -95,4 +95,14 @@ describe('nextPlannedDose', () => {
     expect(result?.medId).toBe('panadol')
     expect(result?.at).toEqual(NOW)
   })
+
+  it('returns null when the last dose is older than 24h', () => {
+    const lastAt = new Date(NOW.getTime() - 25 * 3600_000)
+    const result = nextPlannedDose({
+      child: CHILD,
+      now: NOW,
+      doses: [dose({ medicationId: 'nurofen', administeredAt: lastAt.toISOString() })],
+    })
+    expect(result).toBeNull()
+  })
 })

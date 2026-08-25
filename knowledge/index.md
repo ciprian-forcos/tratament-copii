@@ -8,7 +8,8 @@ graph surface.
 # Project State
 
 * [Current repository state](process/repo-branch-state.md) - branch topology and the source of truth for latest implementation.
-* [V1 Phase 07 Home Next Dose](process/v1-phase-07-home-next-dose.md) - current implementation phase: real next-dose countdown from recorded history.
+* [V1 Phase 08 Treatment Flow](process/v1-phase-08-treatment-flow.md) - current implementation phase: ongoing fever episode from Home.
+* [V1 Phase 07 Home Next Dose](process/v1-phase-07-home-next-dose.md) - Home countdown from recorded history.
 * [Phase 6 hardening bugs](process/phase6-hardening-bugs.md) - QA findings imported from the newer planning branch.
 * [V1 Phase 06 Hardening](process/v1-phase-06-hardening.md) - completed hardening phase mapped from individual bug nodes.
 * [Phase 06 fresh context execution](process/phase-06-fresh-context-execution.md) - subagent context and review map for Phase 06.
@@ -112,6 +113,7 @@ graph surface.
 * [Step 2 datetime input control](ui/buttons/step2-time-choice-button.md)
 * [Plan back button](ui/buttons/plan-back-button.md)
 * [Plan record dose button](ui/buttons/plan-record-dose-button.md)
+* [Plan wait button](ui/buttons/plan-wait-button.md)
 * [Plan change something button](ui/buttons/plan-change-something-button.md)
 * [Children share button](ui/buttons/children-share-button.md)
 * [Children edit child button](ui/buttons/children-edit-child-button.md)

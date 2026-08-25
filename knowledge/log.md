@@ -2,6 +2,10 @@
 
 ## 2026-08-25
 
+* **Phase 08**: Fever treatment is now an episode. Home continues to the plan
+  card while a dose exists in the last 24h. PlanCard uses stored history,
+  persists a Step 2 last dose, and offers `Voi aștepta` when the next dose is
+  still deferred.
 * **Phase 07**: Home now derives the next planned dose from recorded history
   via `nextPlannedDose` + `buildPlan()`. No countdown until the active child
   has a dose; after Nurofen the parent sees Panadol at +4h (and the reverse).
