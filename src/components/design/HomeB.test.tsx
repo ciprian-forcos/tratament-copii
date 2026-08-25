@@ -105,6 +105,61 @@ describe('HomeB night timeline', () => {
     expect(screen.queryByRole('button', { name: /urm/i })).not.toBeInTheDocument()
   })
 
+  it('shows a Panadol countdown after a recorded Nurofen dose', () => {
+    const lastAt = new Date('2026-06-07T21:00:00').toISOString()
+    act(() => {
+      doseStore.record({
+        childId: MAYA_ID,
+        medicationId: 'nurofen',
+        scheduledAt: lastAt,
+        administeredAt: lastAt,
+      })
+    })
+
+    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
+
+    expect(screen.getByText(/mai sunt/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /urm/i })).toBeInTheDocument()
+    expect(screen.getAllByText(/Panadol/i).length).toBeGreaterThanOrEqual(1)
+  })
+
+  it("does not show a countdown from another child's recorded dose", () => {
+    seedLuca()
+    const lastAt = new Date('2026-06-07T21:00:00').toISOString()
+    act(() => {
+      doseStore.record({
+        childId: LUCA_ID,
+        medicationId: 'nurofen',
+        scheduledAt: lastAt,
+        administeredAt: lastAt,
+      })
+    })
+    childStore.setActive(MAYA_ID)
+
+    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
+
+    expect(screen.queryByText(/mai sunt/i)).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /urm/i })).not.toBeInTheDocument()
+  })
+
+  it('tells the parent to give the next medicine now when the 4h floor has elapsed', () => {
+    const lastAt = new Date('2026-06-07T18:00:00').toISOString()
+    act(() => {
+      doseStore.record({
+        childId: MAYA_ID,
+        medicationId: 'nurofen',
+        scheduledAt: lastAt,
+        administeredAt: lastAt,
+      })
+    })
+
+    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
+
+    expect(screen.getByText(/dă/i)).toBeInTheDocument()
+    expect(screen.queryByText(/mai sunt/i)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /urm/i })).toBeInTheDocument()
+  })
+
   it('keeps the now marker centered in the normal home timeline', () => {
     render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
 
