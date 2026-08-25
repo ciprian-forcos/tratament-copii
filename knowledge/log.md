@@ -1,5 +1,12 @@
 # Knowledge Bundle Log
 
+## 2026-08-25
+
+* **Phase 07**: Home now derives the next planned dose from recorded history
+  via `nextPlannedDose` + `buildPlan()`. No countdown until the active child
+  has a dose; after Nurofen the parent sees Panadol at +4h (and the reverse).
+  When the floor has elapsed, Home says `dă {med} acum` instead of `mai sunt 0m`.
+
 ## 2026-06-15
 
 * **Phase 06 Lane D**: Added the Home PWA install affordance, registered/copied the service worker for Pages builds, restored the `MedicamenteTab` route from Children, centralized medicine persistence under `tratament-copii-medications`, and verified default antipyretics in the restored path.

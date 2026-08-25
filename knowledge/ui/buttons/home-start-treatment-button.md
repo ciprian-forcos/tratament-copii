@@ -23,9 +23,13 @@ timestamp: 2026-06-15T22:30:00+03:00
 
 `HomeB` calls `onStart`; `FlowProtoB` routes to `page === 's1'`.
 
+Label is `Începe tratamentul` with no history, and
+`Următoarea doză · HH:MM` after a recorded dose.
+
 # Known Bug
 
 * [Phantom countdown before treatment starts](../../bugs/phantom-countdown-before-treatment.md)
+  — empty-state still holds; Phase 07 added the real post-treatment label.
 
 # Citations
 

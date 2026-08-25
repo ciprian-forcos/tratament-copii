@@ -43,9 +43,11 @@ Phase 06 Lane A aligns the panic-flow planner with this rule:
 * `src/components/design/Step2.tsx` excludes Virodep from previous-dose choices.
 * `src/components/design/PlanCard.tsx` prevents recording a deferred first dose early.
 
-Still open for Phase 06 Lane B:
+Phase 07 Home next-dose:
 
-* `src/components/design/HomeB.tsx` fallback/countdown behavior.
+* `src/components/design/nextPlannedDose.ts` reuses `buildPlan()` so Home
+  shows the same next medicine and 4h floor as the plan card, only after
+  the active child has recorded history.
 
 # Connected UI
 

@@ -32,8 +32,13 @@ No next-dose countdown appears until there is an actual plan or recorded treatme
 
 # Phase 06 Lane B State
 
-Implemented in `src/components/design/HomeB.tsx`; missing `nextDose` renders
-no countdown, no next marker, and no next-dose time CTA.
+Implemented in `src/components/design/HomeB.tsx`; with no recorded history
+Home renders no countdown, no next marker, and no next-dose time CTA.
+
+# Phase 07 Follow-up
+
+A real next dose is now derived from administered history via
+`nextPlannedDose`. The empty-state guarantee above still holds.
 
 # Citations
 

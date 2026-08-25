@@ -8,8 +8,9 @@ graph surface.
 # Project State
 
 * [Current repository state](process/repo-branch-state.md) - branch topology and the source of truth for latest implementation.
+* [V1 Phase 07 Home Next Dose](process/v1-phase-07-home-next-dose.md) - current implementation phase: real next-dose countdown from recorded history.
 * [Phase 6 hardening bugs](process/phase6-hardening-bugs.md) - QA findings imported from the newer planning branch.
-* [V1 Phase 06 Hardening](process/v1-phase-06-hardening.md) - next development phase mapped from individual bug nodes.
+* [V1 Phase 06 Hardening](process/v1-phase-06-hardening.md) - completed hardening phase mapped from individual bug nodes.
 * [Phase 06 fresh context execution](process/phase-06-fresh-context-execution.md) - subagent context and review map for Phase 06.
 * [Phase 06 parallel execution map](process/phase-06-parallel-execution-map.md) - lane ownership and parallel subagent sequencing.
 * [Autonomous harness](process/autonomous-harness.md) - current implementation loop and review gates.
@@ -154,7 +155,7 @@ graph surface.
 
 * [Local storage and app state](implementation/app-state-local-storage.md) - persistence keys and upgrade safety.
 * [Dose history store](implementation/dose-history-store.md) - administered dose persistence.
-* [Schedule adapter and treatment plan](implementation/schedule-adapter-and-dose-plan.md) - timing path from rules to UI.
+* [Schedule adapter and treatment plan](implementation/schedule-adapter-and-dose-plan.md) - timing path from rules to UI, including Home next-dose via `nextPlannedDose`.
 * [Share URL import and merge](implementation/share-url-import-merge.md) - Tier 1 sharing implementation.
 
 # External Methods

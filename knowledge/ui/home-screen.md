@@ -16,9 +16,10 @@ temperature, what happened tonight, and what action starts the panic flow.
 
 The active implementation is `src/components/design/HomeB.tsx`.
 
-Phase 06 Lane B state:
+Phase 06 Lane B + Phase 07 state:
 
-* No countdown or next-dose marker renders before a real `nextDose` exists.
+* No countdown or next-dose marker renders before the active child has recorded treatment.
+* After a recorded dose, Home derives the next medicine/time from history via `nextPlannedDose`.
 * The timeline frames `acum` in the center of the 12-hour strip.
 * Child identity/menu, profile details, and temperature editing are separate controls.
 * Temperature copy is `Temperatura`.
@@ -63,10 +64,13 @@ guidance when the native install prompt is unavailable.
 * `MenuBtn`
 * `TempWheel`
 * `useNightTimeline`
+* `nextPlannedDose`
 * `anchorStrip`
 
 # Citations
 
 * `src/components/design/HomeB.tsx`
 * `src/components/design/ChildPill.tsx`
+* `src/components/design/nextPlannedDose.ts`
 * [Phase 6 hardening bugs](../process/phase6-hardening-bugs.md)
+* [V1 Phase 07 Home Next Dose](../process/v1-phase-07-home-next-dose.md)
