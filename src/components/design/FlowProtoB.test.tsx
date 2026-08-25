@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { childStore } from './childStore'
 import { doseStore } from './doseStore'
 import { FlowProtoB } from './FlowProtoB'
+import { savePanicPref } from './panicPref'
 import { ImportGate } from './share/ImportGate'
 import { encodeShare } from './share/encoder'
 import type { SharePayload } from './share/types'
@@ -11,6 +12,7 @@ import type { SharePayload } from './share/types'
 beforeEach(() => {
   localStorage.clear()
   doseStore.clear()
+  savePanicPref('on')
   window.history.pushState({}, '', '/')
   childStore.setState({
     children: [
@@ -175,5 +177,23 @@ describe('FlowProtoB treatment episode', () => {
     await user.click(screen.getByRole('button', { name: /urm/i }))
 
     expect(screen.getByRole('heading', { name: /Panadol/i })).toBeInTheDocument()
+  })
+})
+
+describe('FlowProtoB calm program', () => {
+  it('shows Program as home when panic is off', () => {
+    savePanicPref('off')
+    render(<FlowProtoB />)
+
+    expect(screen.getByText('Program')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /tratament febră/i })).toBeInTheDocument()
+  })
+
+  it('opens Program from the night home', async () => {
+    const user = userEvent.setup()
+    render(<FlowProtoB />)
+
+    await user.click(screen.getByRole('button', { name: /^program$/i }))
+    expect(screen.getByText('Program')).toBeInTheDocument()
   })
 })

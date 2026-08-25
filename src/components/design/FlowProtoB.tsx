@@ -4,6 +4,7 @@ import type { Child, Medication } from '../../types'
 import { ChildrenScreen } from './ChildrenScreen'
 import { HomeB } from './HomeB'
 import { PlanCard } from './PlanCard'
+import { ProgramScreen } from './ProgramScreen'
 import { Step1 } from './Step1'
 import { Step2, type Step2Value } from './Step2'
 import { StatusBar } from './StatusBar'
@@ -11,16 +12,13 @@ import { activeChild, childStore, useChildren } from './childStore'
 import { doseStore } from './doseStore'
 import { MEDICATIONS_CHANGED_EVENT, loadMedications, saveMedications } from './medicineStorage'
 import { nextPlannedDose } from './nextPlannedDose'
+import { usePanicPref } from './usePanicPref'
 
-type Page = 'home' | 's1' | 's2' | 'done' | 'children' | 'medicines'
+type Page = 'home' | 's1' | 's2' | 'done' | 'children' | 'medicines' | 'program'
 
 /**
- * Fever episode:
- *   start → Step 1 (temperature) → Step 2 (history) → Plan card
- *   continue → Plan card from Home when a dose exists in the last 24h
- *
- * The active child's `temp` lives in the global child store, so HomeB
- * and Step1 stay in sync when either updates.
+ * Calm home is Program (24h schedule). Night/panic home is the fever clock.
+ * Fever episode: start wizard or continue from last dose within 24h.
  */
 export function FlowProtoB() {
   const [page, setPage] = useState<Page>('home')
@@ -31,6 +29,7 @@ export function FlowProtoB() {
   const child = activeChild(state)
   const temp = child.temp ?? 37.0
   const setTemp = (v: number) => childStore.patchActive({ temp: v })
+  const { pref: panicPref, setPref: setPanicPref, panic } = usePanicPref()
 
   const goHome = () => setPage('home')
 
@@ -81,6 +80,7 @@ export function FlowProtoB() {
       <ChildrenScreen
         onBack={() => setPage('home')}
         onMedicines={() => setPage('medicines')}
+        onProgram={() => setPage('program')}
         medications={medications}
       />
     )
@@ -131,8 +131,27 @@ export function FlowProtoB() {
         </div>
       </div>
     )
+  if (page === 'program' || (page === 'home' && !panic))
+    return (
+      <ProgramScreen
+        medications={medications}
+        onFever={startFromHome}
+        onMenu={() => setPage('children')}
+        onBack={page === 'program' && panic ? () => setPage('home') : undefined}
+        panicPref={panicPref}
+        onPanicPref={setPanicPref}
+      />
+    )
   if (page === 'home')
-    return <HomeB onStart={startFromHome} onMenu={() => setPage('children')} />
+    return (
+      <HomeB
+        onStart={startFromHome}
+        onMenu={() => setPage('children')}
+        onProgram={() => setPage('program')}
+        panicPref={panicPref}
+        onPanicPref={setPanicPref}
+      />
+    )
   if (page === 's1')
     return (
       <Step1 value={temp} onChange={setTemp} onBack={goHome} onNext={() => setPage('s2')} />

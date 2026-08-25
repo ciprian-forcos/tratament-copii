@@ -97,11 +97,12 @@ Plans:
 
 ## V2 Backlog (not planned, just remembered)
 
-- **Panic mode**: manual toggle + auto-on after 20:00 device time
-  (`new Date().getHours() >= 20`). State is local-only. Auto-switch is
-  configurable. Toggle is NOT included in share URL state.
+- [x] **Panic mode**: Calm / Auto / Noapte. Auto-on after 20:00. Local-only,
+  not in the share URL. Calm home is Program; night home is the fever clock.
+- [x] **Vitamin/cough-syrup daily program**: 24h Program screen with schedule
+  rules, start time, and mark-administered (via `doseStore`).
+- [x] **Retroactive dose entry from the timeline**: Program checkboxes toggle
+  administered records on/off.
 - Tier 2 share: realtime family session via backend.
 - Capacitor/React Native wrapper.
-- Retroactive dose entry from the timeline.
-- Vitamin/cough-syrup daily program.
 - Notifications / reminders.

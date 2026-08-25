@@ -55,6 +55,17 @@ describe('doseStore', () => {
     expect(filtered[0].medicationId).toBe('panadol')
   })
 
+  it('unrecord() removes the matching scheduled dose', () => {
+    doseStore.record({
+      childId: 'child-1',
+      medicationId: 'nurofen',
+      scheduledAt: '2026-05-27T10:00:00.000Z',
+      administeredAt: '2026-05-27T10:05:00.000Z',
+    })
+    doseStore.unrecord('child-1', 'nurofen', '2026-05-27T10:00:00.000Z')
+    expect(doseStore.list()).toHaveLength(0)
+  })
+
   it('records persist across reload (localStorage)', () => {
     doseStore.record({
       childId: 'child-1',

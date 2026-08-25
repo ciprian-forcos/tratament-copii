@@ -8,7 +8,8 @@ graph surface.
 # Project State
 
 * [Current repository state](process/repo-branch-state.md) - branch topology and the source of truth for latest implementation.
-* [V1 Phase 08 Treatment Flow](process/v1-phase-08-treatment-flow.md) - current implementation phase: ongoing fever episode from Home.
+* [V2 Phase 01 Program And Panic](process/v2-phase-01-program-and-panic.md) - current: 24h program + calm/night home.
+* [V1 Phase 08 Treatment Flow](process/v1-phase-08-treatment-flow.md) - ongoing fever episode from Home.
 * [V1 Phase 07 Home Next Dose](process/v1-phase-07-home-next-dose.md) - Home countdown from recorded history.
 * [Phase 6 hardening bugs](process/phase6-hardening-bugs.md) - QA findings imported from the newer planning branch.
 * [V1 Phase 06 Hardening](process/v1-phase-06-hardening.md) - completed hardening phase mapped from individual bug nodes.
@@ -72,6 +73,7 @@ graph surface.
 * [Share sheet](ui/share-sheet.md) - URL export/import mental model.
 * [Import gate sheets](ui/import-gate-sheets.md) - share URL import confirm/error sheets.
 * [Medicines page](ui/medicines-page.md) - restored `MedicamenteTab` page.
+* [Program screen](ui/program-screen.md) - 24h treatment schedule and rules.
 
 # Feature Graph
 

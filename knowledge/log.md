@@ -2,6 +2,9 @@
 
 ## 2026-08-25
 
+* **V2 Program + panic**: Calm home is the 24h Program (schedule, mark
+  administered, rules). Night home (`Auto` after 20:00, or `Noapte`) is the
+  fever clock. Copii can toggle enabled medicines. Panic pref is local-only.
 * **Phase 08**: Fever treatment is now an episode. Home continues to the plan
   card while a dose exists in the last 24h. PlanCard uses stored history,
   persists a Step 2 last dose, and offers `Voi aștepta` when the next dose is

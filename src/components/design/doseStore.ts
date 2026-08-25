@@ -61,6 +61,15 @@ export const doseStore = {
     return result
   },
 
+  unrecord(childId: string, medicationId: string, scheduledAt: string) {
+    doses = doses.filter(
+      (d) =>
+        !(d.childId === childId && d.medicationId === medicationId && d.scheduledAt === scheduledAt),
+    )
+    saveToStorage()
+    notify()
+  },
+
   clear() {
     doses = []
     localStorage.removeItem(STORAGE_KEY)

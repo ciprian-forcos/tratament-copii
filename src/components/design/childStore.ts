@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
+import { DEFAULT_MEDICATIONS } from '../../data/medications'
 import type { Child } from '../../types'
+
+const DEFAULT_ENABLED = DEFAULT_MEDICATIONS.map((m) => m.id)
 
 /**
  * Replaces the design's window.childStore: a singleton, reactive,
@@ -34,7 +37,7 @@ function loadInitial(): ChildState {
         months: 4,
         initial: 'M',
         temp: 41.0,
-        enabledMedications: [],
+        enabledMedications: DEFAULT_ENABLED,
       }
       return { children: [seed], activeId: seed.id }
     }
@@ -92,7 +95,7 @@ export const childStore = {
       months: 0,
       weight: 9,
       initial: '?',
-      enabledMedications: [],
+      enabledMedications: DEFAULT_ENABLED,
     }
     state = { ...state, activeId: id, children: [...state.children, fresh] }
     emit()

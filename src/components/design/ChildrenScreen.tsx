@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ChildEditor } from './ChildEditor'
 import { StatusBar } from './StatusBar'
 import { activeChild, ageWords, childStore, useChildren } from './childStore'
+import { enabledMedicationIds, toggleEnabledMedication } from './enabledMeds'
 import { loadMedications } from './medicineStorage'
 import { ShareSheet } from './share/ShareSheet'
 import type { Medication } from '../../types'
@@ -9,12 +10,14 @@ import type { Medication } from '../../types'
 export interface ChildrenScreenProps {
   onBack: () => void
   onMedicines?: () => void
+  onProgram?: () => void
   medications?: Medication[]
 }
 
 export function ChildrenScreen({
   onBack,
   onMedicines,
+  onProgram,
   medications = loadMedications(),
 }: ChildrenScreenProps) {
   const state = useChildren()
@@ -27,9 +30,7 @@ export function ChildrenScreen({
     setEditorOpen(true)
   }
 
-  const enabledMeds = medications.filter((m) =>
-    active.enabledMedications.includes(m.id),
-  )
+  const enabledIds = enabledMedicationIds(active, medications)
 
   return (
     <div className="phone" style={{ position: 'relative' }}>
@@ -209,10 +210,11 @@ export function ChildrenScreen({
         <div className="eyebrow" style={{ marginBottom: 8 }}>
           medicamente active pentru {active.name}
         </div>
-        {enabledMeds.length === 0 ? (
+        {enabledIds.length === 0 && (
           <div
             style={{
               padding: '12px 14px',
+              marginBottom: 8,
               borderRadius: 12,
               border: '1.5px dashed var(--line)',
               color: 'var(--ink-3)',
@@ -222,34 +224,41 @@ export function ChildrenScreen({
           >
             niciun medicament activ
           </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            {enabledMeds.map((med) => (
-              <div
+        )}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {medications.map((med) => {
+            const on = enabledIds.includes(med.id)
+            return (
+              <button
                 key={med.id}
+                type="button"
+                aria-pressed={on}
+                onClick={() =>
+                  childStore.patchActive({
+                    enabledMedications: toggleEnabledMedication(active, med.id),
+                  })
+                }
                 style={{
                   padding: '10px 14px',
                   borderRadius: 12,
-                  border: '1.5px solid var(--line)',
-                  background: 'var(--bg-2)',
+                  border: `1.5px solid ${on ? 'var(--accent)' : 'var(--line)'}`,
+                  background: on ? 'rgba(245,177,74,0.08)' : 'var(--bg-2)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
+                  cursor: 'pointer',
+                  color: 'var(--ink)',
+                  textAlign: 'left',
                 }}
               >
-                <span style={{ fontSize: 14, color: 'var(--ink)', fontWeight: 600 }}>
-                  {med.name}
+                <span style={{ fontSize: 14, fontWeight: 600 }}>{med.name}</span>
+                <span className="mono" style={{ fontSize: 11, color: on ? 'var(--accent)' : 'var(--ink-3)' }}>
+                  {on ? 'inclus' : 'oprit'}
                 </span>
-                <span
-                  className="mono"
-                  style={{ fontSize: 11, color: 'var(--ink-3)' }}
-                >
-                  {med.doseType}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {/* Footer */}
@@ -277,6 +286,23 @@ export function ChildrenScreen({
         >
           + Adaugă copil
         </button>
+        {onProgram && (
+          <button
+            onClick={onProgram}
+            style={{
+              padding: '13px',
+              borderRadius: 14,
+              border: '1.5px solid var(--line)',
+              background: 'var(--bg-3)',
+              color: 'var(--ink-2)',
+              fontSize: 15,
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            Program
+          </button>
+        )}
         {onMedicines && (
           <button
             onClick={onMedicines}
