@@ -21,6 +21,7 @@ Additive keys:
 * `tratament-copii-start-time`
 * `tratament-copii-schedule-rules`
 * `tratament-copii-panic-pref` (local only, never in share URLs)
+* `tratament-copii-reminders-enabled` (local only)
 
 # Data Safety Rule
 

@@ -5,6 +5,7 @@ import { activeChild, ageWords, childStore, useChildren } from './childStore'
 import { enabledMedicationIds, toggleEnabledMedication } from './enabledMeds'
 import { loadMedications } from './medicineStorage'
 import { ShareSheet } from './share/ShareSheet'
+import { TabBar, type TabId } from './TabBar'
 import type { Medication } from '../../types'
 
 export interface ChildrenScreenProps {
@@ -12,6 +13,8 @@ export interface ChildrenScreenProps {
   onMedicines?: () => void
   onProgram?: () => void
   medications?: Medication[]
+  tab?: TabId
+  onTab?: (id: TabId) => void
 }
 
 export function ChildrenScreen({
@@ -19,6 +22,8 @@ export function ChildrenScreen({
   onMedicines,
   onProgram,
   medications = loadMedications(),
+  tab,
+  onTab,
 }: ChildrenScreenProps) {
   const state = useChildren()
   const active = activeChild(state)
@@ -286,7 +291,7 @@ export function ChildrenScreen({
         >
           + Adaugă copil
         </button>
-        {onProgram && (
+        {onProgram && !onTab && (
           <button
             onClick={onProgram}
             style={{
@@ -341,6 +346,7 @@ export function ChildrenScreen({
 
       {/* ShareSheet */}
       <ShareSheet open={shareOpen} onClose={() => setShareOpen(false)} />
+      {onTab && tab && <TabBar current={tab} onSelect={onTab} />}
     </div>
   )
 }

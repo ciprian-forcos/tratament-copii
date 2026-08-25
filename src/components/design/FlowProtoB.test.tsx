@@ -112,8 +112,7 @@ describe('FlowProtoB ≡ menu routing', () => {
     const menuBtn = screen.getByRole('button', { name: /meniu/i })
     await user.click(menuBtn)
 
-    // ChildrenScreen should be visible
-    expect(screen.getByText('Copii')).toBeInTheDocument()
+    expect(screen.getByText('gestionează')).toBeInTheDocument()
   })
 
   it('tapping Înapoi from ChildrenScreen returns to HomeB', async () => {
@@ -123,7 +122,7 @@ describe('FlowProtoB ≡ menu routing', () => {
     // Navigate to ChildrenScreen
     const menuBtn = screen.getByRole('button', { name: /meniu/i })
     await user.click(menuBtn)
-    expect(screen.getByText('Copii')).toBeInTheDocument()
+    expect(screen.getByText('gestionează')).toBeInTheDocument()
 
     // Tap Înapoi
     const backBtn = screen.getByRole('button', { name: /^Înapoi$/i })
@@ -185,7 +184,6 @@ describe('FlowProtoB calm program', () => {
     savePanicPref('off')
     render(<FlowProtoB />)
 
-    expect(screen.getByText('Program')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /tratament febră/i })).toBeInTheDocument()
   })
 
@@ -194,6 +192,6 @@ describe('FlowProtoB calm program', () => {
     render(<FlowProtoB />)
 
     await user.click(screen.getByRole('button', { name: /^program$/i }))
-    expect(screen.getByText('Program')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /tratament febră/i })).toBeInTheDocument()
   })
 })

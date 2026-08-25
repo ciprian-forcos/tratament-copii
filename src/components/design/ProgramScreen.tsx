@@ -9,6 +9,8 @@ import { doseStore, useDoses } from './doseStore'
 import { enabledMedicationIds } from './enabledMeds'
 import { PanicToggle } from './PanicToggle'
 import type { PanicPref } from './panicPref'
+import { RemindersButton } from './RemindersButton'
+import { TabBar, type TabId } from './TabBar'
 import {
   describeRule,
   emptyRuleForm,
@@ -42,6 +44,11 @@ export function ProgramScreen({
   onBack,
   panicPref,
   onPanicPref,
+  tab,
+  onTab,
+  remindersEnabled,
+  onRemindersEnable,
+  onRemindersDisable,
 }: {
   medications: Medication[]
   onFever: () => void
@@ -49,6 +56,11 @@ export function ProgramScreen({
   onBack?: () => void
   panicPref: PanicPref
   onPanicPref: (pref: PanicPref) => void
+  tab?: TabId
+  onTab?: (id: TabId) => void
+  remindersEnabled?: boolean
+  onRemindersEnable?: () => void
+  onRemindersDisable?: () => void
 }) {
   const state = useChildren()
   const child = activeChild(state)
@@ -165,6 +177,13 @@ export function ProgramScreen({
           </div>
           <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--ink)' }}>Program</div>
         </div>
+        {onRemindersEnable && onRemindersDisable && (
+          <RemindersButton
+            enabled={Boolean(remindersEnabled)}
+            onEnable={onRemindersEnable}
+            onDisable={onRemindersDisable}
+          />
+        )}
         <PanicToggle pref={panicPref} onChange={onPanicPref} />
       </div>
 
@@ -379,6 +398,7 @@ export function ProgramScreen({
           Tratament febră →
         </button>
       </div>
+      {onTab && tab && <TabBar current={tab} onSelect={onTab} />}
 
       {editing !== undefined && (
         <RuleSheet

@@ -2,6 +2,8 @@
 
 ## 2026-08-25
 
+* **Reminders + tabs + height**: Local next-dose alerts (`Amintește-mi`),
+  persistent Program/Febră/Copii/Meds tab bar, optional child height.
 * **V2 Program + panic**: Calm home is the 24h Program (schedule, mark
   administered, rules). Night home (`Auto` after 20:00, or `Noapte`) is the
   fever clock. Copii can toggle enabled medicines. Panic pref is local-only.

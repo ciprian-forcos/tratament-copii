@@ -10,6 +10,8 @@ import { diffHHMM, fmtHHMM } from './dosePlan'
 import { nextPlannedDose } from './nextPlannedDose'
 import { PanicToggle } from './PanicToggle'
 import type { PanicPref } from './panicPref'
+import { RemindersButton } from './RemindersButton'
+import { TabBar, type TabId } from './TabBar'
 import { useNightTimeline } from './useNightTimeline'
 
 type BeforeInstallPromptEvent = Event & {
@@ -23,11 +25,28 @@ interface Props {
   onProgram?: () => void
   panicPref?: PanicPref
   onPanicPref?: (pref: PanicPref) => void
+  tab?: TabId
+  onTab?: (id: TabId) => void
+  remindersEnabled?: boolean
+  onRemindersEnable?: () => void
+  onRemindersDisable?: () => void
   /** Optional override. When omitted, Home derives the next dose from recorded history. */
   nextDose?: { at: Date; med: string } | null
 }
 
-export function HomeB({ onStart, onMenu, onProgram, panicPref, onPanicPref, nextDose }: Props) {
+export function HomeB({
+  onStart,
+  onMenu,
+  onProgram,
+  panicPref,
+  onPanicPref,
+  nextDose,
+  tab,
+  onTab,
+  remindersEnabled,
+  onRemindersEnable,
+  onRemindersDisable,
+}: Props) {
   const state = useChildren()
   const child = activeChild(state)
   const doses = useDoses()
@@ -104,7 +123,14 @@ export function HomeB({ onStart, onMenu, onProgram, panicPref, onPanicPref, next
           onProfileClick={() => setChildOpen(true)}
           onTemperatureClick={openPicker}
         />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          {onRemindersEnable && onRemindersDisable && (
+            <RemindersButton
+              enabled={Boolean(remindersEnabled)}
+              onEnable={onRemindersEnable}
+              onDisable={onRemindersDisable}
+            />
+          )}
           {panicPref && onPanicPref && <PanicToggle pref={panicPref} onChange={onPanicPref} />}
           <MenuBtn onClick={onMenu} />
         </div>
@@ -253,7 +279,7 @@ export function HomeB({ onStart, onMenu, onProgram, panicPref, onPanicPref, next
             )}
           </div>
         )}
-        {onProgram && (
+        {onProgram && !onTab && (
           <button
             type="button"
             onClick={onProgram}
@@ -275,6 +301,7 @@ export function HomeB({ onStart, onMenu, onProgram, panicPref, onPanicPref, next
           {next ? `Următoarea doză · ${fmtHHMM(next.at)} →` : 'Începe tratamentul'}
         </button>
       </div>
+      {onTab && tab && <TabBar current={tab} onSelect={onTab} />}
     </div>
   )
 }
