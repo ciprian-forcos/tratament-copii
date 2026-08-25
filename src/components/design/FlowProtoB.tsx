@@ -128,7 +128,6 @@ export function FlowProtoB() {
       step2={s2}
       onBack={() => setPage('s2')}
       onDone={() => {
-        // TODO: persist administered dose here once timeline is real.
         goHome()
       }}
     />

@@ -5,7 +5,9 @@ import { ChildPill, MenuBtn } from './ChildPill'
 import { StatusBar } from './StatusBar'
 import { TempWheel } from './TempWheel'
 import { activeChild, childStore, useChildren } from './childStore'
+import { useDoses } from './doseStore'
 import { diffHHMM, fmtHHMM } from './dosePlan'
+import { nextPlannedDose } from './nextPlannedDose'
 import { useNightTimeline } from './useNightTimeline'
 
 type BeforeInstallPromptEvent = Event & {
@@ -16,13 +18,14 @@ interface Props {
   onStart: () => void
   /** Called when the ≡ menu button is tapped. */
   onMenu?: () => void
-  /** When the next planned dose should land. Omitted before treatment exists. */
+  /** Optional override. When omitted, Home derives the next dose from recorded history. */
   nextDose?: { at: Date; med: string } | null
 }
 
 export function HomeB({ onStart, onMenu, nextDose }: Props) {
   const state = useChildren()
   const child = activeChild(state)
+  const doses = useDoses()
   const temp = child.temp ?? 0
   const [pickerOpen, setPickerOpen] = useState(false)
   const [childOpen, setChildOpen] = useState(false)
@@ -65,7 +68,7 @@ export function HomeB({ onStart, onMenu, nextDose }: Props) {
   }
 
   const now = new Date()
-  const next = nextDose ?? null
+  const next = nextDose !== undefined ? nextDose : nextPlannedDose({ child, now, doses })
   const nightDoses = useNightTimeline(child.id, now)
   type Mark = { at: Date; med: string; next?: boolean }
   const marks: Mark[] = [
@@ -102,7 +105,13 @@ export function HomeB({ onStart, onMenu, nextDose }: Props) {
       {next && (
         <div style={{ padding: '18px 18px 0', textAlign: 'center' }}>
           <div className="hand" style={{ fontSize: 26, color: 'var(--accent-2)' }}>
-            mai sunt <span className="underline-hand">{diffHHMM(now, next.at)}</span>
+            {next.at.getTime() > now.getTime() ? (
+              <>
+                mai sunt <span className="underline-hand">{diffHHMM(now, next.at)}</span>
+              </>
+            ) : (
+              <>dă {next.med} acum</>
+            )}
           </div>
         </div>
       )}
