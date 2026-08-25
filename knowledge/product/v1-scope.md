@@ -19,8 +19,10 @@ Cloud sync, accounts, live multi-device state, reminders, notifications, and
 broad vitamin/cough-syrup program management are outside V1.
 
 Phase 06 exception: the existing `MedicamenteTab` medicine editor is restored so
-parents can add/edit medicines and verify default antipyretics. This is not a
-new broad treatment-program surface.
+parents can add/edit medicines and verify default antipyretics.
+
+V2 Program restores the 24h schedule (including vitamins and syrups) as the
+calm-mode home. The 3 AM panic flow remains the night surface.
 
 # Why This Matters
 

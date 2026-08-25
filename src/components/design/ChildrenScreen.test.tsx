@@ -50,8 +50,8 @@ describe('ChildrenScreen', () => {
   it('marks the active child distinctly (aria-current or "activ" text)', () => {
     render(<ChildrenScreen onBack={vi.fn()} />)
     // Active child row should have "activ" marker or aria-current
-    const activMarker = screen.queryByText('activ') ?? document.querySelector('[aria-current="true"]')
-    expect(activMarker).toBeTruthy()
+    expect(document.querySelector('[aria-current="true"]')).toBeTruthy()
+    expect(screen.getByText('activ')).toBeInTheDocument()
   })
 
   it('does not render BSA or estimated height for children', () => {
@@ -142,6 +142,23 @@ describe('ChildrenScreen', () => {
     await user.click(shareBtn)
 
     expect(screen.getByText(/trimite toată aplicația/i)).toBeInTheDocument()
+  })
+
+  it('toggles a medicine on the active child', async () => {
+    const user = userEvent.setup()
+    render(<ChildrenScreen onBack={vi.fn()} />)
+
+    await user.click(screen.getByRole('button', { name: /Nurofen/i }))
+    expect(childStore.get().children[0].enabledMedications).not.toContain('nurofen')
+  })
+
+  it('tapping "Program" uses the program callback', async () => {
+    const user = userEvent.setup()
+    const onProgram = vi.fn()
+    render(<ChildrenScreen onBack={vi.fn()} onProgram={onProgram} />)
+
+    await user.click(screen.getByRole('button', { name: /^program$/i }))
+    expect(onProgram).toHaveBeenCalledOnce()
   })
 
   it('tapping "Medicamente" opens the restored medicines path', async () => {

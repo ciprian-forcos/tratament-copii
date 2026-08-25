@@ -14,11 +14,14 @@ self-contained enough to hand to a fresh subagent.
 ## Phases
 
 - [x] **Phase 0: Baseline** — commit design B + install Vitest + RTL + smoke test
-- [ ] **Phase 1: Dose records** — persist "Am dat doza" to localStorage
-- [ ] **Phase 2: Night timeline** — HomeB reads from real records
-- [ ] **Phase 3: Schedule engine** — `buildPlan()` uses `scheduleEngine.ts`
-- [ ] **Phase 4: Children screen** — ≡ menu opens management view
-- [ ] **Phase 5: Share Tier 1** — URL-encoded state, per-child or whole
+- [x] **Phase 1: Dose records** — persist "Am dat doza" to localStorage
+- [x] **Phase 2: Night timeline** — HomeB reads from real records
+- [x] **Phase 3: Schedule engine** — `buildPlan()` uses `scheduleEngine.ts`
+- [x] **Phase 4: Children screen** — ≡ menu opens management view
+- [x] **Phase 5: Share Tier 1** — URL-encoded state, per-child or whole
+- [x] **Phase 6: Hardening** — 12 QA bugs
+- [x] **Phase 7–8: Episode** — Home next dose and continue-from-history
+- [x] **V2 Program + panic + reminders** — 24h schedule, calm/night home, local alerts
 
 ## Phase Details
 
@@ -89,19 +92,21 @@ Plans:
 | Phase | Plans Complete | Status      | Completed |
 |-------|----------------|-------------|-----------|
 | 0. Baseline           | 2/2 | Complete    | 2026-05-27 |
-| 1. Dose records       | 0/1 | Not started | - |
-| 2. Night timeline     | 0/1 | Not started | - |
-| 3. Schedule engine    | 0/2 | Not started | - |
-| 4. Children screen    | 0/1 | Not started | - |
-| 5. Share Tier 1       | 0/3 | Not started | - |
+| 1. Dose records       | 1/1 | Complete    | 2026-06-07 |
+| 2. Night timeline     | 1/1 | Complete    | 2026-06-07 |
+| 3. Schedule engine    | 2/2 | Complete    | 2026-06-07 |
+| 4. Children screen    | 1/1 | Complete    | 2026-06-07 |
+| 5. Share Tier 1       | 3/3 | Complete    | 2026-06-07 |
 
 ## V2 Backlog (not planned, just remembered)
 
-- **Panic mode**: manual toggle + auto-on after 20:00 device time
-  (`new Date().getHours() >= 20`). State is local-only. Auto-switch is
-  configurable. Toggle is NOT included in share URL state.
-- Tier 2 share: realtime family session via backend.
-- Capacitor/React Native wrapper.
-- Retroactive dose entry from the timeline.
-- Vitamin/cough-syrup daily program.
-- Notifications / reminders.
+- [x] **Panic mode**: Calm / Auto / Noapte. Auto-on after 20:00. Local-only,
+  not in the share URL. Calm home is Program; night home is the fever clock.
+- [x] **Vitamin/cough-syrup daily program**: 24h Program screen with schedule
+  rules, start time, and mark-administered (via `doseStore`).
+- [x] **Retroactive dose entry from the timeline**: Program checkboxes toggle
+  administered records on/off.
+- [x] **Notifications / reminders**: local next-dose alerts while the app is
+  open (Amintește-mi). Background push needs a server; not included.
+- Tier 2 share: realtime family session via backend (needs a server).
+- Capacitor/React Native wrapper (PWA is the shipped app).

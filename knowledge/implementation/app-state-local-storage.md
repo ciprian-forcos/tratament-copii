@@ -15,9 +15,13 @@ The product documentation marks these keys as protected:
 * `tratament-copii-active-child`
 * `tratament-copii-medications`
 
-Dose history uses an additive key:
+Additive keys:
 
 * `tratament-copii-administered-doses`
+* `tratament-copii-start-time`
+* `tratament-copii-schedule-rules`
+* `tratament-copii-panic-pref` (local only, never in share URLs)
+* `tratament-copii-reminders-enabled` (local only)
 
 # Data Safety Rule
 

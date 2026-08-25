@@ -200,6 +200,19 @@ export function ChildEditor({ open, onClose }: Props) {
           format={(v) => `${v.toFixed(1)} kg`}
         />
 
+        <div className="field-label" style={{ marginTop: 12 }}>
+          înălțime (opțional)
+        </div>
+        <Stepper
+          label="centimetri"
+          value={active.height ?? 0}
+          min={0}
+          max={180}
+          step={1}
+          onChange={(v) => childStore.patchActive({ height: v || undefined })}
+          format={(v) => (v === 0 ? 'necompletat' : `${v} cm`)}
+        />
+
         <div
           style={{
             marginTop: 18,

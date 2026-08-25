@@ -1,5 +1,21 @@
 # Knowledge Bundle Log
 
+## 2026-08-25
+
+* **Reminders + tabs + height**: Local next-dose alerts (`Amintește-mi`),
+  persistent Program/Febră/Copii/Meds tab bar, optional child height.
+* **V2 Program + panic**: Calm home is the 24h Program (schedule, mark
+  administered, rules). Night home (`Auto` after 20:00, or `Noapte`) is the
+  fever clock. Copii can toggle enabled medicines. Panic pref is local-only.
+* **Phase 08**: Fever treatment is now an episode. Home continues to the plan
+  card while a dose exists in the last 24h. PlanCard uses stored history,
+  persists a Step 2 last dose, and offers `Voi aștepta` when the next dose is
+  still deferred.
+* **Phase 07**: Home now derives the next planned dose from recorded history
+  via `nextPlannedDose` + `buildPlan()`. No countdown until the active child
+  has a dose; after Nurofen the parent sees Panadol at +4h (and the reverse).
+  When the floor has elapsed, Home says `dă {med} acum` instead of `mai sunt 0m`.
+
 ## 2026-06-15
 
 * **Phase 06 Lane D**: Added the Home PWA install affordance, registered/copied the service worker for Pages builds, restored the `MedicamenteTab` route from Children, centralized medicine persistence under `tratament-copii-medications`, and verified default antipyretics in the restored path.

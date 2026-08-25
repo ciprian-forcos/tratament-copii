@@ -5,7 +5,13 @@ import { ChildPill, MenuBtn } from './ChildPill'
 import { StatusBar } from './StatusBar'
 import { TempWheel } from './TempWheel'
 import { activeChild, childStore, useChildren } from './childStore'
+import { useDoses } from './doseStore'
 import { diffHHMM, fmtHHMM } from './dosePlan'
+import { nextPlannedDose } from './nextPlannedDose'
+import { PanicToggle } from './PanicToggle'
+import type { PanicPref } from './panicPref'
+import { RemindersButton } from './RemindersButton'
+import { TabBar, type TabId } from './TabBar'
 import { useNightTimeline } from './useNightTimeline'
 
 type BeforeInstallPromptEvent = Event & {
@@ -16,13 +22,34 @@ interface Props {
   onStart: () => void
   /** Called when the ≡ menu button is tapped. */
   onMenu?: () => void
-  /** When the next planned dose should land. Omitted before treatment exists. */
+  onProgram?: () => void
+  panicPref?: PanicPref
+  onPanicPref?: (pref: PanicPref) => void
+  tab?: TabId
+  onTab?: (id: TabId) => void
+  remindersEnabled?: boolean
+  onRemindersEnable?: () => void
+  onRemindersDisable?: () => void
+  /** Optional override. When omitted, Home derives the next dose from recorded history. */
   nextDose?: { at: Date; med: string } | null
 }
 
-export function HomeB({ onStart, onMenu, nextDose }: Props) {
+export function HomeB({
+  onStart,
+  onMenu,
+  onProgram,
+  panicPref,
+  onPanicPref,
+  nextDose,
+  tab,
+  onTab,
+  remindersEnabled,
+  onRemindersEnable,
+  onRemindersDisable,
+}: Props) {
   const state = useChildren()
   const child = activeChild(state)
+  const doses = useDoses()
   const temp = child.temp ?? 0
   const [pickerOpen, setPickerOpen] = useState(false)
   const [childOpen, setChildOpen] = useState(false)
@@ -65,7 +92,7 @@ export function HomeB({ onStart, onMenu, nextDose }: Props) {
   }
 
   const now = new Date()
-  const next = nextDose ?? null
+  const next = nextDose !== undefined ? nextDose : nextPlannedDose({ child, now, doses })
   const nightDoses = useNightTimeline(child.id, now)
   type Mark = { at: Date; med: string; next?: boolean }
   const marks: Mark[] = [
@@ -96,13 +123,29 @@ export function HomeB({ onStart, onMenu, nextDose }: Props) {
           onProfileClick={() => setChildOpen(true)}
           onTemperatureClick={openPicker}
         />
-        <MenuBtn onClick={onMenu} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          {onRemindersEnable && onRemindersDisable && (
+            <RemindersButton
+              enabled={Boolean(remindersEnabled)}
+              onEnable={onRemindersEnable}
+              onDisable={onRemindersDisable}
+            />
+          )}
+          {panicPref && onPanicPref && <PanicToggle pref={panicPref} onChange={onPanicPref} />}
+          <MenuBtn onClick={onMenu} />
+        </div>
       </div>
 
       {next && (
         <div style={{ padding: '18px 18px 0', textAlign: 'center' }}>
           <div className="hand" style={{ fontSize: 26, color: 'var(--accent-2)' }}>
-            mai sunt <span className="underline-hand">{diffHHMM(now, next.at)}</span>
+            {next.at.getTime() > now.getTime() ? (
+              <>
+                mai sunt <span className="underline-hand">{diffHHMM(now, next.at)}</span>
+              </>
+            ) : (
+              <>dă {next.med} acum</>
+            )}
           </div>
         </div>
       )}
@@ -236,10 +279,29 @@ export function HomeB({ onStart, onMenu, nextDose }: Props) {
             )}
           </div>
         )}
+        {onProgram && !onTab && (
+          <button
+            type="button"
+            onClick={onProgram}
+            style={{
+              padding: '11px 13px',
+              borderRadius: 14,
+              border: '1.5px solid var(--line)',
+              background: 'var(--bg-3)',
+              color: 'var(--ink-2)',
+              fontSize: 14,
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            Program
+          </button>
+        )}
         <button className="btn-primary btn-wait" onClick={onStart}>
           {next ? `Următoarea doză · ${fmtHHMM(next.at)} →` : 'Începe tratamentul'}
         </button>
       </div>
+      {onTab && tab && <TabBar current={tab} onSelect={onTab} />}
     </div>
   )
 }

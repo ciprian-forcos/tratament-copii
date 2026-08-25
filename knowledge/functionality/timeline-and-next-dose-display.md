@@ -19,17 +19,22 @@ timestamp: 2026-06-15T23:58:00+03:00
 
 * `HomeB`
 * `useNightTimeline`
+* `nextPlannedDose`
 * `anchorStrip`
 * `diffHHMM`
 * `fmtHHMM`
 
 # Current Behavior
 
-Home shows no fake next-dose countdown before treatment exists. When a real
-`nextDose` is provided, it renders the countdown, next marker, and next-dose CTA
-time. The timeline frames `acum` at the center of the strip.
+Home shows no fake next-dose countdown before treatment exists. After the
+active child has a recorded dose, `nextPlannedDose` feeds the latest history
+into `buildPlan()` and Home renders the countdown, next marker, and
+next-dose CTA time. If that time is already due, the copy is `dă {med} acum`
+instead of `mai sunt 0m`. The timeline frames `acum` at the center of the strip.
 
 # Citations
 
 * `src/components/design/HomeB.tsx`
 * `src/components/design/useNightTimeline.ts`
+* `src/components/design/nextPlannedDose.ts`
+* [V1 Phase 07 Home Next Dose](../process/v1-phase-07-home-next-dose.md)

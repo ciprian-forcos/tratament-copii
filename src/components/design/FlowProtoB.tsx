@@ -1,26 +1,32 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { MedicamenteTab } from '../MedicamenteTab'
 import type { Child, Medication } from '../../types'
 import { ChildrenScreen } from './ChildrenScreen'
 import { HomeB } from './HomeB'
 import { PlanCard } from './PlanCard'
+import { ProgramScreen } from './ProgramScreen'
 import { Step1 } from './Step1'
 import { Step2, type Step2Value } from './Step2'
 import { StatusBar } from './StatusBar'
 import { activeChild, childStore, useChildren } from './childStore'
+import { doseStore, useDoses } from './doseStore'
 import { MEDICATIONS_CHANGED_EVENT, loadMedications, saveMedications } from './medicineStorage'
+import { nextPlannedDose } from './nextPlannedDose'
+import { TabBar, type TabId } from './TabBar'
+import { useDoseReminder } from './useDoseReminder'
+import { isPanicActive, loadPanicPref } from './panicPref'
+import { usePanicPref } from './usePanicPref'
 
-type Page = 'home' | 's1' | 's2' | 'done' | 'children' | 'medicines'
+type Page = 'home' | 's1' | 's2' | 'done' | 'children' | 'medicines' | 'program'
 
 /**
- * Variant B end-to-end:
- *   HomeB → Step 1 (temperature) → Step 2 (first / last) → Plan card.
- *
- * The active child's `temp` lives in the global child store, so HomeB
- * and Step1 stay in sync when either updates.
+ * Calm home is Program (24h schedule). Night/panic home is the fever clock.
+ * Fever episode: start wizard or continue from last dose within 24h.
  */
 export function FlowProtoB() {
-  const [page, setPage] = useState<Page>('home')
+  const [page, setPage] = useState<Page>(() =>
+    isPanicActive(loadPanicPref(), new Date()) ? 'home' : 'program',
+  )
   const [s2, setS2] = useState<Step2Value>({ kind: 'first' })
   const [medications, setMedicationState] = useState<Medication[]>(loadMedications)
 
@@ -28,8 +34,49 @@ export function FlowProtoB() {
   const child = activeChild(state)
   const temp = child.temp ?? 37.0
   const setTemp = (v: number) => childStore.patchActive({ temp: v })
+  const { pref: panicPref, setPref: setPanicPref } = usePanicPref()
+  const doses = useDoses()
+  const nextFever = useMemo(
+    () => nextPlannedDose({ child, now: new Date(), doses }),
+    [child, doses],
+  )
+  const reminders = useDoseReminder(
+    nextFever
+      ? {
+          at: nextFever.at,
+          title: 'Tratament copii',
+          body: `Dă ${nextFever.med}`,
+        }
+      : null,
+  )
 
   const goHome = () => setPage('home')
+
+  function goTab(id: TabId) {
+    if (id === 'fever') setPage('home')
+    else if (id === 'program') setPage('program')
+    else if (id === 'children') setPage('children')
+    else setPage('medicines')
+  }
+
+  function inEpisode() {
+    return (
+      nextPlannedDose({
+        child,
+        now: new Date(),
+        doses: doseStore.list(),
+      }) != null
+    )
+  }
+
+  function startFromHome() {
+    if (inEpisode()) {
+      setPage('done')
+      return
+    }
+    setS2({ kind: 'first' })
+    setPage('s1')
+  }
 
   useEffect(() => {
     const reloadMedications = () => setMedicationState(loadMedications())
@@ -59,7 +106,10 @@ export function FlowProtoB() {
       <ChildrenScreen
         onBack={() => setPage('home')}
         onMedicines={() => setPage('medicines')}
+        onProgram={() => setPage('program')}
         medications={medications}
+        tab="children"
+        onTab={goTab}
       />
     )
   if (page === 'medicines')
@@ -107,9 +157,39 @@ export function FlowProtoB() {
             setChildren={setChildren}
           />
         </div>
+        <TabBar current="medicines" onSelect={goTab} />
       </div>
     )
-  if (page === 'home') return <HomeB onStart={() => setPage('s1')} onMenu={() => setPage('children')} />
+  if (page === 'program')
+    return (
+      <ProgramScreen
+        medications={medications}
+        onFever={startFromHome}
+        onMenu={() => setPage('children')}
+        panicPref={panicPref}
+        onPanicPref={setPanicPref}
+        tab="program"
+        onTab={goTab}
+        remindersEnabled={reminders.enabled}
+        onRemindersEnable={() => void reminders.enable()}
+        onRemindersDisable={reminders.disable}
+      />
+    )
+  if (page === 'home')
+    return (
+      <HomeB
+        onStart={startFromHome}
+        onMenu={() => setPage('children')}
+        onProgram={() => setPage('program')}
+        panicPref={panicPref}
+        onPanicPref={setPanicPref}
+        tab="fever"
+        onTab={goTab}
+        remindersEnabled={reminders.enabled}
+        onRemindersEnable={() => void reminders.enable()}
+        onRemindersDisable={reminders.disable}
+      />
+    )
   if (page === 's1')
     return (
       <Step1 value={temp} onChange={setTemp} onBack={goHome} onNext={() => setPage('s2')} />
@@ -126,11 +206,9 @@ export function FlowProtoB() {
   return (
     <PlanCard
       step2={s2}
-      onBack={() => setPage('s2')}
-      onDone={() => {
-        // TODO: persist administered dose here once timeline is real.
-        goHome()
-      }}
+      onBack={() => setPage(inEpisode() ? 'home' : 's2')}
+      onDone={goHome}
+      onWait={goHome}
     />
   )
 }

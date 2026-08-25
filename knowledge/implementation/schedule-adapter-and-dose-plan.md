@@ -18,6 +18,8 @@ given, and what amount appears in the [Plan card](../ui/plan-card.md).
 * `src/utils/scheduleEngine.ts`
 * `src/components/design/scheduleAdapter.ts`
 * `src/components/design/dosePlan.ts`
+* `src/components/design/nextPlannedDose.ts`
+* `src/components/design/episode.ts`
 
 # Phase 06 Lane A State
 
@@ -29,7 +31,9 @@ Lane A aligns the panic-flow treatment planner with
 * Cross-drug floor in `dosePlan.ts`: 4 hours.
 * Step 2 passes an absolute previous-dose datetime through `lastAt`.
 
-Home fallback countdown behavior is covered separately by Phase 06 Lane B.
+Home no longer uses a fake fallback countdown. Phase 07 derives the next
+dose from recorded history through `nextPlannedDose`, which reuses
+`buildPlan()` rather than a second timing policy.
 
 # Design Boundary
 
@@ -46,3 +50,5 @@ The module must keep [Dosage versus treatment plan](../medical/dosage-vs-treatme
 * `src/components/design/dosePlan.ts`
 * `src/components/design/dosePlan.test.ts`
 * `src/components/design/scheduleAdapter.test.ts`
+* `src/components/design/nextPlannedDose.ts`
+* `src/components/design/nextPlannedDose.test.ts`
