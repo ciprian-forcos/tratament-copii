@@ -166,11 +166,20 @@ describe('HomeB night timeline', () => {
     const marker = screen.getByTestId('now-marker')
     expect(marker).toHaveStyle({ left: '50%' })
     expect(marker).not.toHaveTextContent('▼')
-    expect(screen.getByTestId('now-dot')).toBeInTheDocument()
+    expect(screen.queryByTestId('now-dot')).not.toBeInTheDocument()
+
+    const cursor = screen.getByTestId('now-cursor')
+    expect(Number.parseFloat(cursor.style.width)).toBeLessThanOrEqual(2)
+    expect(Number.parseFloat(cursor.style.top)).toBeGreaterThanOrEqual(28)
+    expect(Number.parseFloat(cursor.style.height)).toBeLessThanOrEqual(20)
+    expect(Number.parseFloat(marker.style.zIndex || '0')).toBe(0)
 
     const label = screen.getByText('acum')
     expect(marker).toContainElement(label)
-    expect(Number.parseFloat(label.style.top)).toBeGreaterThanOrEqual(70)
+    expect(Number.parseFloat(label.style.top)).toBeGreaterThanOrEqual(82)
+    expect(
+      Number.parseFloat(cursor.style.top) + Number.parseFloat(cursor.style.height),
+    ).toBeLessThan(Number.parseFloat(label.style.top))
   })
 
   it('keeps acum below the timeline when a recent dose dot sits near now', () => {
@@ -187,8 +196,31 @@ describe('HomeB night timeline', () => {
     render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
 
     const label = screen.getByText('acum')
-    expect(Number.parseFloat(label.style.top)).toBeGreaterThanOrEqual(70)
-    expect(screen.getByTestId('now-dot')).toBeInTheDocument()
+    expect(Number.parseFloat(label.style.top)).toBeGreaterThanOrEqual(82)
+    expect(screen.getByTestId('now-cursor')).toBeInTheDocument()
+    expect(screen.queryByTestId('now-dot')).not.toBeInTheDocument()
+  })
+
+  it('lets the next-dose pulse mark now instead of covering it with a now-dot', () => {
+    const lastAt = new Date('2026-06-07T18:00:00').toISOString()
+    act(() => {
+      doseStore.record({
+        childId: MAYA_ID,
+        medicationId: 'nurofen',
+        scheduledAt: lastAt,
+        administeredAt: lastAt,
+      })
+    })
+
+    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
+
+    expect(screen.getByText(/dă/i)).toBeInTheDocument()
+    const pulse = document.querySelector('.pulse-dot')
+    expect(pulse).not.toBeNull()
+    expect(pulse?.parentElement).toHaveStyle({ zIndex: '1' })
+    expect(screen.queryByTestId('now-cursor')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('now-dot')).not.toBeInTheDocument()
+    expect(Number.parseFloat(screen.getByText('acum').style.top)).toBeGreaterThanOrEqual(82)
   })
 
   it('renders separate child, profile, and temperature controls', () => {

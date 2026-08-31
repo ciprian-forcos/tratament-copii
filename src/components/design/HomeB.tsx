@@ -106,6 +106,7 @@ export function HomeB({
     const dt = (d.getTime() - stripStart.getTime()) / (12 * 3600_000)
     return Math.max(0, Math.min(1, dt)) * 100
   }
+  const nextIsDue = Boolean(next && next.at.getTime() <= now.getTime())
 
   return (
     <div className="phone">
@@ -185,6 +186,49 @@ export function HomeB({
               fill="none"
             />
           </svg>
+          <div
+            data-testid="now-marker"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: `${toPct(now)}%`,
+              transform: 'translateX(-50%)',
+              height: '100%',
+              pointerEvents: 'none',
+              zIndex: 0,
+            }}
+          >
+            {!nextIsDue && (
+              <div
+                aria-hidden="true"
+                data-testid="now-cursor"
+                style={{
+                  position: 'absolute',
+                  top: 34,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: 2,
+                  height: 14,
+                  borderRadius: 1,
+                  background: 'var(--cool)',
+                }}
+              />
+            )}
+            <div
+              className="mono"
+              style={{
+                position: 'absolute',
+                top: 82,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                fontSize: 10,
+                color: 'var(--ink)',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              acum
+            </div>
+          </div>
           {marks.map((m, i) => {
             const isNext = (m as { next?: boolean }).next === true
             return (
@@ -199,6 +243,7 @@ export function HomeB({
                   flexDirection: 'column',
                   alignItems: 'center',
                   gap: 6,
+                  zIndex: 1,
                 }}
               >
                 <div
@@ -226,48 +271,6 @@ export function HomeB({
               </div>
             )
           })}
-          <div
-            data-testid="now-marker"
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: `${toPct(now)}%`,
-              transform: 'translateX(-50%)',
-              height: '100%',
-              pointerEvents: 'none',
-              zIndex: 2,
-            }}
-          >
-            <div
-              aria-hidden="true"
-              data-testid="now-dot"
-              style={{
-                position: 'absolute',
-                top: 16,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: 12,
-                height: 12,
-                borderRadius: '50%',
-                background: 'var(--cool)',
-                boxShadow: '0 0 0 3px rgba(122,167,230,0.28)',
-              }}
-            />
-            <div
-              className="mono"
-              style={{
-                position: 'absolute',
-                top: 76,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                fontSize: 10,
-                color: 'var(--ink)',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              acum
-            </div>
-          </div>
         </div>
       </div>
 
