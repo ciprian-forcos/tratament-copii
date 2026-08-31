@@ -1,5 +1,11 @@
 # Knowledge Bundle Log
 
+## 2026-08-31
+
+* **Home timeline now label**: Moved the `acum` text below the night timeline
+  track so it no longer sits on the now-dot / nearby dose dots. The now-dot
+  stays on the strip; the label is under the SVG track.
+
 ## 2026-08-25
 
 * **Reminders + tabs + height**: Local next-dose alerts (`Amintește-mi`),

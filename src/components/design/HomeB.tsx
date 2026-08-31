@@ -172,7 +172,7 @@ export function HomeB({
         <div className="eyebrow" style={{ marginBottom: 12 }}>
           noaptea asta
         </div>
-        <div style={{ position: 'relative', height: 90 }}>
+        <div style={{ position: 'relative', height: 100 }}>
           <svg
             viewBox="0 0 320 70"
             preserveAspectRatio="none"
@@ -227,18 +227,46 @@ export function HomeB({
             )
           })}
           <div
+            data-testid="now-marker"
             style={{
               position: 'absolute',
               top: 0,
               left: `${toPct(now)}%`,
               transform: 'translateX(-50%)',
-              color: 'var(--ink)',
-              fontSize: 10,
-              fontFamily: 'var(--font-mono)',
+              height: '100%',
+              pointerEvents: 'none',
+              zIndex: 2,
             }}
           >
-            ▼
-            <div style={{ marginTop: -2 }}>acum</div>
+            <div
+              aria-hidden="true"
+              data-testid="now-dot"
+              style={{
+                position: 'absolute',
+                top: 16,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: 12,
+                height: 12,
+                borderRadius: '50%',
+                background: 'var(--cool)',
+                boxShadow: '0 0 0 3px rgba(122,167,230,0.28)',
+              }}
+            />
+            <div
+              className="mono"
+              style={{
+                position: 'absolute',
+                top: 76,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                fontSize: 10,
+                color: 'var(--ink)',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              acum
+            </div>
           </div>
         </div>
       </div>

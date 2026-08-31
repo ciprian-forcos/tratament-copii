@@ -160,10 +160,35 @@ describe('HomeB night timeline', () => {
     expect(screen.getByRole('button', { name: /urm/i })).toBeInTheDocument()
   })
 
-  it('keeps the now marker centered in the normal home timeline', () => {
+  it('keeps the now marker centered and puts the acum label below the timeline', () => {
     render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
 
-    expect(screen.getByText('acum').parentElement).toHaveStyle({ left: '50%' })
+    const marker = screen.getByTestId('now-marker')
+    expect(marker).toHaveStyle({ left: '50%' })
+    expect(marker).not.toHaveTextContent('▼')
+    expect(screen.getByTestId('now-dot')).toBeInTheDocument()
+
+    const label = screen.getByText('acum')
+    expect(marker).toContainElement(label)
+    expect(Number.parseFloat(label.style.top)).toBeGreaterThanOrEqual(70)
+  })
+
+  it('keeps acum below the timeline when a recent dose dot sits near now', () => {
+    const lastAt = new Date('2026-06-07T22:50:00').toISOString()
+    act(() => {
+      doseStore.record({
+        childId: MAYA_ID,
+        medicationId: 'nurofen',
+        scheduledAt: lastAt,
+        administeredAt: lastAt,
+      })
+    })
+
+    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
+
+    const label = screen.getByText('acum')
+    expect(Number.parseFloat(label.style.top)).toBeGreaterThanOrEqual(70)
+    expect(screen.getByTestId('now-dot')).toBeInTheDocument()
   })
 
   it('renders separate child, profile, and temperature controls', () => {
