@@ -5,8 +5,9 @@
 * **Home timeline now cursor**: Replaced the filled now-dot with a short
   vertical tick on the night-strip curve, drawn behind dose marks. The tick
   is omitted when the next dose is already due, so the pulse-dot stays the
-  now mark. `acum` sits at `top: 82` so it no longer kisses the next-dose
-  column.
+  now mark, and also when any dose mark is within 40 minutes of now, so the
+  tick does not show through nearby `HH:MM` labels. `acum` sits at `top: 82`
+  so it no longer kisses the next-dose column.
 
 ## 2026-08-31
 

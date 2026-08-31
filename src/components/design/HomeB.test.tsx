@@ -197,7 +197,42 @@ describe('HomeB night timeline', () => {
 
     const label = screen.getByText('acum')
     expect(Number.parseFloat(label.style.top)).toBeGreaterThanOrEqual(82)
+    expect(screen.queryByTestId('now-cursor')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('now-dot')).not.toBeInTheDocument()
+  })
+
+  it('keeps the now-tick when the nearest dose mark is far from now', () => {
+    const lastAt = new Date('2026-06-07T21:00:00').toISOString()
+    act(() => {
+      doseStore.record({
+        childId: MAYA_ID,
+        medicationId: 'nurofen',
+        scheduledAt: lastAt,
+        administeredAt: lastAt,
+      })
+    })
+
+    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
+
     expect(screen.getByTestId('now-cursor')).toBeInTheDocument()
+    expect(screen.queryByTestId('now-dot')).not.toBeInTheDocument()
+  })
+
+  it('hides the now-tick when the next dose sits near now', () => {
+    const lastAt = new Date('2026-06-07T19:15:00').toISOString()
+    act(() => {
+      doseStore.record({
+        childId: MAYA_ID,
+        medicationId: 'nurofen',
+        scheduledAt: lastAt,
+        administeredAt: lastAt,
+      })
+    })
+
+    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
+
+    expect(screen.getByText(/mai sunt/i)).toBeInTheDocument()
+    expect(screen.queryByTestId('now-cursor')).not.toBeInTheDocument()
     expect(screen.queryByTestId('now-dot')).not.toBeInTheDocument()
   })
 

@@ -32,7 +32,9 @@ into `buildPlan()` and Home renders the countdown, next marker, and
 next-dose CTA time. If that time is already due, the copy is `dă {med} acum`
 instead of `mai sunt 0m`. The timeline frames a short vertical now-tick at
 the center of the strip curve, drawn behind dose marks, except when the next
-dose is already due — then the pulse-dot is the now mark. The `acum` label sits below
+dose is already due — then the pulse-dot is the now mark — or when any dose
+mark is within 40 minutes of now, so the tick does not show through nearby
+`HH:MM` labels. The `acum` label sits below
 the track.
 
 # Citations

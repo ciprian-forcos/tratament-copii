@@ -107,6 +107,10 @@ export function HomeB({
     return Math.max(0, Math.min(1, dt)) * 100
   }
   const nextIsDue = Boolean(next && next.at.getTime() <= now.getTime())
+  // HH:MM labels share the tick's y-band; hide it when a mark is within ~40 min.
+  const markNearNow = marks.some(
+    (m) => Math.abs(m.at.getTime() - now.getTime()) <= 40 * 60_000,
+  )
 
   return (
     <div className="phone">
@@ -198,7 +202,7 @@ export function HomeB({
               zIndex: 0,
             }}
           >
-            {!nextIsDue && (
+            {!nextIsDue && !markNearNow && (
               <div
                 aria-hidden="true"
                 data-testid="now-cursor"

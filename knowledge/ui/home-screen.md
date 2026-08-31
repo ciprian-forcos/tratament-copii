@@ -21,7 +21,7 @@ Phase 06 Lane B + Phase 07 state:
 * No countdown or next-dose marker renders before the active child has recorded treatment.
 * After a recorded dose, Home derives the next medicine/time from history via `nextPlannedDose`.
 * The timeline frames `acum` in the center of the 12-hour strip.
-* A short vertical now-tick sits on the strip curve, behind the dose marks, except when the next dose is already due — then the pulse-dot is the now mark. The `acum` label sits below the timeline so it does not cover nearby dose dots.
+* A short vertical now-tick sits on the strip curve, behind the dose marks, except when the next dose is already due — then the pulse-dot is the now mark — or when any dose mark is within 40 minutes of now, so the tick does not show through nearby `HH:MM` labels. The `acum` label sits below the timeline so it does not cover nearby dose dots.
 * Child identity/menu, profile details, and temperature editing are separate controls.
 * Temperature copy is `Temperatura`.
 * `StatusBar` keeps time text and does not render fake signal/battery icons.
