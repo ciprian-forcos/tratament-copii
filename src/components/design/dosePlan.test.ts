@@ -19,6 +19,13 @@ vi.mock('./scheduleAdapter', () => ({
 import { nextDoseFor } from './scheduleAdapter'
 import { buildPlan } from './dosePlan'
 
+function mustPlan(...args: Parameters<typeof buildPlan>) {
+  const plan = buildPlan(...args)
+  expect(plan).not.toBeNull()
+  if (!plan) throw new Error('expected a plan')
+  return plan
+}
+
 const CHILD: Child = {
   id: 'child-1',
   name: 'Ana',
@@ -41,7 +48,7 @@ describe('buildPlan', () => {
   // ── First treatment (no history) ────────────────────────────────────────
   describe('first treatment (kind=first, no lastMedId)', () => {
     it('now-step is Nurofen at `now`', () => {
-      const plan = buildPlan({ child: CHILD, now: NOW })
+      const plan = mustPlan({ child: CHILD, now: NOW })
 
       expect(plan.now.medId).toBe('nurofen')
       expect(plan.now.when).toEqual(NOW)
@@ -51,7 +58,7 @@ describe('buildPlan', () => {
       const engineTime = new Date(NOW.getTime() + 5 * 3600_000)
       vi.mocked(nextDoseFor).mockReturnValue(engineTime)
 
-      const plan = buildPlan({ child: CHILD, now: NOW })
+      const plan = mustPlan({ child: CHILD, now: NOW })
 
       expect(plan.next.medId).toBe('panadol')
       expect(plan.next.when).toEqual(engineTime)
@@ -62,14 +69,14 @@ describe('buildPlan', () => {
       // But the 4h cross-drug spacing floor should apply relative to the now-step.
       vi.mocked(nextDoseFor).mockReturnValue(NOW)
 
-      const plan = buildPlan({ child: CHILD, now: NOW })
+      const plan = mustPlan({ child: CHILD, now: NOW })
 
       const floor = new Date(NOW.getTime() + 4 * 3600_000)
       expect(plan.next.when).toEqual(floor)
     })
 
     it('calls nextDoseFor with the correct args for the next medication', () => {
-      buildPlan({ child: CHILD, now: NOW })
+      mustPlan({ child: CHILD, now: NOW })
 
       expect(nextDoseFor).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -84,7 +91,7 @@ describe('buildPlan', () => {
   // ── Alternation: last given was Nurofen ─────────────────────────────────
   describe('last given was Nurofen', () => {
     it('now-step is Panadol', () => {
-      const plan = buildPlan({ child: CHILD, now: NOW, lastMedId: 'nurofen' })
+      const plan = mustPlan({ child: CHILD, now: NOW, lastMedId: 'nurofen' })
 
       expect(plan.now.medId).toBe('panadol')
     })
@@ -96,7 +103,7 @@ describe('buildPlan', () => {
         return NOW
       })
 
-      const plan = buildPlan({ child: CHILD, now: NOW, lastMedId: 'nurofen' })
+      const plan = mustPlan({ child: CHILD, now: NOW, lastMedId: 'nurofen' })
 
       expect(plan.next.medId).toBe('nurofen')
       expect(plan.next.when).toEqual(engineTime)
@@ -106,7 +113,7 @@ describe('buildPlan', () => {
   // ── Alternation: last given was Panadol ─────────────────────────────────
   describe('last given was Panadol', () => {
     it('now-step is Nurofen', () => {
-      const plan = buildPlan({ child: CHILD, now: NOW, lastMedId: 'panadol' })
+      const plan = mustPlan({ child: CHILD, now: NOW, lastMedId: 'panadol' })
 
       expect(plan.now.medId).toBe('nurofen')
     })
@@ -118,7 +125,7 @@ describe('buildPlan', () => {
         return NOW
       })
 
-      const plan = buildPlan({ child: CHILD, now: NOW, lastMedId: 'panadol' })
+      const plan = mustPlan({ child: CHILD, now: NOW, lastMedId: 'panadol' })
 
       expect(plan.next.medId).toBe('panadol')
       expect(plan.next.when).toEqual(engineTime)
@@ -134,7 +141,7 @@ describe('buildPlan', () => {
 
       vi.mocked(nextDoseFor).mockReturnValue(localNow)
 
-      const plan = buildPlan({
+      const plan = mustPlan({
         child: CHILD,
         now: localNow,
         lastMedId: 'nurofen',
@@ -152,7 +159,7 @@ describe('buildPlan', () => {
 
       vi.mocked(nextDoseFor).mockReturnValue(localNow)
 
-      const plan = buildPlan({
+      const plan = mustPlan({
         child: CHILD,
         now: localNow,
         lastMedId: 'nurofen',
@@ -178,7 +185,7 @@ describe('buildPlan', () => {
       // nurofen: round(1/2 + 0) = round(0.5) = 1 — not sub_doza
       // sub_doza only applies to mg_per_kg type; we test that the field is
       // plumbed through correctly regardless of its value.
-      const plan = buildPlan({ child: tinyChild, now: NOW })
+      const plan = mustPlan({ child: tinyChild, now: NOW })
 
       // Amount field must exist and be either a number or 'sub_doza'
       expect(
@@ -195,11 +202,15 @@ describe('buildPlan', () => {
     it('falls back to 4h floor from now-step when engine returns null', () => {
       vi.mocked(nextDoseFor).mockReturnValue(null)
 
-      const plan = buildPlan({ child: CHILD, now: NOW })
+      const plan = mustPlan({ child: CHILD, now: NOW })
 
       // null -> fall back to 4h floor from now-step
       const floor = new Date(NOW.getTime() + 4 * 3600_000)
       expect(plan.next.when).toEqual(floor)
     })
+  })
+
+  it('returns null when Nurofen and Panadol are missing from the catalog', () => {
+    expect(buildPlan({ child: CHILD, now: NOW, medications: [] })).toBeNull()
   })
 })

@@ -96,8 +96,11 @@ describe('FlowProtoB medicine routing', () => {
 })
 
 async function openMedicines(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole('button', { name: /meniu/i }))
-  await user.click(screen.getByRole('button', { name: /medicamente/i }))
+  await user.click(screen.getByRole('button', { name: /^medicamente$/i }))
+}
+
+function expectHome() {
+  expect(screen.getByRole('button', { name: /copil /i })).toBeInTheDocument()
 }
 
 describe('FlowProtoB ≡ menu routing', () => {
@@ -105,11 +108,9 @@ describe('FlowProtoB ≡ menu routing', () => {
     const user = userEvent.setup()
     render(<FlowProtoB />)
 
-    // Should be on home screen
-    expect(screen.getByText('noaptea asta')).toBeInTheDocument()
+    expectHome()
 
-    // Tap ≡
-    const menuBtn = screen.getByRole('button', { name: /meniu/i })
+    const menuBtn = screen.getByRole('button', { name: /copil /i })
     await user.click(menuBtn)
 
     expect(screen.getByText('gestionează')).toBeInTheDocument()
@@ -119,17 +120,14 @@ describe('FlowProtoB ≡ menu routing', () => {
     const user = userEvent.setup()
     render(<FlowProtoB />)
 
-    // Navigate to ChildrenScreen
-    const menuBtn = screen.getByRole('button', { name: /meniu/i })
+    const menuBtn = screen.getByRole('button', { name: /copil /i })
     await user.click(menuBtn)
     expect(screen.getByText('gestionează')).toBeInTheDocument()
 
-    // Tap Înapoi
     const backBtn = screen.getByRole('button', { name: /^Înapoi$/i })
     await user.click(backBtn)
 
-    // Back on home screen
-    expect(screen.getByText('noaptea asta')).toBeInTheDocument()
+    expectHome()
   })
 })
 
@@ -170,7 +168,7 @@ describe('FlowProtoB treatment episode', () => {
     await user.click(screen.getByRole('button', { name: /generează planul/i }))
     await user.click(screen.getByRole('button', { name: /am dat doza/i }))
 
-    expect(screen.getByText('noaptea asta')).toBeInTheDocument()
+    expectHome()
     expect(screen.getByRole('button', { name: /urm/i })).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: /urm/i }))

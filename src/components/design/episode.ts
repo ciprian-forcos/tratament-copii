@@ -28,7 +28,7 @@ export function lastDoseInEpisode({
   seed?: DoseRef | null
 }): DoseRef | null {
   const candidates: DoseRef[] = doses
-    .filter((d) => d.childId === childId)
+    .filter((d) => d.childId === childId && d.source !== 'program')
     .map((d) => ({ medicationId: d.medicationId, at: new Date(d.administeredAt) }))
     .filter((d) => !Number.isNaN(d.at.getTime()))
 

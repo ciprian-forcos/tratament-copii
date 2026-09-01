@@ -30,8 +30,12 @@ body,
   --cool:      #7aa7e6;
 
   --font-hand: "Caveat", "Patrick Hand", "Comic Sans MS", cursive;
-  --font-body: -apple-system, "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+
+html {
+  color-scheme: dark;
 }
 
 body {
@@ -106,6 +110,67 @@ body {
   overflow: hidden;
 }
 .phone * { box-sizing: border-box; }
+
+/* Legacy light Tailwind in MedicamenteTab, remapped onto the dark shell. */
+.meds-panel {
+  color: var(--ink);
+}
+.meds-panel .text-gray-900,
+.meds-panel .text-gray-800,
+.meds-panel .text-gray-700,
+.meds-panel .text-gray-600 {
+  color: var(--ink);
+}
+.meds-panel .text-gray-400,
+.meds-panel .text-indigo-400 {
+  color: var(--ink-3);
+}
+.meds-panel .border-gray-200,
+.meds-panel .border-gray-300 {
+  border-color: var(--line);
+}
+.meds-panel .bg-white,
+.meds-panel .bg-gray-50 {
+  background-color: var(--bg-2);
+}
+.meds-panel .bg-indigo-50,
+.meds-panel .bg-gray-100 {
+  background-color: var(--bg-3);
+}
+.meds-panel .text-indigo-600,
+.meds-panel .text-indigo-800,
+.meds-panel .border-indigo-300 {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.meds-panel .hover\:bg-indigo-50:hover,
+.meds-panel .hover\:bg-gray-50:hover {
+  background-color: var(--bg-3);
+}
+.meds-panel .bg-amber-50 {
+  background-color: rgba(245, 177, 74, 0.12);
+}
+.meds-panel .border-amber-200,
+.meds-panel .border-indigo-100 {
+  border-color: var(--line);
+}
+.meds-panel .text-amber-700,
+.meds-panel .text-amber-500 {
+  color: var(--accent-2);
+}
+.meds-panel .bg-red-50 {
+  background-color: rgba(239, 99, 96, 0.12);
+}
+.meds-panel .text-red-700 {
+  color: var(--danger);
+}
+.meds-panel input,
+.meds-panel select,
+.meds-panel textarea {
+  background-color: var(--bg-3);
+  color: var(--ink);
+  border-color: var(--line);
+}
 
 /* status bar */
 .statusbar {

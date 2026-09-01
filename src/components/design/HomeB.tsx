@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnalogClock } from './AnalogClock'
 import { ChildEditor } from './ChildEditor'
-import { ChildPill, MenuBtn } from './ChildPill'
+import { ChildPill } from './ChildPill'
 import { StatusBar } from './StatusBar'
 import { TempWheel } from './TempWheel'
 import { activeChild, childStore, useChildren } from './childStore'
 import { useDoses } from './doseStore'
 import { diffHHMM, fmtHHMM } from './dosePlan'
 import { nextPlannedDose } from './nextPlannedDose'
-import { PanicToggle } from './PanicToggle'
-import type { PanicPref } from './panicPref'
+import { isNightWindow } from './panicPref'
 import { RemindersButton } from './RemindersButton'
 import { TabBar, type TabId } from './TabBar'
 import { useNightTimeline } from './useNightTimeline'
@@ -20,15 +19,12 @@ type BeforeInstallPromptEvent = Event & {
 
 interface Props {
   onStart: () => void
-  /** Called when the ≡ menu button is tapped. */
+  /** Called when the child name chip is tapped. */
   onMenu?: () => void
-  onProgram?: () => void
-  panicPref?: PanicPref
-  onPanicPref?: (pref: PanicPref) => void
   tab?: TabId
   onTab?: (id: TabId) => void
   remindersEnabled?: boolean
-  onRemindersEnable?: () => void
+  onRemindersEnable?: () => boolean | Promise<boolean>
   onRemindersDisable?: () => void
   /** Optional override. When omitted, Home derives the next dose from recorded history. */
   nextDose?: { at: Date; med: string } | null
@@ -37,9 +33,6 @@ interface Props {
 export function HomeB({
   onStart,
   onMenu,
-  onProgram,
-  panicPref,
-  onPanicPref,
   nextDose,
   tab,
   onTab,
@@ -50,7 +43,7 @@ export function HomeB({
   const state = useChildren()
   const child = activeChild(state)
   const doses = useDoses()
-  const temp = child.temp ?? 0
+  const temp = child.temp
   const [pickerOpen, setPickerOpen] = useState(false)
   const [childOpen, setChildOpen] = useState(false)
   const installPrompt = useRef<BeforeInstallPromptEvent | null>(null)
@@ -91,8 +84,13 @@ export function HomeB({
     setManualInstallOpen((open) => !open)
   }
 
-  const now = new Date()
+  const [now, setNow] = useState(() => new Date())
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 30_000)
+    return () => window.clearInterval(id)
+  }, [])
   const next = nextDose !== undefined ? nextDose : nextPlannedDose({ child, now, doses })
+  const nightEyebrow = isNightWindow(now)
   const nightDoses = useNightTimeline(child.id, now)
   type Mark = { at: Date; med: string; next?: boolean }
   const marks: Mark[] = [
@@ -121,24 +119,24 @@ export function HomeB({
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          gap: 8,
+          minWidth: 0,
         }}
       >
-        <ChildPill
-          onChildClick={() => onMenu?.()}
-          onProfileClick={() => setChildOpen(true)}
-          onTemperatureClick={openPicker}
-        />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-          {onRemindersEnable && onRemindersDisable && (
-            <RemindersButton
-              enabled={Boolean(remindersEnabled)}
-              onEnable={onRemindersEnable}
-              onDisable={onRemindersDisable}
-            />
-          )}
-          {panicPref && onPanicPref && <PanicToggle pref={panicPref} onChange={onPanicPref} />}
-          <MenuBtn onClick={onMenu} />
+        <div style={{ minWidth: 0, flex: 1, overflow: 'hidden' }}>
+          <ChildPill
+            onChildClick={() => onMenu?.()}
+            onProfileClick={() => setChildOpen(true)}
+            onTemperatureClick={openPicker}
+          />
         </div>
+        {onRemindersEnable && onRemindersDisable && (
+          <RemindersButton
+            enabled={Boolean(remindersEnabled)}
+            onEnable={onRemindersEnable}
+            onDisable={onRemindersDisable}
+          />
+        )}
       </div>
 
       {next && (
@@ -157,7 +155,7 @@ export function HomeB({
 
       <TempWheel
         open={pickerOpen}
-        value={temp || 37.0}
+        value={temp ?? 37.0}
         onChange={setTemp}
         onClose={() => setPickerOpen(false)}
       />
@@ -174,9 +172,11 @@ export function HomeB({
       </div>
 
       <div style={{ padding: '8px 24px 14px', flex: 1 }}>
-        <div className="eyebrow" style={{ marginBottom: 12 }}>
-          noaptea asta
-        </div>
+        {nightEyebrow && (
+          <div className="eyebrow" style={{ marginBottom: 12 }}>
+            noaptea asta
+          </div>
+        )}
         <div style={{ position: 'relative', height: 100 }}>
           <svg
             viewBox="0 0 320 70"
@@ -313,24 +313,6 @@ export function HomeB({
               </div>
             )}
           </div>
-        )}
-        {onProgram && !onTab && (
-          <button
-            type="button"
-            onClick={onProgram}
-            style={{
-              padding: '11px 13px',
-              borderRadius: 14,
-              border: '1.5px solid var(--line)',
-              background: 'var(--bg-3)',
-              color: 'var(--ink-2)',
-              fontSize: 14,
-              fontWeight: 600,
-              cursor: 'pointer',
-            }}
-          >
-            Program
-          </button>
         )}
         <button className="btn-primary btn-wait" onClick={onStart}>
           {next ? `Următoarea doză · ${fmtHHMM(next.at)} →` : 'Începe tratamentul'}

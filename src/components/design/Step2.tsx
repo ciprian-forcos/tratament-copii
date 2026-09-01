@@ -1,9 +1,12 @@
 import { StepShell } from './StepShell'
+import { RoDateTimeField } from './RoDateTimeField'
 
-const MEDS = [
+const DEFAULT_FEVER_CHOICES = [
   { id: 'nurofen', label: 'Nurofen', sub: 'ibuprofen' },
   { id: 'panadol', label: 'Panadol', sub: 'paracetamol' },
 ]
+
+export type Step2MedChoice = { id: string; label: string; sub: string }
 
 export interface Step2Value {
   kind: 'first' | 'last'
@@ -16,12 +19,14 @@ interface Props {
   onChange: (v: Step2Value) => void
   onBack: () => void
   onNext: () => void
+  medications?: Step2MedChoice[]
 }
 
-export function Step2({ value, onChange, onBack, onNext }: Props) {
+export function Step2({ value, onChange, onBack, onNext, medications = DEFAULT_FEVER_CHOICES }: Props) {
   const v = value
   const set = (patch: Partial<Step2Value>) => onChange({ ...v, ...patch })
   const disabled = v.kind === 'last' && (!v.med || !v.lastAt)
+  const choices = medications.length > 0 ? medications : DEFAULT_FEVER_CHOICES
 
   return (
     <StepShell
@@ -69,7 +74,7 @@ export function Step2({ value, onChange, onBack, onNext }: Props) {
               marginBottom: 16,
             }}
           >
-            {MEDS.map((m) => {
+            {choices.map((m) => {
               const active = v.med === m.id
               return (
                 <button
@@ -92,25 +97,12 @@ export function Step2({ value, onChange, onBack, onNext }: Props) {
             })}
           </div>
 
-          <label style={{ display: 'block' }}>
-            <span className="field-label">data si ora</span>
-            <input
-              aria-label="data si ora"
-              type="datetime-local"
-              value={v.lastAt ?? ''}
-              onChange={(event) => set({ lastAt: event.target.value })}
-              style={{
-                width: '100%',
-                boxSizing: 'border-box',
-                padding: '12px 14px',
-                borderRadius: 12,
-                border: '1.5px solid var(--line)',
-                background: 'var(--bg-2)',
-                color: 'var(--ink)',
-                font: 'inherit',
-              }}
-            />
-          </label>
+          <RoDateTimeField
+            label="data si ora"
+            ariaLabel="data si ora"
+            value={v.lastAt ?? ''}
+            onChange={(lastAt) => set({ lastAt })}
+          />
         </div>
       )}
 

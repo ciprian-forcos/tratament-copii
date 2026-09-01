@@ -36,7 +36,6 @@ function loadInitial(): ChildState {
         years: 2,
         months: 4,
         initial: 'M',
-        temp: 41.0,
         enabledMedications: DEFAULT_ENABLED,
       }
       return { children: [seed], activeId: seed.id }

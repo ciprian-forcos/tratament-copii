@@ -1,15 +1,17 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import type { Medication, ScheduleRule } from '../../types'
-import { defaultScheduleRules } from '../../data/scheduleRules'
+import { defaultScheduleRules, migrateScheduleRules } from '../../data/scheduleRules'
 import { useLocalStorage } from '../../hooks/useLocalStorage'
 import { generateSchedule } from '../../utils/scheduleEngine'
 import { calculateDose, formatDose } from '../../utils/doseCalculation'
 import { activeChild, childStore, useChildren } from './childStore'
 import { doseStore, useDoses } from './doseStore'
 import { enabledMedicationIds } from './enabledMeds'
-import { PanicToggle } from './PanicToggle'
-import type { PanicPref } from './panicPref'
+import { FormPictogram } from './FormPictogram'
+import { MedicalDisclaimer } from './MedicalDisclaimer'
 import { RemindersButton } from './RemindersButton'
+import { RoDateTimeField } from './RoDateTimeField'
+import { inferMedicationForm, shortMedName } from '../../utils/medicationForm'
 import { TabBar, type TabId } from './TabBar'
 import {
   describeRule,
@@ -33,17 +35,11 @@ function formatTime(date: Date): string {
   return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
 }
 
-function shortName(name: string): string {
-  return name.split(/[/(]/)[0].trim()
-}
-
 export function ProgramScreen({
   medications,
   onFever,
   onMenu,
   onBack,
-  panicPref,
-  onPanicPref,
   tab,
   onTab,
   remindersEnabled,
@@ -54,12 +50,10 @@ export function ProgramScreen({
   onFever: () => void
   onMenu?: () => void
   onBack?: () => void
-  panicPref: PanicPref
-  onPanicPref: (pref: PanicPref) => void
   tab?: TabId
   onTab?: (id: TabId) => void
   remindersEnabled?: boolean
-  onRemindersEnable?: () => void
+  onRemindersEnable?: () => boolean | Promise<boolean>
   onRemindersDisable?: () => void
 }) {
   const state = useChildren()
@@ -70,6 +64,10 @@ export function ProgramScreen({
     toDatetimeLocalString(new Date()),
   )
   const [rules, setRules] = useLocalStorage<ScheduleRule[]>(RULES_KEY, defaultScheduleRules)
+  useEffect(() => {
+    const migrated = migrateScheduleRules(rules)
+    if (migrated.length !== rules.length) setRules(migrated)
+  }, [rules, setRules])
   const [now, setNow] = useState(() => new Date())
   const [rulesOpen, setRulesOpen] = useState(false)
   const [editing, setEditing] = useState<ScheduleRule | null | undefined>(undefined)
@@ -109,6 +107,7 @@ export function ProgramScreen({
       medicationId: entry.medicationId,
       scheduledAt,
       administeredAt: new Date().toISOString(),
+      source: 'program',
     })
   }
 
@@ -134,6 +133,7 @@ export function ProgramScreen({
           display: 'flex',
           alignItems: 'center',
           gap: 10,
+          minWidth: 0,
         }}
       >
         {onBack ? (
@@ -171,7 +171,7 @@ export function ProgramScreen({
             ≡
           </button>
         )}
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div className="eyebrow" style={{ color: 'var(--accent)' }}>
             program 24h · {child.name}
           </div>
@@ -184,7 +184,6 @@ export function ProgramScreen({
             onDisable={onRemindersDisable}
           />
         )}
-        <PanicToggle pref={panicPref} onChange={onPanicPref} />
       </div>
 
       {state.children.length > 1 && (
@@ -215,28 +214,21 @@ export function ProgramScreen({
       )}
 
       <div style={{ padding: '14px 18px 0' }}>
-        <div className="field-label">ora de start</div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <input
-            aria-label="ora de start"
-            type="datetime-local"
-            value={startTimeStr.slice(0, 16)}
-            onChange={(e) => setStartTimeStr(e.target.value)}
-            style={{
-              flex: 1,
-              padding: '10px 12px',
-              borderRadius: 12,
-              border: '1.5px solid var(--line)',
-              background: 'var(--bg-2)',
-              color: 'var(--ink)',
-              font: 'inherit',
-            }}
-          />
+        <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <RoDateTimeField
+              label="ora de start"
+              ariaLabel="ora de start"
+              value={startTimeStr}
+              onChange={setStartTimeStr}
+            />
+          </div>
           <button
             type="button"
             onClick={() => setStartTimeStr(toDatetimeLocalString(new Date()))}
             style={{
               padding: '10px 12px',
+              marginBottom: 2,
               borderRadius: 12,
               border: '1.5px solid var(--line)',
               background: 'var(--bg-3)',
@@ -303,11 +295,12 @@ export function ProgramScreen({
                   >
                     {given ? '✓' : ''}
                   </button>
+                  <FormPictogram form={inferMedicationForm(med)} size={14} color={isNext ? 'var(--accent)' : 'var(--ink-2)'} />
                   <span className="mono" style={{ width: 44, color: isNext ? 'var(--accent)' : 'var(--ink-2)' }}>
                     {formatTime(entry.scheduledAt)}
                   </span>
-                  <span style={{ flex: 1, fontWeight: 600, color: 'var(--ink)' }}>
-                    {shortName(med.name)}
+                  <span style={{ flex: 1, fontWeight: 600, color: 'var(--ink)', minWidth: 0 }}>
+                    {shortMedName(med.name)}
                     {isNext ? (
                       <span className="eyebrow" style={{ marginLeft: 8, color: 'var(--accent)' }}>
                         următor
@@ -394,6 +387,7 @@ export function ProgramScreen({
       </div>
 
       <div style={{ padding: '14px 18px 22px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <MedicalDisclaimer compact />
         <button className="btn-primary" onClick={onFever}>
           Tratament febră →
         </button>

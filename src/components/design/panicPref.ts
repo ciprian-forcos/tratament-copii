@@ -27,3 +27,9 @@ export function isPanicActive(pref: PanicPref, now: Date): boolean {
   if (pref === 'off') return false
   return now.getHours() >= 20
 }
+
+/** Home "noaptea asta" eyebrow: 20:00–07:59. */
+export function isNightWindow(now: Date): boolean {
+  const hour = now.getHours()
+  return hour >= 20 || hour < 8
+}

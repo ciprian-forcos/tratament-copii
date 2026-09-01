@@ -18,6 +18,7 @@ function dose(
     scheduledAt: partial.scheduledAt ?? partial.administeredAt,
     medicationId: partial.medicationId,
     administeredAt: partial.administeredAt,
+    source: partial.source,
   }
 }
 
@@ -63,6 +64,36 @@ describe('lastDoseInEpisode', () => {
       seed: { medicationId: 'panadol', at: new Date('2026-06-07T21:00:00') },
     })
     expect(result?.medicationId).toBe('panadol')
+  })
+
+  it('ignores Program check-offs so they do not open a fever episode', () => {
+    const result = lastDoseInEpisode({
+      now: NOW,
+      childId: 'maya',
+      doses: [
+        dose({
+          medicationId: 'vitamina_d',
+          administeredAt: '2026-06-07T21:00:00',
+          source: 'program',
+        }),
+      ],
+    })
+    expect(result).toBeNull()
+  })
+
+  it('still uses fever-sourced doses for the episode', () => {
+    const result = lastDoseInEpisode({
+      now: NOW,
+      childId: 'maya',
+      doses: [
+        dose({
+          medicationId: 'nurofen',
+          administeredAt: '2026-06-07T21:00:00',
+          source: 'fever',
+        }),
+      ],
+    })
+    expect(result?.medicationId).toBe('nurofen')
   })
 
   it('ignores another child', () => {

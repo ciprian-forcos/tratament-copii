@@ -31,6 +31,7 @@ export function nextPlannedDose({
     lastMedId: last.medicationId,
     lastAt: last.at,
   })
+  if (!plan) return null
 
   return {
     at: plan.now.when,

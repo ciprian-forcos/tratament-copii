@@ -16,24 +16,6 @@ export const defaultScheduleRules: ScheduleRule[] = [
     hoursAfter: 4,
   },
   {
-    id: 'r3',
-    type: 'every_n_hours',
-    medicationId: 'panadol',
-    everyNHours: 8,
-  },
-  {
-    id: 'r4',
-    type: 'every_n_hours',
-    medicationId: 'diclofenac',
-    everyNHours: 12,
-  },
-  {
-    id: 'r5',
-    type: 'every_n_hours',
-    medicationId: 'novocalmin',
-    everyNHours: 12,
-  },
-  {
     id: 'r6',
     type: 'once_per_day',
     medicationId: 'vitamina_d',
@@ -56,3 +38,34 @@ export const defaultScheduleRules: ScheduleRule[] = [
     timesPerDay: 3,
   },
 ]
+
+/** Drop the default duplicate Panadol q8h (r3) and rescue-suppository standing rules (r4/r5) if still unmodified. */
+export function migrateScheduleRules(rules: ScheduleRule[]): ScheduleRule[] {
+  return rules.filter((rule) => {
+    if (
+      rule.id === 'r3' &&
+      rule.type === 'every_n_hours' &&
+      rule.medicationId === 'panadol' &&
+      rule.everyNHours === 8
+    ) {
+      return false
+    }
+    if (
+      rule.id === 'r4' &&
+      rule.type === 'every_n_hours' &&
+      rule.medicationId === 'diclofenac' &&
+      rule.everyNHours === 12
+    ) {
+      return false
+    }
+    if (
+      rule.id === 'r5' &&
+      rule.type === 'every_n_hours' &&
+      rule.medicationId === 'novocalmin' &&
+      rule.everyNHours === 12
+    ) {
+      return false
+    }
+    return true
+  })
+}

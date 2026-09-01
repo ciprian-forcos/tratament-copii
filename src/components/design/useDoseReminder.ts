@@ -19,7 +19,8 @@ export function useDoseReminder(reminder: Reminder | null) {
     return () => armReminder(null)
   }, [enabled, reminder?.at.getTime(), reminder?.title, reminder?.body])
 
-  async function enable() {
+  async function enable(): Promise<boolean> {
+    if (typeof Notification === 'undefined') return false
     const ok = await ensureNotificationPermission()
     if (!ok) return false
     saveRemindersEnabled(true)

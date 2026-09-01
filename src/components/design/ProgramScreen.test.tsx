@@ -36,8 +36,6 @@ describe('ProgramScreen', () => {
       <ProgramScreen
         medications={DEFAULT_MEDICATIONS}
         onFever={vi.fn()}
-        panicPref="off"
-        onPanicPref={vi.fn()}
       />,
     )
 
@@ -51,8 +49,6 @@ describe('ProgramScreen', () => {
       <ProgramScreen
         medications={DEFAULT_MEDICATIONS}
         onFever={vi.fn()}
-        panicPref="off"
-        onPanicPref={vi.fn()}
       />,
     )
 
@@ -69,8 +65,6 @@ describe('ProgramScreen', () => {
       <ProgramScreen
         medications={DEFAULT_MEDICATIONS}
         onFever={vi.fn()}
-        panicPref="off"
-        onPanicPref={vi.fn()}
       />,
     )
 

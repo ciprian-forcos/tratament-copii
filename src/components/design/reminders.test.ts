@@ -48,6 +48,11 @@ describe('reminders', () => {
     expect(await ensureNotificationPermission()).toBe(true)
   })
 
+  it('returns false when notification permission is denied', async () => {
+    ;(window.Notification as unknown as { permission: string }).permission = 'denied'
+    expect(await ensureNotificationPermission()).toBe(false)
+  })
+
   it('fires when the due time is reached', () => {
     armReminder({
       at: new Date(Date.now() + 60_000),

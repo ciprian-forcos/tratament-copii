@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { Plus, Pencil, Trash2, Pill, User } from 'lucide-react'
-import type { Child, Medication, DoseConfig } from '../types'
+import type { Child, Medication, DoseConfig, MedicationForm } from '../types'
 import { calculateDose, formatDose } from '../utils/doseCalculation'
+import { FormPictogram } from './design/FormPictogram'
+import { inferMedicationForm, isCorePlanMedication } from '../utils/medicationForm'
 
 const PRESET_COLORS = [
   '#3b82f6', '#f97316', '#8b5cf6', '#14b8a6',
@@ -59,6 +61,7 @@ interface FormState {
   fixedAmount: string
   // weight_threshold
   thresholds: ThresholdRow[]
+  form: MedicationForm
 }
 
 function emptyForm(): FormState {
@@ -77,6 +80,7 @@ function emptyForm(): FormState {
     roundTo: 'half',
     fixedAmount: '',
     thresholds: [{ min: '0', max: '', amount: '' }],
+    form: 'sirop',
   }
 }
 
@@ -87,6 +91,7 @@ function medicationToForm(med: Medication): FormState {
   base.color = med.color
   base.notes = med.notes
   base.unit = med.doseConfig.unit
+  base.form = inferMedicationForm(med)
   const cfg = med.doseConfig
   if (cfg.type === 'weight_divided') {
     base.divisor = String(cfg.divisor)
@@ -220,6 +225,7 @@ export function MedicamenteTab({ medications, setMedications, activeChild, setCh
                 doseConfig,
                 color: form.color,
                 notes: form.notes.trim(),
+                form: form.form,
               }
             : m
         )
@@ -232,6 +238,8 @@ export function MedicamenteTab({ medications, setMedications, activeChild, setCh
         doseConfig,
         color: form.color,
         notes: form.notes.trim(),
+        form: form.form,
+        kind: 'fever',
       }
       setMedications((prev: Medication[]) => [...prev, newMed])
     }
@@ -239,6 +247,10 @@ export function MedicamenteTab({ medications, setMedications, activeChild, setCh
   }
 
   function handleDelete(medId: string) {
+    if (isCorePlanMedication(medId)) {
+      setDeleteConfirmId(null)
+      return
+    }
     setMedications((prev: Medication[]) => prev.filter(m => m.id !== medId))
     setChildren((prev: Child[]) =>
       prev.map(c => ({
@@ -252,7 +264,7 @@ export function MedicamenteTab({ medications, setMedications, activeChild, setCh
   const isSaveDisabled = !!nameError || !form.name.trim()
 
   return (
-    <div className="p-4 space-y-3">
+    <div className="meds-panel p-4 space-y-3">
       <button
         onClick={openAdd}
         className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-indigo-300 text-indigo-600 font-medium text-sm hover:bg-indigo-50 transition-colors"
@@ -314,7 +326,10 @@ export function MedicamenteTab({ medications, setMedications, activeChild, setCh
 
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <div className="font-semibold text-gray-900 text-sm">{med.name}</div>
+                <div className="flex items-center gap-2 min-w-0">
+                  <FormPictogram form={inferMedicationForm(med)} size={14} />
+                  <div className="font-semibold text-gray-900 text-sm min-w-0">{med.name}</div>
+                </div>
 
                 {doseStr && (
                   <div className="mt-1">
@@ -345,6 +360,9 @@ export function MedicamenteTab({ medications, setMedications, activeChild, setCh
                   onClick={() => setDeleteConfirmId(med.id)}
                   className="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                   aria-label="Șterge"
+                  disabled={isCorePlanMedication(med.id)}
+                  title={isCorePlanMedication(med.id) ? 'Nu poți șterge medicamentul de bază al planului de febră.' : undefined}
+                  style={isCorePlanMedication(med.id) ? { opacity: 0.35, cursor: 'not-allowed' } : undefined}
                 >
                   <Trash2 size={16} />
                 </button>
@@ -376,7 +394,7 @@ export function MedicamenteTab({ medications, setMedications, activeChild, setCh
       {/* Add/Edit dialog */}
       {showDialog && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40">
-          <div className="w-full max-w-[480px] bg-white rounded-t-2xl sm:rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
+          <div className="meds-panel w-full max-w-[480px] bg-white rounded-t-2xl sm:rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
             <div className="p-6 pb-4 border-b flex-shrink-0">
               <h2 className="text-lg font-semibold text-gray-900">
                 {editingMed ? 'Editează medicament' : 'Adaugă medicament'}
@@ -414,6 +432,22 @@ export function MedicamenteTab({ medications, setMedications, activeChild, setCh
                       {DOSE_TYPE_LABELS[t]}
                     </option>
                   ))}
+                </select>
+              </div>
+
+              {/* Form */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Formă</label>
+                <select
+                  aria-label="formă medicament"
+                  value={form.form}
+                  onChange={e => setForm(f => ({ ...f, form: e.target.value as MedicationForm }))}
+                  className={inputCls()}
+                >
+                  <option value="sirop">Sirop (ml)</option>
+                  <option value="picaturi">Picături</option>
+                  <option value="spray">Spray / pufuri</option>
+                  <option value="supozitor">Supozitor</option>
                 </select>
               </div>
 

@@ -4,7 +4,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'program', label: 'Program' },
   { id: 'fever', label: 'Febră' },
   { id: 'children', label: 'Copii' },
-  { id: 'medicines', label: 'Meds' },
+  { id: 'medicines', label: 'Medicamente' },
 ]
 
 export function TabBar({
@@ -35,14 +35,15 @@ export function TabBar({
             aria-current={active ? 'page' : undefined}
             onClick={() => onSelect(tab.id)}
             style={{
-              padding: '10px 4px',
+              padding: '10px 2px',
               borderRadius: 12,
               border: `1.5px solid ${active ? 'var(--accent)' : 'var(--line)'}`,
               background: active ? 'rgba(245,177,74,0.12)' : 'var(--bg-3)',
               color: active ? 'var(--accent)' : 'var(--ink-2)',
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: 700,
               cursor: 'pointer',
+              lineHeight: 1.15,
             }}
           >
             {tab.label}

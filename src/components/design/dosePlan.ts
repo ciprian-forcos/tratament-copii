@@ -1,11 +1,11 @@
-import type { Child, Medication } from '../../types'
+import type { Child, Medication, MedicationForm } from '../../types'
 import { DEFAULT_MEDICATIONS } from '../../data/medications'
 import { calculateDose } from '../../utils/doseCalculation'
+import { formNote, inferMedicationForm, shortMedName } from '../../utils/medicationForm'
 import { nextDoseFor } from './scheduleAdapter'
 
-/** Choose the medication object by short id used in the design's MEDS list. */
-function findMed(id: string): Medication | undefined {
-  return DEFAULT_MEDICATIONS.find((m) => m.id === id)
+function findMed(id: string, catalog: Medication[]): Medication | undefined {
+  return catalog.find((m) => m.id === id)
 }
 
 /** Minimum cross-drug spacing (ibuprofen ↔ paracetamol alternation policy). */
@@ -18,6 +18,7 @@ export interface PlannedStep {
   unit: string
   when: Date
   note: string
+  form?: MedicationForm
 }
 
 export interface Plan {
@@ -39,12 +40,14 @@ export function buildPlan({
   now,
   lastMedId,
   lastAt,
+  medications = DEFAULT_MEDICATIONS,
 }: {
   child: Child
   now: Date
   lastMedId?: string
   lastAt?: Date
-}): Plan {
+  medications?: Medication[]
+}): Plan | null {
   const isIbu = (id?: string) => id === 'nurofen'
   const isPara = (id?: string) => id === 'panadol'
 
@@ -71,32 +74,32 @@ export function buildPlan({
     ? new Date(Math.max(engineNext.getTime(), crossDrugFloor.getTime()))
     : crossDrugFloor
 
-  const nowMed = findMed(nowMedId)!
-  const nextMed = findMed(nextMedId)!
+  const nowMed = findMed(nowMedId, medications)
+  const nextMed = findMed(nextMedId, medications)
+  if (!nowMed || !nextMed) return null
+
+  const nowForm = inferMedicationForm(nowMed)
 
   return {
     now: {
       medId: nowMedId,
-      medName: shortName(nowMed),
+      medName: shortMedName(nowMed.name),
       amount: calculateDose(nowMed, child.weight),
       unit: nowMed.doseConfig.unit,
       when: nowTarget,
-      note: 'sirop · cu seringa',
+      note: formNote(nowForm),
+      form: nowForm,
     },
     next: {
       medId: nextMedId,
-      medName: shortName(nextMed),
+      medName: shortMedName(nextMed.name),
       amount: calculateDose(nextMed, child.weight),
       unit: nextMed.doseConfig.unit,
       when: nextTarget,
       note: 'alternăm, ca să nu suprapunem.',
+      form: inferMedicationForm(nextMed),
     },
   }
-}
-
-function shortName(med: Medication): string {
-  // "Nurofen/Algin (Ibuprofen 100mg/5ml)" → "Nurofen"
-  return med.name.split(/[/(]/)[0].trim()
 }
 
 export function fmtHHMM(d: Date): string {

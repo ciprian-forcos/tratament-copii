@@ -4,7 +4,11 @@ import { activeChild, useChildren } from './childStore'
 import { buildPlan, diffHHMM, fmtHHMM } from './dosePlan'
 import { doseStore, useDoses } from './doseStore'
 import { alreadyRecorded, lastDoseInEpisode, seedFromStep2 } from './episode'
+import { FormPictogram } from './FormPictogram'
+import { MedicalDisclaimer } from './MedicalDisclaimer'
+import { loadMedications } from './medicineStorage'
 import type { Step2Value } from './Step2'
+
 
 interface Props {
   onBack: () => void
@@ -33,14 +37,39 @@ export function PlanCard({ onBack, onDone, onWait, step2 }: Props) {
     now,
     lastMedId: last?.medicationId,
     lastAt: last?.at,
+    medications: loadMedications(),
   })
 
+  if (!plan) {
+    return (
+      <div className="phone">
+        <StatusBar timeLabel={fmtHHMM(now)} />
+        <div style={{ padding: '28px 22px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="eyebrow" style={{ color: 'var(--danger)' }}>
+            plan indisponibil
+          </div>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--ink)', margin: 0 }}>
+            Lipsește Nurofen sau Panadol din Medicamente.
+          </h1>
+          <p style={{ color: 'var(--ink-2)', fontSize: 15, lineHeight: 1.4 }}>
+            Adaugă-le înapoi ca să putem calcula doza. Fără ele, planul de febră nu poate rula.
+          </p>
+          <button className="btn-secondary" onClick={onBack}>
+            ← Înapoi
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  const nowStep = plan.now
+  const nextStep = plan.next
   const nowAmount =
-    plan.now.amount === 'sub_doza' ? 'sub doza' : `${plan.now.amount} ${plan.now.unit}`
+    nowStep.amount === 'sub_doza' ? 'sub doza' : `${nowStep.amount} ${nowStep.unit}`
   const nextAmount =
-    plan.next.amount === 'sub_doza' ? 'sub doza' : `${plan.next.amount} ${plan.next.unit}`
-  const canRecordNow = plan.now.when.getTime() <= now.getTime()
-  const nowTimingLabel = canRecordNow ? 'acum' : `la ${fmtHHMM(plan.now.when)}`
+    nextStep.amount === 'sub_doza' ? 'sub doza' : `${nextStep.amount} ${nextStep.unit}`
+  const canRecordNow = nowStep.when.getTime() <= now.getTime()
+  const nowTimingLabel = canRecordNow ? 'acum' : `la ${fmtHHMM(nowStep.when)}`
   const nowRowLabel = canRecordNow ? 'acum' : 'urmează'
 
   function persistSeed() {
@@ -50,6 +79,7 @@ export function PlanCard({ onBack, onDone, onWait, step2 }: Props) {
       medicationId: seed.medicationId,
       scheduledAt: seed.at.toISOString(),
       administeredAt: seed.at.toISOString(),
+      source: 'fever',
     })
   }
 
@@ -60,9 +90,10 @@ export function PlanCard({ onBack, onDone, onWait, step2 }: Props) {
     const administeredAt = new Date()
     doseStore.record({
       childId: child.id,
-      medicationId: plan.now.medId,
-      scheduledAt: plan.now.when.toISOString(),
+      medicationId: nowStep.medId,
+      scheduledAt: nowStep.when.toISOString(),
       administeredAt: administeredAt.toISOString(),
+      source: 'fever',
     })
     onDone(administeredAt)
   }
@@ -141,8 +172,8 @@ export function PlanCard({ onBack, onDone, onWait, step2 }: Props) {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-            <NumberBubble n={1} highlight />
-            <div style={{ flex: 1 }}>
+            <FormPictogram form={plan.now.form ?? 'sirop'} />
+            <div style={{ flex: 1, minWidth: 0 }}>
               <div className="eyebrow" style={{ color: 'var(--accent)' }}>
                 {nowRowLabel} · {fmtHHMM(plan.now.when)}
               </div>
@@ -158,8 +189,8 @@ export function PlanCard({ onBack, onDone, onWait, step2 }: Props) {
           <div style={{ borderTop: '1.5px dashed var(--line)' }} />
 
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-            <NumberBubble n={2} />
-            <div style={{ flex: 1 }}>
+            <FormPictogram form={plan.next.form ?? 'sirop'} color="var(--ink-2)" />
+            <div style={{ flex: 1, minWidth: 0 }}>
               <div className="eyebrow">
                 apoi · {fmtHHMM(plan.next.when)} (în {diffHHMM(now, plan.next.when)})
               </div>
@@ -173,6 +204,7 @@ export function PlanCard({ onBack, onDone, onWait, step2 }: Props) {
           </div>
 
         </div>
+        <MedicalDisclaimer compact />
       </div>
 
       <div style={{ flex: 1 }} />
@@ -206,26 +238,4 @@ export function PlanCard({ onBack, onDone, onWait, step2 }: Props) {
   )
 }
 
-function NumberBubble({ n, highlight }: { n: number; highlight?: boolean }) {
-  return (
-    <div
-      style={{
-        flex: '0 0 auto',
-        width: 44,
-        height: 44,
-        borderRadius: 14,
-        border: '1.5px solid ' + (highlight ? 'var(--accent)' : 'var(--line)'),
-        background: highlight ? 'rgba(245,177,74,0.12)' : 'var(--bg-3)',
-        color: highlight ? 'var(--accent)' : 'var(--ink-2)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontFamily: 'var(--font-mono)',
-        fontSize: 16,
-        fontWeight: 600,
-      }}
-    >
-      {n}
-    </div>
-  )
-}
+

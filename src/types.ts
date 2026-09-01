@@ -43,6 +43,9 @@ export type DoseConfig =
 
 // Medication
 
+export type MedicationForm = 'sirop' | 'picaturi' | 'spray' | 'supozitor'
+export type MedicationKind = 'fever' | 'support'
+
 export interface Medication {
   id: string
   name: string
@@ -50,6 +53,8 @@ export interface Medication {
   doseConfig: DoseConfig
   color: string
   notes: string
+  form?: MedicationForm
+  kind?: MedicationKind
 }
 
 // Schedule rule variants
@@ -114,4 +119,6 @@ export interface AdministeredDose {
   medicationId: string
   scheduledAt: string  // ISO datetime string
   administeredAt: string  // ISO datetime string
+  /** Fever wizard vs Program check-off. Untagged records count as fever (legacy). */
+  source?: 'fever' | 'program'
 }

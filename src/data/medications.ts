@@ -13,6 +13,8 @@ export const DEFAULT_MEDICATIONS: Medication[] = [
     },
     color: '#3b82f6',
     notes: 'La 8 ore; min 4h de la Panadol daca febra persista',
+    form: 'sirop',
+    kind: 'fever',
   },
   {
     id: 'panadol',
@@ -26,6 +28,8 @@ export const DEFAULT_MEDICATIONS: Medication[] = [
     },
     color: '#f97316',
     notes: 'La 8 ore; min 4h de la Nurofen',
+    form: 'sirop',
+    kind: 'fever',
   },
   {
     id: 'diclofenac',
@@ -42,6 +46,8 @@ export const DEFAULT_MEDICATIONS: Medication[] = [
     },
     color: '#8b5cf6',
     notes: '0.5-2 mg/kg/zi, in 2-3 prize. Doar daca nu scade cu Nurofen+Panadol',
+    form: 'supozitor',
+    kind: 'fever',
   },
   {
     id: 'novocalmin',
@@ -58,6 +64,8 @@ export const DEFAULT_MEDICATIONS: Medication[] = [
     },
     color: '#14b8a6',
     notes: '0.5-2 mg/kg/zi, in 2-3 prize. Doar daca nu scade cu Nurofen+Panadol',
+    form: 'supozitor',
+    kind: 'fever',
   },
   {
     id: 'vitamina_d',
@@ -70,6 +78,8 @@ export const DEFAULT_MEDICATIONS: Medication[] = [
     },
     color: '#22c55e',
     notes: 'O data pe zi',
+    form: 'spray',
+    kind: 'support',
   },
   {
     id: 'vitamina_c',
@@ -82,6 +92,8 @@ export const DEFAULT_MEDICATIONS: Medication[] = [
     },
     color: '#eab308',
     notes: 'Dimineata',
+    form: 'picaturi',
+    kind: 'support',
   },
   {
     id: 'virodep',
@@ -94,6 +106,8 @@ export const DEFAULT_MEDICATIONS: Medication[] = [
     },
     color: '#ec4899',
     notes: 'De 2 ori pe zi, inainte de masa',
+    form: 'picaturi',
+    kind: 'support',
   },
   {
     id: 'greentus',
@@ -106,5 +120,7 @@ export const DEFAULT_MEDICATIONS: Medication[] = [
     },
     color: '#ef4444',
     notes: 'De 3 ori pe zi, inainte de masa',
+    form: 'sirop',
+    kind: 'support',
   },
 ]

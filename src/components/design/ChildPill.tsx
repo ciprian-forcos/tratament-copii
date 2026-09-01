@@ -10,8 +10,8 @@ interface Props {
 export function ChildPill({ onChildClick, onProfileClick, onTemperatureClick }: Props) {
   const state = useChildren()
   const child = activeChild(state)
-  const temp = child.temp ?? 0
-  const fever = temp >= 38
+  const temp = child.temp
+  const fever = temp != null && temp >= 38
 
   return (
     <div
@@ -20,6 +20,7 @@ export function ChildPill({ onChildClick, onProfileClick, onTemperatureClick }: 
         alignItems: 'center',
         gap: 6,
         minWidth: 0,
+        flexWrap: 'wrap',
       }}
     >
       <button
@@ -67,7 +68,7 @@ export function ChildPill({ onChildClick, onProfileClick, onTemperatureClick }: 
       <ChipButton onClick={onTemperatureClick} ariaLabel={`temperatura ${child.name}`}>
         <span style={{ color: 'var(--ink-3)', fontFamily: 'var(--font-body)' }}>Temperatura</span>
         <span style={{ color: fever ? 'var(--danger)' : 'var(--ink)' }} className="mono">
-          {temp.toFixed(1)}°
+          {temp != null ? `${temp.toFixed(1)}°` : '—'}
         </span>
       </ChipButton>
     </div>

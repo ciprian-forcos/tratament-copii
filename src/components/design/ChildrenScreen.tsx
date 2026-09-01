@@ -50,18 +50,7 @@ export function ChildrenScreen({
           gap: 10,
         }}
       >
-        <span
-          aria-hidden="true"
-          style={{
-            color: 'var(--ink-3)',
-            fontSize: 22,
-            lineHeight: 1,
-            padding: '0 4px',
-          }}
-        >
-          ‹
-        </span>
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div className="eyebrow" style={{ color: 'var(--accent)' }}>
             gestionează
           </div>
@@ -110,10 +99,12 @@ export function ChildrenScreen({
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 8,
+                minWidth: 0,
+                overflow: 'hidden',
               }}
             >
               {/* Row header: avatar + name + age + active badge */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
                 <span
                   style={{
                     width: 36,
@@ -132,7 +123,7 @@ export function ChildrenScreen({
                 >
                   {child.initial ?? child.name.trim()[0]?.toUpperCase() ?? '?'}
                 </span>
-                <div style={{ flex: 1 }}>
+                <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
                   <div style={{ fontWeight: 700, fontSize: 16, color: 'var(--ink)' }}>
                     {child.name}
                     {isActive && (
@@ -166,7 +157,7 @@ export function ChildrenScreen({
                 style={{
                   display: 'flex',
                   gap: 8,
-                  paddingLeft: 46,
+                  flexWrap: 'wrap',
                 }}
               >
                 <button
@@ -251,12 +242,14 @@ export function ChildrenScreen({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
+                  gap: 8,
                   cursor: 'pointer',
                   color: 'var(--ink)',
                   textAlign: 'left',
+                  minWidth: 0,
                 }}
               >
-                <span style={{ fontSize: 14, fontWeight: 600 }}>{med.name}</span>
+                <span style={{ fontSize: 14, fontWeight: 600, minWidth: 0, overflowWrap: 'anywhere' }}>{med.name}</span>
                 <span className="mono" style={{ fontSize: 11, color: on ? 'var(--accent)' : 'var(--ink-3)' }}>
                   {on ? 'inclus' : 'oprit'}
                 </span>

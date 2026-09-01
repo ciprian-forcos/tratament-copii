@@ -1,9 +1,10 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { StepShell } from './StepShell'
+import { ChildEditor } from './ChildEditor'
 import { activeChild, ageWords, childStore, useChildren } from './childStore'
 
 interface Props {
-  value: number
+  value: number | undefined
   onChange: (v: number) => void
   onBack: () => void
   onNext: () => void
@@ -12,9 +13,10 @@ interface Props {
 const PRESETS = [37.5, 38.0, 38.5, 39.0, 39.5, 40.0, 40.5, 41.0]
 
 export function Step1({ value, onChange, onBack, onNext }: Props) {
-  const v = value
+  const v = value ?? 37.0
   const fever = v >= 38
   const set = (n: number) => onChange(Math.max(35, Math.min(43, +n.toFixed(1))))
+  const [editorOpen, setEditorOpen] = useState(false)
 
   const state = useChildren()
   const child = activeChild(state)
@@ -90,7 +92,10 @@ export function Step1({ value, onChange, onBack, onNext }: Props) {
 
       <div style={{ flex: 1 }} />
 
-      <div
+      <button
+        type="button"
+        onClick={() => setEditorOpen(true)}
+        aria-label={`editează profil ${child.name}`}
         style={{
           padding: '12px 14px',
           marginTop: 18,
@@ -101,6 +106,10 @@ export function Step1({ value, onChange, onBack, onNext }: Props) {
           gap: 12,
           color: 'var(--ink-2)',
           fontSize: 13,
+          width: '100%',
+          background: 'transparent',
+          cursor: 'pointer',
+          textAlign: 'left',
         }}
       >
         <span
@@ -124,12 +133,13 @@ export function Step1({ value, onChange, onBack, onNext }: Props) {
             {child.name} · {ageWords(child)} · {child.weight} kg
           </div>
           <div className="mono" style={{ fontSize: 11, color: 'var(--ink-3)' }}>
-            folosit pentru calculul dozei
+            tap pentru greutate · folosit pentru calculul dozei
           </div>
         </div>
-      </div>
+      </button>
 
-      <PersistTempOnChange value={v} />
+      {value != null && <PersistTempOnChange value={value} />}
+      <ChildEditor open={editorOpen} onClose={() => setEditorOpen(false)} />
     </StepShell>
   )
 }

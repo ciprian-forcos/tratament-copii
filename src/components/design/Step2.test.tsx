@@ -42,6 +42,21 @@ describe('Step2', () => {
     expect(input).toHaveAttribute('type', 'datetime-local')
   })
 
+  it('lists caller-provided fever medicines instead of the hardcoded pair', () => {
+    render(
+      <Step2
+        value={{ kind: 'last' }}
+        onChange={vi.fn()}
+        onBack={vi.fn()}
+        onNext={vi.fn()}
+        medications={[{ id: 'custom-fever', label: 'Algin', sub: 'sirop · cu seringa' }]}
+      />,
+    )
+
+    expect(screen.getByRole('button', { name: /algin/i })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /nurofen/i })).not.toBeInTheDocument()
+  })
+
   it('offers only the timed antipyretic choices and excludes Virodep', async () => {
     const user = userEvent.setup()
     render(<Step2Harness />)

@@ -15,7 +15,9 @@ import { nextPlannedDose } from './nextPlannedDose'
 import { TabBar, type TabId } from './TabBar'
 import { useDoseReminder } from './useDoseReminder'
 import { isPanicActive, loadPanicPref } from './panicPref'
-import { usePanicPref } from './usePanicPref'
+import { MedicalDisclaimer } from './MedicalDisclaimer'
+import { enabledMedicationIds } from './enabledMeds'
+import { isFeverMedication, inferMedicationForm, formNote, shortMedName } from '../../utils/medicationForm'
 
 type Page = 'home' | 's1' | 's2' | 'done' | 'children' | 'medicines' | 'program'
 
@@ -32,10 +34,16 @@ export function FlowProtoB() {
 
   const state = useChildren()
   const child = activeChild(state)
-  const temp = child.temp ?? 37.0
+  const temp = child.temp
   const setTemp = (v: number) => childStore.patchActive({ temp: v })
-  const { pref: panicPref, setPref: setPanicPref } = usePanicPref()
   const doses = useDoses()
+  const feverChoices = medications
+    .filter((m) => enabledMedicationIds(child, medications).includes(m.id) && isFeverMedication(m))
+    .map((m) => ({
+      id: m.id,
+      label: shortMedName(m.name),
+      sub: formNote(inferMedicationForm(m)),
+    }))
   const nextFever = useMemo(
     () => nextPlannedDose({ child, now: new Date(), doses }),
     [child, doses],
@@ -150,6 +158,9 @@ export function FlowProtoB() {
           </div>
         </div>
         <div style={{ flex: 1, overflowY: 'auto' }}>
+          <div style={{ padding: '8px 16px 0' }}>
+            <MedicalDisclaimer compact />
+          </div>
           <MedicamenteTab
             medications={medications}
             setMedications={setMedications}
@@ -166,12 +177,10 @@ export function FlowProtoB() {
         medications={medications}
         onFever={startFromHome}
         onMenu={() => setPage('children')}
-        panicPref={panicPref}
-        onPanicPref={setPanicPref}
         tab="program"
         onTab={goTab}
         remindersEnabled={reminders.enabled}
-        onRemindersEnable={() => void reminders.enable()}
+        onRemindersEnable={() => reminders.enable()}
         onRemindersDisable={reminders.disable}
       />
     )
@@ -180,13 +189,10 @@ export function FlowProtoB() {
       <HomeB
         onStart={startFromHome}
         onMenu={() => setPage('children')}
-        onProgram={() => setPage('program')}
-        panicPref={panicPref}
-        onPanicPref={setPanicPref}
         tab="fever"
         onTab={goTab}
         remindersEnabled={reminders.enabled}
-        onRemindersEnable={() => void reminders.enable()}
+        onRemindersEnable={() => reminders.enable()}
         onRemindersDisable={reminders.disable}
       />
     )
@@ -201,6 +207,7 @@ export function FlowProtoB() {
         onChange={setS2}
         onBack={() => setPage('s1')}
         onNext={() => setPage('done')}
+        medications={feverChoices}
       />
     )
   return (

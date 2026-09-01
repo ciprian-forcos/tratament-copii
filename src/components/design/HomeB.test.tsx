@@ -44,6 +44,12 @@ describe('HomeB night timeline', () => {
     expect(screen.getByText('noaptea asta')).toBeInTheDocument()
   })
 
+  it('hides "noaptea asta" during the day', () => {
+    vi.setSystemTime(new Date('2026-06-07T16:20:00'))
+    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
+    expect(screen.queryByText('noaptea asta')).not.toBeInTheDocument()
+  })
+
   it('renders dose short names for doses within the window', () => {
     const t1 = new Date('2026-06-07T21:30:00').toISOString()
     const t2 = new Date('2026-06-07T22:00:00').toISOString()

@@ -10,7 +10,6 @@
  * internally. We implement the plan's public signature here, keeping the
  * FINDINGS logic (engine-driven interval, max(engineSlot, now)).
  */
-import { generateSchedule } from '../../utils/scheduleEngine'
 import { defaultScheduleRules } from '../../data/scheduleRules'
 import { doseStore } from './doseStore'
 
@@ -33,11 +32,8 @@ export function nextDoseFor({
   childId: string
   now: Date
 }): Date | null {
-  // Check whether this medication has any recurring rule at all.
-  const hasRule = defaultScheduleRules.some(
-    (r) => r.medicationId === medicationId && r.type === 'every_n_hours',
-  )
-  if (!hasRule) return null
+  const intervalHours = sameDrugIntervalHours(medicationId)
+  if (intervalHours == null) return null
 
   // Find the most recent administered dose for this medication.
   const allDoses = doseStore.listFor(childId)
@@ -55,24 +51,16 @@ export function nextDoseFor({
       : latest,
   )
   const lastAdministeredAt = new Date(lastDose.administeredAt)
+  const nextFromRule = new Date(lastAdministeredAt.getTime() + intervalHours * 3600_000)
+  return new Date(Math.max(nextFromRule.getTime(), now.getTime()))
+}
 
-  // Ask the engine: project forward from lastAdministeredAt, find the first
-  // slot strictly after lastAdministeredAt (i.e. lastAdministeredAt + interval).
-  // We use a 48h window to be safe in case interval > 24h.
-  const schedule = generateSchedule(lastAdministeredAt, defaultScheduleRules, [medicationId], 48)
-
-  const nextEntry = schedule.find(
-    (e) =>
-      e.medicationId === medicationId &&
-      e.scheduledAt.getTime() > lastAdministeredAt.getTime(),
+/** Same-drug floor. Panadol keeps 8h even after the duplicate Program q8h rule (r3) was removed. */
+function sameDrugIntervalHours(medicationId: string): number | null {
+  const rule = defaultScheduleRules.find(
+    (r) => r.medicationId === medicationId && r.type === 'every_n_hours',
   )
-
-  if (!nextEntry) {
-    // Rule exists but engine produced no future slot (e.g. window too small).
-    // Fall back to eligible immediately.
-    return now
-  }
-
-  // Return the later of the engine-computed next slot and now.
-  return new Date(Math.max(nextEntry.scheduledAt.getTime(), now.getTime()))
+  if (rule && rule.type === 'every_n_hours') return rule.everyNHours
+  if (medicationId === 'panadol') return 8
+  return null
 }
