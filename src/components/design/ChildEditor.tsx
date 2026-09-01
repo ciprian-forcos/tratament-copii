@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { activeChild, ageWords, childStore, useChildren } from './childStore'
 
 interface Props {
@@ -261,7 +262,11 @@ export function ChildEditor({ open, onClose }: Props) {
   )
 }
 
-function Stepper({
+export function applyStep(current: number, delta: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, Number((current + delta).toFixed(2))))
+}
+
+export function Stepper({
   label,
   value,
   onChange,
@@ -278,6 +283,19 @@ function Stepper({
   step?: number
   format?: (v: number) => string
 }) {
+  const valueRef = useRef(value)
+  const committedRef = useRef(value)
+  if (value !== committedRef.current) {
+    valueRef.current = value
+    committedRef.current = value
+  }
+
+  const bump = (direction: 1 | -1) => {
+    const next = applyStep(valueRef.current, direction * step, min, max)
+    valueRef.current = next
+    onChange(next)
+  }
+
   return (
     <div
       style={{
@@ -299,7 +317,8 @@ function Stepper({
       </div>
       <div style={{ display: 'flex', gap: 8 }}>
         <button
-          onClick={() => onChange(Math.max(min, +(value - step).toFixed(2)))}
+          type="button"
+          onClick={() => bump(-1)}
           aria-label="minus"
           style={{
             width: 44,
@@ -315,7 +334,8 @@ function Stepper({
           −
         </button>
         <button
-          onClick={() => onChange(Math.min(max, +(value + step).toFixed(2)))}
+          type="button"
+          onClick={() => bump(1)}
           aria-label="plus"
           style={{
             width: 44,

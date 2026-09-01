@@ -2,6 +2,10 @@
 
 ## 2026-09-01
 
+* **Cycle 2 stepper + Step2 RO time**: Weight/age steppers keep a live
+  value so 10 rapid taps no longer collapse into one step. Step 2 last-dose
+  mode seeds `lastAt` to now and shows the same `dd.mm.yyyy HH:mm` line as
+  Program above the native `datetime-local` input.
 * **Home timeline now cursor**: Replaced the filled now-dot with a short
   vertical tick on the night-strip curve, drawn behind dose marks. The tick
   is omitted when the next dose is already due, so the pulse-dot stays the

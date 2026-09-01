@@ -1,3 +1,4 @@
+import { toDatetimeLocalString } from '../../utils/formatRo'
 import { StepShell } from './StepShell'
 import { RoDateTimeField } from './RoDateTimeField'
 
@@ -53,7 +54,13 @@ export function Step2({ value, onChange, onBack, onNext, medications = DEFAULT_F
         <button
           className="chip"
           aria-checked={v.kind === 'last'}
-          onClick={() => set({ kind: 'last' })}
+          onClick={() =>
+            onChange({
+              ...v,
+              kind: 'last',
+              lastAt: v.lastAt || toDatetimeLocalString(new Date()),
+            })
+          }
         >
           <span className="radio-dot" />
           <div>
