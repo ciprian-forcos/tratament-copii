@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { AnalogClock } from './AnalogClock'
 import { ChildEditor } from './ChildEditor'
 import { ChildPill } from './ChildPill'
@@ -7,15 +7,17 @@ import { TempWheel } from './TempWheel'
 import { activeChild, childStore, useChildren } from './childStore'
 import { useDoses } from './doseStore'
 import { diffHHMM, fmtHHMM } from './dosePlan'
+import {
+  estimateTextWidth,
+  layoutMarks,
+  STRIP_HALF_MS,
+  STRIP_SPAN_MS,
+} from './layoutMarks'
 import { nextPlannedDose } from './nextPlannedDose'
 import { isNightWindow } from './panicPref'
 import { RemindersButton } from './RemindersButton'
 import { TabBar, type TabId } from './TabBar'
 import { useNightTimeline } from './useNightTimeline'
-
-type BeforeInstallPromptEvent = Event & {
-  prompt: () => Promise<void>
-}
 
 interface Props {
   onStart: () => void
@@ -46,43 +48,9 @@ export function HomeB({
   const temp = child.temp
   const [pickerOpen, setPickerOpen] = useState(false)
   const [childOpen, setChildOpen] = useState(false)
-  const installPrompt = useRef<BeforeInstallPromptEvent | null>(null)
-  const [manualInstallOpen, setManualInstallOpen] = useState(false)
-  const [standalone, setStandalone] = useState(isStandaloneDisplay)
 
   const setTemp = (v: number) => childStore.patchActive({ temp: v })
   const openPicker = () => setPickerOpen(true)
-
-  useEffect(() => {
-    setStandalone(isStandaloneDisplay())
-    const onBeforeInstallPrompt = (event: Event) => {
-      event.preventDefault()
-      installPrompt.current = event as BeforeInstallPromptEvent
-      setManualInstallOpen(false)
-    }
-    const onInstalled = () => {
-      setStandalone(true)
-      installPrompt.current = null
-      setManualInstallOpen(false)
-    }
-
-    window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt)
-    window.addEventListener('appinstalled', onInstalled)
-    return () => {
-      window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt)
-      window.removeEventListener('appinstalled', onInstalled)
-    }
-  }, [])
-
-  function handleInstall() {
-    if (installPrompt.current) {
-      const prompt = installPrompt.current
-      installPrompt.current = null
-      void prompt.prompt()
-      return
-    }
-    setManualInstallOpen((open) => !open)
-  }
 
   const [now, setNow] = useState(() => new Date())
   useEffect(() => {
@@ -98,17 +66,39 @@ export function HomeB({
     ...(next ? [{ at: next.at, med: next.med, next: true }] : []),
   ]
 
-  // Keep the useful 12-hour span, but frame the current moment in the center.
-  const stripStart = new Date(now.getTime() - 6 * 3600_000)
-  const toPct = (d: Date) => {
-    const dt = (d.getTime() - stripStart.getTime()) / (12 * 3600_000)
-    return Math.max(0, Math.min(1, dt)) * 100
-  }
+  const stripRef = useRef<HTMLDivElement>(null)
+  const [stripW, setStripW] = useState(390)
+  useLayoutEffect(() => {
+    const el = stripRef.current
+    if (!el) return
+    const apply = () => {
+      const w = el.clientWidth
+      if (w > 0) setStripW(w)
+    }
+    apply()
+    if (typeof ResizeObserver === 'undefined') return
+    const ro = new ResizeObserver(apply)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  const stripStart = new Date(now.getTime() - STRIP_HALF_MS)
+  const toPct = (d: Date) => ((d.getTime() - stripStart.getTime()) / STRIP_SPAN_MS) * 100
+  const laidOut = layoutMarks(marks, {
+    widthPx: stripW,
+    now,
+    measure: estimateTextWidth,
+  })
   const nextIsDue = Boolean(next && next.at.getTime() <= now.getTime())
-  // HH:MM labels share the tick's y-band; hide it when a mark is within ~40 min.
   const markNearNow = marks.some(
     (m) => Math.abs(m.at.getTime() - now.getTime()) <= 40 * 60_000,
   )
+
+  const ctaLabel = !next
+    ? 'Începe tratamentul'
+    : nextIsDue
+      ? 'Deschide planul'
+      : `Următoarea doză · ${fmtHHMM(next.at)} →`
 
   return (
     <div className="phone">
@@ -177,7 +167,7 @@ export function HomeB({
             noaptea asta
           </div>
         )}
-        <div style={{ position: 'relative', height: 100 }}>
+        <div ref={stripRef} style={{ position: 'relative', height: 100 }}>
           <svg
             viewBox="0 0 320 70"
             preserveAspectRatio="none"
@@ -233,99 +223,70 @@ export function HomeB({
               acum
             </div>
           </div>
-          {marks.map((m, i) => {
-            const isNext = (m as { next?: boolean }).next === true
-            return (
+          {laidOut.map((m, i) => (
+            <div
+              key={i}
+              data-testid="strip-mark"
+              data-next={m.next ? 'true' : 'false'}
+              data-pinned={m.pinned ? 'true' : 'false'}
+              style={{
+                position: 'absolute',
+                top: 14,
+                left: m.leftPx,
+                width: m.widthPx,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 6,
+                zIndex: 1,
+                overflow: 'hidden',
+              }}
+            >
               <div
-                key={i}
+                className={m.next ? 'pulse-dot' : ''}
                 style={{
-                  position: 'absolute',
-                  top: 14,
-                  left: `${toPct(m.at)}%`,
-                  transform: 'translateX(-50%)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: 6,
-                  zIndex: 1,
+                  width: m.next ? 16 : 10,
+                  height: m.next ? 16 : 10,
+                  borderRadius: '50%',
+                  background: m.next ? 'var(--accent)' : 'var(--cool)',
+                  boxShadow: m.next ? '0 0 0 4px rgba(245,177,74,0.18)' : 'none',
+                  flex: '0 0 auto',
+                }}
+              />
+              <div
+                className="mono"
+                style={{
+                  fontSize: 10,
+                  color: m.next ? 'var(--accent)' : 'var(--ink-3)',
+                  whiteSpace: 'nowrap',
                 }}
               >
-                <div
-                  className={isNext ? 'pulse-dot' : ''}
-                  style={{
-                    width: isNext ? 16 : 10,
-                    height: isNext ? 16 : 10,
-                    borderRadius: '50%',
-                    background: isNext ? 'var(--accent)' : 'var(--cool)',
-                    boxShadow: isNext ? '0 0 0 4px rgba(245,177,74,0.18)' : 'none',
-                  }}
-                />
-                <div
-                  className="mono"
-                  style={{ fontSize: 10, color: isNext ? 'var(--accent)' : 'var(--ink-3)' }}
-                >
-                  {fmtHHMM(m.at)}
-                </div>
-                <div
-                  className="hand"
-                  style={{ fontSize: 14, color: isNext ? 'var(--accent-2)' : 'var(--ink-2)' }}
-                >
-                  {m.med}
-                </div>
+                {m.timeLabel}
               </div>
-            )
-          })}
+              <div
+                className="hand"
+                style={{
+                  fontSize: 14,
+                  color: m.next ? 'var(--accent-2)' : 'var(--ink-2)',
+                  maxWidth: '100%',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {m.label}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
       <div style={{ padding: '0 18px 22px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {!standalone && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <button
-              type="button"
-              onClick={handleInstall}
-              style={{
-                padding: '11px 13px',
-                borderRadius: 14,
-                border: '1.5px solid var(--line)',
-                background: 'var(--bg-3)',
-                color: 'var(--ink-2)',
-                fontSize: 14,
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              Instalează aplicația
-            </button>
-            {manualInstallOpen && (
-              <div
-                style={{
-                  padding: '10px 12px',
-                  borderRadius: 12,
-                  border: '1.5px dashed var(--line)',
-                  background: 'var(--bg-2)',
-                  color: 'var(--ink-3)',
-                  fontSize: 13,
-                  lineHeight: 1.35,
-                }}
-              >
-                Adaugă pe ecranul principal din meniul browserului.
-              </div>
-            )}
-          </div>
-        )}
         <button className="btn-primary btn-wait" onClick={onStart}>
-          {next ? `Următoarea doză · ${fmtHHMM(next.at)} →` : 'Începe tratamentul'}
+          {ctaLabel}
         </button>
       </div>
       {onTab && tab && <TabBar current={tab} onSelect={onTab} />}
     </div>
-  )
-}
-
-function isStandaloneDisplay() {
-  return (
-    window.matchMedia?.('(display-mode: standalone)').matches ||
-    (navigator as Navigator & { standalone?: boolean }).standalone === true
   )
 }

@@ -1,7 +1,9 @@
 import { useRef, useState, useEffect } from 'react'
 import { doseStore } from './doseStore'
 import type { AdministeredDose } from '../../types'
-import { DEFAULT_MEDICATIONS } from '../../data/medications'
+import { shortMedName } from '../../utils/medicationForm'
+import { STRIP_HALF_MS } from './layoutMarks'
+import { loadMedications } from './medicineStorage'
 
 export interface NightTimelineEntry {
   at: Date
@@ -17,14 +19,11 @@ export function anchorStrip(now: Date): Date {
   return start
 }
 
-/** Resolve a medication's short display name from DEFAULT_MEDICATIONS.
- *  Short name is the text before the first '/' or '(' character.
- *  Falls back to medId if the medication is not found. */
+/** Resolve a medication's short display name from the stored catalog. */
 function resolveShortName(medId: string): string {
-  const med = DEFAULT_MEDICATIONS.find((m) => m.id === medId)
+  const med = loadMedications().find((m) => m.id === medId)
   if (!med) return medId
-  const match = med.name.match(/^([^/(]+)/)
-  return match ? match[1].trim() : med.name.trim()
+  return shortMedName(med.name)
 }
 
 function dosesToEntries(doses: AdministeredDose[]): NightTimelineEntry[] {
@@ -43,17 +42,21 @@ function signature(doses: AdministeredDose[]): string {
 }
 
 /**
- * Returns the administered doses for `childId` that fall within the
- * current 12-hour night window (anchor 21:00 → 09:00), sorted ascending.
+ * Returns administered fever doses for `childId` on the strip axis
+ * (now ± 6h), sorted ascending. Program check-offs are excluded so the
+ * strip and the episode plan agree. `anchorStrip` (21:00–09:00) is not
+ * this window — see `isNightWindow`.
  */
 export function useNightTimeline(childId: string, now: Date): NightTimelineEntry[] {
-  const since = anchorStrip(now)
-  const until = new Date(since.getTime() + 12 * 3600_000)
+  const sinceMs = now.getTime() - STRIP_HALF_MS
+  const untilMs = now.getTime() + STRIP_HALF_MS
 
   const cachedRef = useRef<{ sig: string; entries: NightTimelineEntry[] } | null>(null)
 
   function getEntries(): NightTimelineEntry[] {
-    const doses = doseStore.listFor(childId, { since, until })
+    const doses = doseStore
+      .listFor(childId, { since: new Date(sinceMs), until: new Date(untilMs) })
+      .filter((d) => d.source !== 'program')
     const sig = signature(doses)
     if (cachedRef.current && cachedRef.current.sig === sig) {
       return cachedRef.current.entries
@@ -66,14 +69,13 @@ export function useNightTimeline(childId: string, now: Date): NightTimelineEntry
   const [entries, setEntries] = useState<NightTimelineEntry[]>(() => getEntries())
 
   useEffect(() => {
-    // Update immediately in case childId/now changed between render and effect
     setEntries(getEntries())
 
     const unsubscribe = doseStore.subscribe(() => {
       setEntries(getEntries())
     })
     return unsubscribe
-  }, [childId, since.getTime()])
+  }, [childId, sinceMs, untilMs])
 
   return entries
 }

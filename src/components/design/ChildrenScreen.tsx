@@ -4,6 +4,7 @@ import { StatusBar } from './StatusBar'
 import { activeChild, ageWords, childStore, useChildren } from './childStore'
 import { enabledMedicationIds, toggleEnabledMedication } from './enabledMeds'
 import { loadMedications } from './medicineStorage'
+import { InstallPrompt } from './InstallPrompt'
 import { ShareSheet } from './share/ShareSheet'
 import { TabBar, type TabId } from './TabBar'
 import type { Medication } from '../../types'
@@ -268,6 +269,7 @@ export function ChildrenScreen({
           gap: 10,
         }}
       >
+        <InstallPrompt />
         <button
           aria-label="+ adaugă copil"
           onClick={handleAdd}

@@ -79,10 +79,8 @@ describe('PlanCard', () => {
 
     expect(screen.getByRole('heading', { name: /la 06:30/i })).toBeInTheDocument()
 
-    const button = screen.getByRole('button', { name: /am dat doza/i })
-    expect(button).toBeDisabled()
-
-    fireEvent.click(button)
+    expect(screen.queryByRole('button', { name: /am dat doza/i })).not.toBeInTheDocument()
+    expect(screen.getByText(/se deblochează la 06:30/i)).toBeInTheDocument()
 
     expect(doseStore.list()).toHaveLength(0)
     expect(onDone).not.toHaveBeenCalled()
@@ -109,7 +107,8 @@ describe('PlanCard', () => {
 
     expect(screen.getByRole('heading', { name: /Panadol/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /la 05:00/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /am dat doza/i })).toBeDisabled()
+    expect(screen.queryByRole('button', { name: /am dat doza/i })).not.toBeInTheDocument()
+    expect(screen.getByText(/se deblochează la 05:00/i)).toBeInTheDocument()
   })
 
   it('persists the Step 2 last dose and goes home when the parent waits', () => {
@@ -127,7 +126,9 @@ describe('PlanCard', () => {
       />,
     )
 
-    fireEvent.click(screen.getByRole('button', { name: /voi aștepta/i }))
+    const wait = screen.getByRole('button', { name: /voi aștepta/i })
+    expect(wait.className).toMatch(/btn-primary/)
+    fireEvent.click(wait)
 
     const doses = doseStore.list()
     expect(doses).toHaveLength(1)

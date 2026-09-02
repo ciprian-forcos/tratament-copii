@@ -121,6 +121,7 @@ function Seg({
       style={{
         display: 'inline-flex',
         alignItems: 'center',
+        gap: 6,
         padding: '0 8px',
         height: 22,
         color: color || 'var(--ink-2)',

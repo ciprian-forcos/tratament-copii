@@ -81,13 +81,11 @@ describe('useNightTimeline', () => {
     expect(result.current).toHaveLength(0)
   })
 
-  it('excludes doses outside the 12h window', () => {
+  it('excludes doses outside now ± 6h', () => {
     const now = new Date('2026-06-07T23:00:00')
-    // Window: 2026-06-07 21:00 → 2026-06-08 09:00
-    // This dose is at 20:59, just before the window start
-    const outsideBefore = new Date('2026-06-07T20:59:00').toISOString()
-    // This dose is at 09:00, at the boundary (exclusive)
-    const outsideAfter = new Date('2026-06-08T09:00:00').toISOString()
+    // Axis: 17:00 → 05:00
+    const outsideBefore = new Date('2026-06-07T16:59:00').toISOString()
+    const outsideAfter = new Date('2026-06-08T05:00:00').toISOString()
     doseStore.record({
       childId: 'maya',
       medicationId: 'nurofen',
@@ -105,6 +103,48 @@ describe('useNightTimeline', () => {
     expect(result.current).toHaveLength(0)
   })
 
+  it('excludes previous-night doses when they sit outside now ± 6h', () => {
+    const now = new Date('2026-06-07T20:30:00')
+    doseStore.record({
+      childId: 'maya',
+      medicationId: 'nurofen',
+      scheduledAt: new Date('2026-06-06T22:30:00').toISOString(),
+      administeredAt: new Date('2026-06-06T22:30:00').toISOString(),
+    })
+    doseStore.record({
+      childId: 'maya',
+      medicationId: 'panadol',
+      scheduledAt: new Date('2026-06-07T00:00:00').toISOString(),
+      administeredAt: new Date('2026-06-07T00:00:00').toISOString(),
+    })
+
+    const { result } = renderHook(() => useNightTimeline('maya', now))
+    expect(result.current).toHaveLength(0)
+  })
+
+  it('excludes program-sourced doses from the fever strip', () => {
+    const now = new Date('2026-06-07T23:00:00')
+    const administeredAt = new Date('2026-06-07T22:30:00').toISOString()
+    doseStore.record({
+      childId: 'maya',
+      medicationId: 'vitamina_d',
+      scheduledAt: administeredAt,
+      administeredAt,
+      source: 'program',
+    })
+    doseStore.record({
+      childId: 'maya',
+      medicationId: 'nurofen',
+      scheduledAt: administeredAt,
+      administeredAt,
+      source: 'fever',
+    })
+
+    const { result } = renderHook(() => useNightTimeline('maya', now))
+    expect(result.current).toHaveLength(1)
+    expect(result.current[0].medId).toBe('nurofen')
+  })
+
   it('resolves Nurofen short name as "Nurofen" not full name', () => {
     const now = new Date('2026-06-07T23:00:00')
     const administeredAt = new Date('2026-06-07T22:30:00').toISOString()
@@ -118,6 +158,33 @@ describe('useNightTimeline', () => {
     const { result } = renderHook(() => useNightTimeline('maya', now))
     expect(result.current[0].med).toBe('Nurofen')
     expect(result.current[0].med).not.toContain('Ibuprofen')
+  })
+
+  it('resolves a custom medicine name from the stored catalog', () => {
+    const now = new Date('2026-06-07T23:00:00')
+    const administeredAt = new Date('2026-06-07T22:30:00').toISOString()
+    localStorage.setItem(
+      'tratament-copii-medications',
+      JSON.stringify([
+        {
+          id: 'algin-custom',
+          name: 'Algin custom (ibuprofen)',
+          doseType: 'fixed',
+          doseConfig: { type: 'fixed', amount: '5', unit: 'ml' },
+          color: '#3b82f6',
+          notes: '',
+        },
+      ]),
+    )
+    doseStore.record({
+      childId: 'maya',
+      medicationId: 'algin-custom',
+      scheduledAt: administeredAt,
+      administeredAt,
+    })
+
+    const { result } = renderHook(() => useNightTimeline('maya', now))
+    expect(result.current[0].med).toBe('Algin custom')
   })
 
   it('falls back to medId when medication not found in DEFAULT_MEDICATIONS', () => {

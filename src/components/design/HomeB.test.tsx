@@ -30,9 +30,8 @@ describe('HomeB night timeline', () => {
       activeId: MAYA_ID,
     })
     vi.useFakeTimers()
-    // now = 2026-06-07 23:00 local — inside window starting 21:00
+    // now = 2026-06-07 23:00 local — inside now ± 6h
     vi.setSystemTime(new Date('2026-06-07T23:00:00'))
-    setStandalone(false)
   })
 
   afterEach(() => {
@@ -60,9 +59,9 @@ describe('HomeB night timeline', () => {
 
     render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
 
-    // Short names from DEFAULT_MEDICATIONS should appear in the timeline
-    expect(screen.getAllByText('Nurofen').length).toBeGreaterThanOrEqual(1)
-    expect(screen.getAllByText('Panadol Baby').length).toBeGreaterThanOrEqual(1)
+    // Short names from the catalog appear on the strip (may share a clustered label).
+    expect(screen.getByText(/Nurofen/)).toBeInTheDocument()
+    expect(screen.getByText(/Panadol/)).toBeInTheDocument()
   })
 
   it('does NOT render doses for another child', () => {
@@ -163,7 +162,7 @@ describe('HomeB night timeline', () => {
 
     expect(screen.getByText(/dă/i)).toBeInTheDocument()
     expect(screen.queryByText(/mai sunt/i)).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /urm/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /deschide planul/i })).toBeInTheDocument()
   })
 
   it('keeps the now marker centered and puts the acum label below the timeline', () => {
@@ -278,50 +277,60 @@ describe('HomeB night timeline', () => {
     expect(screen.getByText(/salveaz/i)).toBeInTheDocument()
   })
 
-  it('prompts install when beforeinstallprompt is available', () => {
-    const prompt = vi.fn().mockResolvedValue(undefined)
-    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
+  it('does not draw previous-night doses that sit outside now ± 6h', () => {
+    vi.setSystemTime(new Date('2026-06-07T20:30:00'))
+    act(() => {
+      doseStore.record({
+        childId: MAYA_ID,
+        medicationId: 'nurofen',
+        scheduledAt: new Date('2026-06-06T22:30:00').toISOString(),
+        administeredAt: new Date('2026-06-06T22:30:00').toISOString(),
+      })
+      doseStore.record({
+        childId: MAYA_ID,
+        medicationId: 'panadol',
+        scheduledAt: new Date('2026-06-07T00:00:00').toISOString(),
+        administeredAt: new Date('2026-06-07T00:00:00').toISOString(),
+      })
+    })
 
-    const event = new Event('beforeinstallprompt') as Event & { prompt: () => Promise<void> }
-    Object.assign(event, { prompt })
-    const preventDefault = vi.spyOn(event, 'preventDefault')
-    window.dispatchEvent(event)
+    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} nextDose={null} />)
 
-    expect(preventDefault).toHaveBeenCalledOnce()
-    fireEvent.click(screen.getByRole('button', { name: /instaleaz/i }))
-    expect(prompt).toHaveBeenCalledOnce()
+    expect(screen.queryByTestId('strip-mark')).not.toBeInTheDocument()
+    expect(screen.getByText('acum')).toBeInTheDocument()
+    expect(screen.getByText('noaptea asta')).toBeInTheDocument()
   })
 
-  it('shows manual install guidance when install prompt is unsupported', () => {
-    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
+  it('pins a next-dose mark that falls beyond the axis and keeps the real time', () => {
+    vi.setSystemTime(new Date('2026-06-07T20:30:00'))
+    render(
+      <HomeB
+        onStart={vi.fn()}
+        onMenu={vi.fn()}
+        nextDose={{ at: new Date('2026-06-08T04:00:00'), med: 'Panadol Baby' }}
+      />,
+    )
 
-    fireEvent.click(screen.getByRole('button', { name: /instaleaz/i }))
-
-    expect(screen.getByText(/adaug/i)).toBeInTheDocument()
-    expect(screen.getByText(/ecran/i)).toBeInTheDocument()
+    const mark = screen.getByTestId('strip-mark')
+    expect(mark).toHaveAttribute('data-pinned', 'true')
+    expect(mark).toHaveAttribute('data-next', 'true')
+    expect(screen.getByText('04:00')).toBeInTheDocument()
   })
 
-  it('hides install affordance when already running standalone', () => {
-    setStandalone(true)
+  it('names the home CTA as the action when the next dose is due', () => {
+    const lastAt = new Date('2026-06-07T18:00:00').toISOString()
+    act(() => {
+      doseStore.record({
+        childId: MAYA_ID,
+        medicationId: 'nurofen',
+        scheduledAt: lastAt,
+        administeredAt: lastAt,
+      })
+    })
 
     render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
 
-    expect(screen.queryByRole('button', { name: /instaleaz/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /deschide planul/i })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /urm/i })).not.toBeInTheDocument()
   })
 })
-
-function setStandalone(matches: boolean) {
-  Object.defineProperty(window, 'matchMedia', {
-    value: vi.fn().mockImplementation((query: string) => ({
-      matches: query === '(display-mode: standalone)' ? matches : false,
-      media: query,
-      onchange: null,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    })),
-    configurable: true,
-  })
-}

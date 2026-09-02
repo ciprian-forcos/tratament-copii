@@ -1,14 +1,24 @@
+import { useEffect, useState } from 'react'
+import { fmtHHMM } from './dosePlan'
+
 interface Props {
   /** Optional centered eyebrow text (e.g. "VARIANT B · LINIE TIMP"). */
   stripe?: string
-  /** Override the displayed time. Default: live current time. */
+  /** Override the displayed time. Default: live current time, ticking every 30s. */
   timeLabel?: string
 }
 
 export function StatusBar({ stripe, timeLabel }: Props) {
+  const [now, setNow] = useState(() => new Date())
+  useEffect(() => {
+    if (timeLabel != null) return
+    const id = window.setInterval(() => setNow(new Date()), 30_000)
+    return () => window.clearInterval(id)
+  }, [timeLabel])
+
   return (
     <div className="statusbar">
-      <span>{timeLabel ?? formatNow()}</span>
+      <span>{timeLabel ?? fmtHHMM(now)}</span>
       {stripe && (
         <span
           style={{
@@ -23,9 +33,4 @@ export function StatusBar({ stripe, timeLabel }: Props) {
       )}
     </div>
   )
-}
-
-function formatNow(): string {
-  const d = new Date()
-  return `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`
 }

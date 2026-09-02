@@ -351,14 +351,14 @@ export function MedicamenteTab({ medications, setMedications, activeChild, setCh
               <div className="flex items-center gap-1 flex-shrink-0">
                 <button
                   onClick={() => openEdit(med)}
-                  className="p-2 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+                  className="w-11 h-11 inline-flex items-center justify-center rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
                   aria-label="Editează"
                 >
                   <Pencil size={16} />
                 </button>
                 <button
                   onClick={() => setDeleteConfirmId(med.id)}
-                  className="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                  className="w-11 h-11 inline-flex items-center justify-center rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                   aria-label="Șterge"
                   disabled={isCorePlanMedication(med.id)}
                   title={isCorePlanMedication(med.id) ? 'Nu poți șterge medicamentul de bază al planului de febră.' : undefined}

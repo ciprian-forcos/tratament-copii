@@ -156,7 +156,8 @@ describe('FlowProtoB treatment episode', () => {
     await user.click(screen.getByRole('button', { name: /urm/i }))
 
     expect(screen.getByRole('heading', { name: /Panadol/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /am dat doza/i })).toBeDisabled()
+    expect(screen.queryByRole('button', { name: /am dat doza/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /voi aștepta/i })).toBeInTheDocument()
   })
 
   it('after recording the first dose, Home continues the episode', async () => {

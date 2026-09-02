@@ -1,5 +1,18 @@
 # Knowledge Bundle Log
 
+## 2026-09-02
+
+* **Cycle 3 UX (C1–C3, C5, C7–C11)**: Step 2 no longer prefills last-dose
+  time. Night-strip marks go through `layoutMarks` (collision clustering,
+  edge clamp, max-width labels). Recorded marks outside now ± 6h are
+  dropped; a next-dose mark beyond the axis is pinned with a chevron.
+  `isPanicActive('auto')` uses `isNightWindow` (20:00–07:59). Program
+  check-offs stay off the fever strip. Due Home CTA reads "Deschide
+  planul"; a not-due PlanCard promotes "Voi aștepta". StatusBar uses
+  `fmtHHMM` and ticks in the wizard. Install prompt moved to Copii.
+  C4 (vitamin hours) and C6 (suppositories) remain blocked on medical
+  calls. "Amintiri" wording parked.
+
 ## 2026-09-01
 
 * **Cycle 2 stepper + Step2 RO time**: Weight/age steppers keep a live

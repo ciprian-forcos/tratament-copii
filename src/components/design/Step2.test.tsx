@@ -69,7 +69,7 @@ describe('Step2', () => {
     expect(screen.queryByText(/novocalmin/i)).not.toBeInTheDocument()
   })
 
-  it('continues from previous-dose mode only after a medicine is chosen', async () => {
+  it('continues from previous-dose mode only after a medicine and a time are chosen', async () => {
     const user = userEvent.setup()
     const onNext = vi.fn()
     render(<Step2Harness onNext={onNext} />)
@@ -81,6 +81,12 @@ describe('Step2', () => {
     expect(onNext).not.toHaveBeenCalled()
 
     await user.click(screen.getByRole('button', { name: /nurofen/i }))
+    await user.click(continueButton)
+    expect(onNext).not.toHaveBeenCalled()
+
+    fireEvent.change(screen.getByLabelText(/data si ora/i), {
+      target: { value: '2026-06-14T23:30' },
+    })
     await user.click(continueButton)
     expect(onNext).toHaveBeenCalledOnce()
   })
@@ -100,14 +106,20 @@ describe('Step2', () => {
     expect(screen.getByLabelText(/data si ora/i)).toHaveAttribute('type', 'datetime-local')
   })
 
-  it('fills an RO datetime line when last-dose mode opens', async () => {
+  it('does not prefill last-dose time; CTA stays disabled until lastAt is set', async () => {
     const user = userEvent.setup()
-    render(<Step2Harness />)
+    const onNext = vi.fn()
+    render(<Step2Harness onNext={onNext} />)
 
     await user.click(screen.getByRole('button', { name: /ultima/i }))
+    await user.click(screen.getByRole('button', { name: /nurofen/i }))
 
-    expect(screen.queryByText('—')).not.toBeInTheDocument()
-    expect(screen.getByText(/\d{2}\.\d{2}\.\d{4}/)).toBeInTheDocument()
+    expect(screen.getByText('—')).toBeInTheDocument()
+    expect(screen.queryByText(/\d{2}\.\d{2}\.\d{4}/)).not.toBeInTheDocument()
+    expect(screen.getByLabelText(/data si ora/i)).toHaveValue('')
+
+    await user.click(screen.getByRole('button', { name: /genereaz/i }))
+    expect(onNext).not.toHaveBeenCalled()
   })
 
   it('stores the previous dose as one local datetime value', () => {

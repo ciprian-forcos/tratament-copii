@@ -10,10 +10,13 @@ describe('isPanicActive', () => {
     expect(isPanicActive('off', new Date(2026, 7, 25, 22, 0, 0))).toBe(false)
   })
 
-  it('auto-enables at 20:00 and later', () => {
+  it('auto-enables for the night window 20:00–07:59', () => {
     expect(isPanicActive('auto', new Date(2026, 7, 25, 19, 59, 0))).toBe(false)
     expect(isPanicActive('auto', new Date(2026, 7, 25, 20, 0, 0))).toBe(true)
-    expect(isPanicActive('auto', new Date(2026, 7, 25, 3, 0, 0))).toBe(false)
+    expect(isPanicActive('auto', new Date(2026, 7, 25, 3, 12, 0))).toBe(true)
+    expect(isPanicActive('auto', new Date(2026, 7, 25, 7, 59, 0))).toBe(true)
+    expect(isPanicActive('auto', new Date(2026, 7, 25, 8, 0, 0))).toBe(false)
+    expect(isPanicActive('auto', new Date(2026, 7, 25, 9, 5, 0))).toBe(false)
   })
 })
 

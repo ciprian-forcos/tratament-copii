@@ -217,18 +217,24 @@ export function PlanCard({ onBack, onDone, onWait, step2 }: Props) {
           gap: 10,
         }}
       >
-        <button
-          className="btn-primary"
-          disabled={!canRecordNow}
-          style={!canRecordNow ? { opacity: 0.4, cursor: 'not-allowed' } : undefined}
-          onClick={recordDose}
-        >
-          Am dat doza <span className="arrow">✓</span>
-        </button>
-        {!canRecordNow && onWait && (
-          <button className="btn-secondary" onClick={waitForDose}>
-            Voi aștepta
+        {canRecordNow ? (
+          <button className="btn-primary" onClick={recordDose}>
+            Am dat doza <span className="arrow">✓</span>
           </button>
+        ) : (
+          <>
+            <div
+              className="hand"
+              style={{ fontSize: 18, color: 'var(--ink-2)', textAlign: 'center' }}
+            >
+              Se deblochează la {fmtHHMM(nowStep.when)}
+            </div>
+            {onWait && (
+              <button className="btn-primary" onClick={waitForDose}>
+                Voi aștepta
+              </button>
+            )}
+          </>
         )}
         <button className="btn-secondary btn-ghost" onClick={onBack}>
           ← Schimbă ceva
