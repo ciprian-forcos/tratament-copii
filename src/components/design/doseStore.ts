@@ -33,10 +33,13 @@ function notify() {
 }
 
 export const doseStore = {
-  record(input: Omit<AdministeredDose, 'id'>): AdministeredDose {
+  record(input: Omit<AdministeredDose, 'id'> & { id?: string }): AdministeredDose {
+    if (input.id && doses.some((d) => d.id === input.id)) {
+      return doses.find((d) => d.id === input.id)!
+    }
     const record: AdministeredDose = {
       ...input,
-      id: 'd' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 6),
+      id: input.id ?? 'd' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 6),
     }
     doses = [...doses, record]
     saveToStorage()

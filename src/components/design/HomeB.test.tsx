@@ -3,8 +3,8 @@ import { fireEvent, render, screen, act } from '@testing-library/react'
 import { doseStore } from './doseStore'
 import { childStore } from './childStore'
 import { HomeB } from './HomeB'
+import { timelineStore } from './timeline/store'
 
-// Seed a second child for cross-child isolation tests
 const MAYA_ID = 'maya'
 const LUCA_ID = 'luca-test'
 
@@ -18,11 +18,12 @@ function seedLuca() {
   }))
 }
 
-describe('HomeB night timeline', () => {
+describe('HomeB timeline', () => {
   beforeEach(() => {
     doseStore.clear()
+    timelineStore.clear()
     localStorage.clear()
-    // Reset childStore to default (Maya active)
+    timelineStore.reloadFromStorage()
     childStore.setState({
       children: [
         { id: MAYA_ID, name: 'Maya', weight: 13, years: 2, months: 4, initial: 'M', temp: 38.5, enabledMedications: [] },
@@ -30,7 +31,6 @@ describe('HomeB night timeline', () => {
       activeId: MAYA_ID,
     })
     vi.useFakeTimers()
-    // now = 2026-06-07 23:00 local — inside now ± 6h
     vi.setSystemTime(new Date('2026-06-07T23:00:00'))
   })
 
@@ -38,15 +38,16 @@ describe('HomeB night timeline', () => {
     vi.useRealTimers()
   })
 
-  it('renders "noaptea asta" eyebrow', () => {
-    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
-    expect(screen.getByText('noaptea asta')).toBeInTheDocument()
+  it('keeps the now marker centered', () => {
+    render(<HomeB />)
+    expect(screen.getByText('acum').parentElement).toHaveStyle({ left: '50%' })
   })
 
-  it('hides "noaptea asta" during the day', () => {
-    vi.setSystemTime(new Date('2026-06-07T16:20:00'))
-    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
-    expect(screen.queryByText('noaptea asta')).not.toBeInTheDocument()
+  it('renders a pull-down grabber and no clock or panic toggle', () => {
+    render(<HomeB />)
+    expect(screen.getByRole('button', { name: /copii și medicamente/i })).toBeInTheDocument()
+    expect(screen.queryByRole('radio', { name: /calm/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('radiogroup', { name: /panic/i })).not.toBeInTheDocument()
   })
 
   it('renders dose short names for doses within the window', () => {
@@ -57,60 +58,30 @@ describe('HomeB night timeline', () => {
       doseStore.record({ childId: MAYA_ID, medicationId: 'panadol', scheduledAt: t2, administeredAt: t2 })
     })
 
-    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
+    render(<HomeB />)
 
-    // Short names from the catalog appear on the strip (may share a clustered label).
-    expect(screen.getByText(/Nurofen/)).toBeInTheDocument()
-    expect(screen.getByText(/Panadol/)).toBeInTheDocument()
+    expect(screen.getAllByText('Nurofen').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getAllByText('Panadol Baby').length).toBeGreaterThanOrEqual(1)
   })
 
-  it('does NOT render doses for another child', () => {
+  it('does not render doses for another child', () => {
     seedLuca()
     const t1 = new Date('2026-06-07T22:00:00').toISOString()
     act(() => {
-      // Record dose for Luca only
       doseStore.record({ childId: LUCA_ID, medicationId: 'nurofen', scheduledAt: t1, administeredAt: t1 })
     })
-
-    // Ensure Maya is active
     childStore.setActive(MAYA_ID)
-    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
-
-    // Nurofen should NOT appear in Maya's timeline
-    // (The button "Următoarea doză" shows the next-dose med name, not past doses)
-    // We check that no past-dose dot appears — easiest is to check the rendered meds
-    // The timeline area only shows doses via useNightTimeline — Luca's dose excluded
-    const nurofenElements = screen.queryAllByText('Nurofen')
-    // There might be 0 (no Maya doses) — the key assertion is Luca's dose is not in Maya view
-    // Since no Maya doses were recorded, timeline should be empty (only the next-dose mark exists)
-    // The next-dose mark shows 'Panadol' (default fallback) not 'Nurofen'
-    // So if Nurofen appears, it leaked from Luca's records
-    expect(nurofenElements).toHaveLength(0)
+    render(<HomeB />)
+    expect(screen.queryAllByText('Nurofen')).toHaveLength(0)
   })
 
-  it('shows nothing from defaultTimeline stub (stub is removed)', () => {
-    // With no doses seeded and now=23:00, there should be NO past dose dots
-    // The only mark on the strip should be the next-dose dot
-    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
-
-    // defaultTimeline stub added 'Nurofen' and 'Panadol' entries — verify they're gone
-    // (the stub would render 3 dots: 2x Nurofen, 1x Panadol)
-    // After removal, only the next-dose name appears in the button text, not on the strip
-    // Since no doses are seeded, there should be no past-dose labels in the timeline
-    // "Panadol" might appear in the button label only
-    const allNurofen = screen.queryAllByText('Nurofen')
-    expect(allNurofen).toHaveLength(0)
-  })
-
-  it('does not show a countdown, next marker, or fake Panadol before treatment exists', () => {
-    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
-
-    expect(screen.queryByText(/mai sunt/i)).not.toBeInTheDocument()
+  it('does not show a next dose before treatment exists', () => {
+    render(<HomeB />)
+    expect(screen.queryByText(/dă/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/Panadol/i)).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /urm/i })).not.toBeInTheDocument()
   })
 
-  it('shows a Panadol countdown after a recorded Nurofen dose', () => {
+  it('shows a Panadol mark after a recorded Nurofen dose', () => {
     const lastAt = new Date('2026-06-07T21:00:00').toISOString()
     act(() => {
       doseStore.record({
@@ -121,14 +92,14 @@ describe('HomeB night timeline', () => {
       })
     })
 
-    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
+    render(<HomeB />)
 
-    expect(screen.getByText(/mai sunt/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /urm/i })).toBeInTheDocument()
+    expect(screen.getAllByText(/Nurofen/i).length).toBeGreaterThanOrEqual(1)
     expect(screen.getAllByText(/Panadol/i).length).toBeGreaterThanOrEqual(1)
+    expect(screen.getByText('8 ml')).toBeInTheDocument()
   })
 
-  it("does not show a countdown from another child's recorded dose", () => {
+  it("does not show a next dose from another child's recorded dose", () => {
     seedLuca()
     const lastAt = new Date('2026-06-07T21:00:00').toISOString()
     act(() => {
@@ -141,10 +112,10 @@ describe('HomeB night timeline', () => {
     })
     childStore.setActive(MAYA_ID)
 
-    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
+    render(<HomeB />)
 
-    expect(screen.queryByText(/mai sunt/i)).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /urm/i })).not.toBeInTheDocument()
+    expect(screen.queryByText(/dă/i)).not.toBeInTheDocument()
+    expect(screen.queryAllByText(/Panadol/i)).toHaveLength(0)
   })
 
   it('tells the parent to give the next medicine now when the 4h floor has elapsed', () => {
@@ -158,179 +129,38 @@ describe('HomeB night timeline', () => {
       })
     })
 
-    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
+    render(<HomeB />)
 
     expect(screen.getByText(/dă/i)).toBeInTheDocument()
-    expect(screen.queryByText(/mai sunt/i)).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /deschide planul/i })).toBeInTheDocument()
   })
 
-  it('keeps the now marker centered and puts the acum label below the timeline', () => {
-    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
-
-    const marker = screen.getByTestId('now-marker')
-    expect(marker).toHaveStyle({ left: '50%' })
-    expect(marker).not.toHaveTextContent('▼')
-    expect(screen.queryByTestId('now-dot')).not.toBeInTheDocument()
-
-    const cursor = screen.getByTestId('now-cursor')
-    expect(Number.parseFloat(cursor.style.width)).toBeLessThanOrEqual(2)
-    expect(Number.parseFloat(cursor.style.top)).toBeGreaterThanOrEqual(28)
-    expect(Number.parseFloat(cursor.style.height)).toBeLessThanOrEqual(20)
-    expect(Number.parseFloat(marker.style.zIndex || '0')).toBe(0)
-
-    const label = screen.getByText('acum')
-    expect(marker).toContainElement(label)
-    expect(Number.parseFloat(label.style.top)).toBeGreaterThanOrEqual(82)
-    expect(
-      Number.parseFloat(cursor.style.top) + Number.parseFloat(cursor.style.height),
-    ).toBeLessThan(Number.parseFloat(label.style.top))
+  it('opens child and medicine chips from the pull-down grabber', () => {
+    render(<HomeB />)
+    fireEvent.click(screen.getByRole('button', { name: /copii și medicamente/i }))
+    expect(screen.getByRole('button', { name: /copil maya/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /nurofen/i })).toBeInTheDocument()
   })
 
-  it('keeps acum below the timeline when a recent dose dot sits near now', () => {
-    const lastAt = new Date('2026-06-07T22:50:00').toISOString()
+  it('does not paint a temperature fact on the line', () => {
     act(() => {
-      doseStore.record({
+      timelineStore.append({
         childId: MAYA_ID,
-        medicationId: 'nurofen',
-        scheduledAt: lastAt,
-        administeredAt: lastAt,
+        at: '2026-06-07T22:10:00',
+        payload: { kind: 'temperature', celsius: 38.4 },
       })
     })
-
-    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
-
-    const label = screen.getByText('acum')
-    expect(Number.parseFloat(label.style.top)).toBeGreaterThanOrEqual(82)
-    expect(screen.queryByTestId('now-cursor')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('now-dot')).not.toBeInTheDocument()
-  })
-
-  it('keeps the now-tick when the nearest dose mark is far from now', () => {
-    const lastAt = new Date('2026-06-07T21:00:00').toISOString()
-    act(() => {
-      doseStore.record({
-        childId: MAYA_ID,
-        medicationId: 'nurofen',
-        scheduledAt: lastAt,
-        administeredAt: lastAt,
-      })
-    })
-
-    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
-
-    expect(screen.getByTestId('now-cursor')).toBeInTheDocument()
-    expect(screen.queryByTestId('now-dot')).not.toBeInTheDocument()
-  })
-
-  it('hides the now-tick when the next dose sits near now', () => {
-    const lastAt = new Date('2026-06-07T19:15:00').toISOString()
-    act(() => {
-      doseStore.record({
-        childId: MAYA_ID,
-        medicationId: 'nurofen',
-        scheduledAt: lastAt,
-        administeredAt: lastAt,
-      })
-    })
-
-    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
-
-    expect(screen.getByText(/mai sunt/i)).toBeInTheDocument()
-    expect(screen.queryByTestId('now-cursor')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('now-dot')).not.toBeInTheDocument()
-  })
-
-  it('lets the next-dose pulse mark now instead of covering it with a now-dot', () => {
-    const lastAt = new Date('2026-06-07T18:00:00').toISOString()
-    act(() => {
-      doseStore.record({
-        childId: MAYA_ID,
-        medicationId: 'nurofen',
-        scheduledAt: lastAt,
-        administeredAt: lastAt,
-      })
-    })
-
-    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
-
-    expect(screen.getByText(/dă/i)).toBeInTheDocument()
-    const pulse = document.querySelector('.pulse-dot')
-    expect(pulse).not.toBeNull()
-    expect(pulse?.parentElement).toHaveStyle({ zIndex: '1' })
-    expect(screen.queryByTestId('now-cursor')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('now-dot')).not.toBeInTheDocument()
-    expect(Number.parseFloat(screen.getByText('acum').style.top)).toBeGreaterThanOrEqual(82)
-  })
-
-  it('renders separate child, profile, and temperature controls', () => {
-    const onMenu = vi.fn()
-    render(<HomeB onStart={vi.fn()} onMenu={onMenu} />)
-
-    fireEvent.click(screen.getByRole('button', { name: /copil maya/i }))
-    expect(onMenu).toHaveBeenCalledOnce()
-
-    fireEvent.click(screen.getByRole('button', { name: /profil/i }))
-    expect(screen.getByText(/profil copil/i)).toBeInTheDocument()
-
-    fireEvent.click(screen.getByRole('button', { name: /temperatura/i }))
-    expect(screen.getByText(/salveaz/i)).toBeInTheDocument()
-  })
-
-  it('does not draw previous-night doses that sit outside now ± 6h', () => {
-    vi.setSystemTime(new Date('2026-06-07T20:30:00'))
-    act(() => {
-      doseStore.record({
-        childId: MAYA_ID,
-        medicationId: 'nurofen',
-        scheduledAt: new Date('2026-06-06T22:30:00').toISOString(),
-        administeredAt: new Date('2026-06-06T22:30:00').toISOString(),
-      })
-      doseStore.record({
-        childId: MAYA_ID,
-        medicationId: 'panadol',
-        scheduledAt: new Date('2026-06-07T00:00:00').toISOString(),
-        administeredAt: new Date('2026-06-07T00:00:00').toISOString(),
-      })
-    })
-
-    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} nextDose={null} />)
-
-    expect(screen.queryByTestId('strip-mark')).not.toBeInTheDocument()
+    render(<HomeB />)
+    expect(screen.queryByText(/38.4/)).not.toBeInTheDocument()
     expect(screen.getByText('acum')).toBeInTheDocument()
-    expect(screen.getByText('noaptea asta')).toBeInTheDocument()
   })
 
-  it('pins a next-dose mark that falls beyond the axis and keeps the real time', () => {
-    vi.setSystemTime(new Date('2026-06-07T20:30:00'))
-    render(
-      <HomeB
-        onStart={vi.fn()}
-        onMenu={vi.fn()}
-        nextDose={{ at: new Date('2026-06-08T04:00:00'), med: 'Panadol Baby' }}
-      />,
-    )
-
-    const mark = screen.getByTestId('strip-mark')
-    expect(mark).toHaveAttribute('data-pinned', 'true')
-    expect(mark).toHaveAttribute('data-next', 'true')
-    expect(screen.getByText('04:00')).toBeInTheDocument()
-  })
-
-  it('names the home CTA as the action when the next dose is due', () => {
-    const lastAt = new Date('2026-06-07T18:00:00').toISOString()
-    act(() => {
-      doseStore.record({
-        childId: MAYA_ID,
-        medicationId: 'nurofen',
-        scheduledAt: lastAt,
-        administeredAt: lastAt,
-      })
-    })
-
-    render(<HomeB onStart={vi.fn()} onMenu={vi.fn()} />)
-
-    expect(screen.getByRole('button', { name: /deschide planul/i })).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /urm/i })).not.toBeInTheDocument()
+  it('opens the attach sheet when the strip is tapped', () => {
+    render(<HomeB />)
+    const strip = screen.getByLabelText(/bandă de timp/i)
+    fireEvent.pointerDown(strip, { pointerId: 1, clientX: 100, clientY: 40 })
+    fireEvent.pointerUp(strip, { pointerId: 1, clientX: 100, clientY: 40 })
+    expect(screen.getByRole('button', { name: /confirmă/i })).toBeInTheDocument()
+    expect(screen.getByText('Am dat doza')).toBeInTheDocument()
+    expect(screen.getByText('Temperatură')).toBeInTheDocument()
   })
 })

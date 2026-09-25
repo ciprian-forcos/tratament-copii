@@ -8,10 +8,13 @@ import { savePanicPref } from './panicPref'
 import { ImportGate } from './share/ImportGate'
 import { encodeShare } from './share/encoder'
 import type { SharePayload } from './share/types'
+import { timelineStore } from './timeline/store'
 
 beforeEach(() => {
   localStorage.clear()
   doseStore.clear()
+  timelineStore.clear()
+  timelineStore.reloadFromStorage()
   savePanicPref('on')
   window.history.pushState({}, '', '/')
   childStore.setState({
@@ -24,45 +27,45 @@ beforeEach(() => {
         months: 4,
         initial: 'M',
         temp: 38.5,
-        enabledMedications: [],
+        enabledMedications: ['nurofen', 'panadol'],
       },
     ],
     activeId: 'maya',
   })
 })
 
-describe('FlowProtoB medicine routing', () => {
-  it('opens the restored Medicamente route from ChildrenScreen', async () => {
-    const user = userEvent.setup()
+async function openDrawer(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(screen.getByRole('button', { name: /copii și medicamente/i }))
+}
+
+describe('FlowProtoB timeline home', () => {
+  it('is the timeline even when panic pref is off', () => {
+    savePanicPref('off')
     render(<FlowProtoB />)
-
-    await openMedicines(user)
-
-    expect(screen.getByRole('button', { name: /adaug/i })).toBeInTheDocument()
-    expect(screen.getAllByText(/Nurofen/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Panadol/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Novocalmin/i).length).toBeGreaterThan(0)
+    expect(screen.getByText('acum')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /tratament febră/i })).not.toBeInTheDocument()
   })
 
-  it('persists a medicine added through Medicamente and reads it after remount', async () => {
+  it('shows child and medicine chips in the pull-down', async () => {
     const user = userEvent.setup()
-    const { unmount } = render(<FlowProtoB />)
-
-    await openMedicines(user)
-    await user.click(screen.getByRole('button', { name: /adaug/i }))
-    await user.type(screen.getByPlaceholderText(/ibuprofen/i), 'Test sirop')
-    await user.click(screen.getByRole('button', { name: /salveaz/i }))
-
-    expect(localStorage.getItem('tratament-copii-medications')).toContain('Test sirop')
-
-    unmount()
     render(<FlowProtoB />)
-    await openMedicines(user)
-
-    expect(screen.getByText('Test sirop')).toBeInTheDocument()
+    await openDrawer(user)
+    expect(screen.getByRole('button', { name: /copil maya/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /nurofen/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /panadol/i })).toBeInTheDocument()
   })
 
-  it('shows imported medicines without requiring a reload', async () => {
+  it('toggles a medicine chip for the active child', async () => {
+    const user = userEvent.setup()
+    render(<FlowProtoB />)
+    await openDrawer(user)
+    const chip = screen.getByRole('button', { name: /nurofen/i })
+    expect(chip).toHaveAttribute('aria-pressed', 'true')
+    await user.click(chip)
+    expect(chip).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('shows imported medicines in the pull-down without a reload', async () => {
     const user = userEvent.setup()
     const payload: SharePayload = {
       v: 1,
@@ -89,108 +92,8 @@ describe('FlowProtoB medicine routing', () => {
 
     await waitFor(() => screen.getByRole('button', { name: /^importă$/i }))
     await user.click(screen.getByRole('button', { name: /^importă$/i }))
-    await openMedicines(user)
+    await openDrawer(user)
 
-    expect(screen.getByText('Import sirop')).toBeInTheDocument()
-  })
-})
-
-async function openMedicines(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole('button', { name: /^medicamente$/i }))
-}
-
-function expectHome() {
-  expect(screen.getByRole('button', { name: /copil /i })).toBeInTheDocument()
-}
-
-describe('FlowProtoB ≡ menu routing', () => {
-  it('tapping ≡ opens ChildrenScreen', async () => {
-    const user = userEvent.setup()
-    render(<FlowProtoB />)
-
-    expectHome()
-
-    const menuBtn = screen.getByRole('button', { name: /copil /i })
-    await user.click(menuBtn)
-
-    expect(screen.getByText('gestionează')).toBeInTheDocument()
-  })
-
-  it('tapping Înapoi from ChildrenScreen returns to HomeB', async () => {
-    const user = userEvent.setup()
-    render(<FlowProtoB />)
-
-    const menuBtn = screen.getByRole('button', { name: /copil /i })
-    await user.click(menuBtn)
-    expect(screen.getByText('gestionează')).toBeInTheDocument()
-
-    const backBtn = screen.getByRole('button', { name: /^Înapoi$/i })
-    await user.click(backBtn)
-
-    expectHome()
-  })
-})
-
-describe('FlowProtoB treatment episode', () => {
-  it('starts the wizard when there is no in-episode history', async () => {
-    const user = userEvent.setup()
-    render(<FlowProtoB />)
-
-    await user.click(screen.getByRole('button', { name: /începe tratamentul/i }))
-
-    expect(screen.getByText(/cât are acum/i)).toBeInTheDocument()
-  })
-
-  it('opens the plan card from Home when a recent dose exists', async () => {
-    const user = userEvent.setup()
-    const lastAt = new Date(Date.now() - 30 * 60_000).toISOString()
-    doseStore.record({
-      childId: 'maya',
-      medicationId: 'nurofen',
-      scheduledAt: lastAt,
-      administeredAt: lastAt,
-    })
-
-    render(<FlowProtoB />)
-
-    await user.click(screen.getByRole('button', { name: /urm/i }))
-
-    expect(screen.getByRole('heading', { name: /Panadol/i })).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /am dat doza/i })).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /voi aștepta/i })).toBeInTheDocument()
-  })
-
-  it('after recording the first dose, Home continues the episode', async () => {
-    const user = userEvent.setup()
-    render(<FlowProtoB />)
-
-    await user.click(screen.getByRole('button', { name: /începe tratamentul/i }))
-    await user.click(screen.getByRole('button', { name: /continuă/i }))
-    await user.click(screen.getByRole('button', { name: /generează planul/i }))
-    await user.click(screen.getByRole('button', { name: /am dat doza/i }))
-
-    expectHome()
-    expect(screen.getByRole('button', { name: /urm/i })).toBeInTheDocument()
-
-    await user.click(screen.getByRole('button', { name: /urm/i }))
-
-    expect(screen.getByRole('heading', { name: /Panadol/i })).toBeInTheDocument()
-  })
-})
-
-describe('FlowProtoB calm program', () => {
-  it('shows Program as home when panic is off', () => {
-    savePanicPref('off')
-    render(<FlowProtoB />)
-
-    expect(screen.getByRole('button', { name: /tratament febră/i })).toBeInTheDocument()
-  })
-
-  it('opens Program from the night home', async () => {
-    const user = userEvent.setup()
-    render(<FlowProtoB />)
-
-    await user.click(screen.getByRole('button', { name: /^program$/i }))
-    expect(screen.getByRole('button', { name: /tratament febră/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /import sirop/i })).toBeInTheDocument()
   })
 })

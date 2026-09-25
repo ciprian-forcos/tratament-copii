@@ -122,3 +122,44 @@ export interface AdministeredDose {
   /** Fever wizard vs Program check-off. Untagged records count as fever (legacy). */
   source?: 'fever' | 'program'
 }
+
+export type DoseFactPayload = {
+  kind: 'dose'
+  medicationId: string
+  amount?: number | 'sub_doza'
+  unit?: string
+  source: 'given' | 'seeded'
+}
+
+export type TemperatureFactPayload = {
+  kind: 'temperature'
+  celsius: number
+}
+
+export type NoteFactPayload = {
+  kind: 'note'
+  text: string
+}
+
+export type TimelineFactPayload = DoseFactPayload | TemperatureFactPayload | NoteFactPayload
+
+export interface TimelineFact {
+  id: string
+  childId: string
+  at: string
+  payload: TimelineFactPayload
+}
+
+export type TimelineZoom = 'hour' | 'day' | 'week'
+
+export interface TimelineMark {
+  at: Date
+  source: 'fact' | 'projected'
+  kind: 'dose'
+  medicationId: string
+  label: string
+  /** Calculated amount for this child, e.g. "7 ml". */
+  amount?: string
+  factId?: string
+  policy?: string
+}
