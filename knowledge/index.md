@@ -7,6 +7,7 @@ graph surface.
 
 # Project State
 
+* [Theme handoff](../THEME-HANDOFF.md) - why the Claude-default look was dropped, and how skins differ from the Acum / Edi / Fane layouts.
 * [Current repository state](process/repo-branch-state.md) - branch topology and the source of truth for latest implementation.
 * [V2 Phase 01 Program And Panic](process/v2-phase-01-program-and-panic.md) - current: 24h program + calm/night home.
 * [V1 Phase 08 Treatment Flow](process/v1-phase-08-treatment-flow.md) - ongoing fever episode from Home.

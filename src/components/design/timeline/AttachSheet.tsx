@@ -42,7 +42,7 @@ export function AttachSheet({
         zIndex: 40,
         background: 'var(--bg-2)',
         borderTop: '1.5px solid var(--line)',
-        borderRadius: '22px 22px 0 0',
+        borderRadius: '2px 2px 0 0',
         padding: '14px 18px 20px',
       }}
     >
@@ -171,9 +171,9 @@ function fmt(d: Date) {
 function chipStyle(on: boolean): CSSProperties {
   return {
     padding: '12px 8px',
-    borderRadius: 16,
+    borderRadius: 2,
     border: `1.5px solid ${on ? 'var(--accent)' : 'var(--line)'}`,
-    background: on ? 'rgba(245,177,74,0.12)' : 'var(--bg-3)',
+    background: on ? 'var(--accent-wash)' : 'var(--bg-3)',
     color: on ? 'var(--accent)' : 'var(--ink-2)',
     fontSize: 13,
     fontWeight: 600,

@@ -141,6 +141,24 @@ describe('HomeB timeline', () => {
     expect(screen.getByRole('button', { name: /nurofen/i })).toBeInTheDocument()
   })
 
+  it('switches the active child and the tape follows that child', () => {
+    seedLuca()
+    const t1 = new Date('2026-06-07T22:00:00').toISOString()
+    act(() => {
+      doseStore.record({ childId: LUCA_ID, medicationId: 'nurofen', scheduledAt: t1, administeredAt: t1 })
+    })
+    render(<HomeB />)
+    expect(screen.getByText('Maya')).toBeInTheDocument()
+    expect(screen.queryByText('Nurofen')).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: /copii și medicamente/i }))
+    fireEvent.click(screen.getByRole('button', { name: /copil luca/i }))
+
+    expect(screen.getByRole('button', { name: /copil luca/i })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getAllByText('Luca').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getAllByText('Nurofen').length).toBeGreaterThanOrEqual(1)
+  })
+
   it('does not paint a temperature fact on the line', () => {
     act(() => {
       timelineStore.append({

@@ -182,7 +182,7 @@ export function ShareSheet({ open, onClose }: Props) {
                   borderRadius: 14,
                   border: `1.5px solid ${isChecked && !isDisabled ? 'var(--accent)' : 'var(--line)'}`,
                   background: isChecked && !isDisabled
-                    ? 'rgba(245,177,74,0.07)'
+                    ? 'var(--accent-wash)'
                     : 'var(--bg-3)',
                   opacity: isDisabled ? 0.45 : 1,
                   cursor: isDisabled ? 'not-allowed' : 'pointer',
@@ -228,7 +228,7 @@ export function ShareSheet({ open, onClose }: Props) {
                       fontSize: 11,
                       fontFamily: 'var(--font-mono)',
                       color: 'var(--accent)',
-                      background: 'rgba(245,177,74,0.15)',
+                      background: 'var(--accent-wash)',
                       borderRadius: 6,
                       padding: '1px 6px',
                       letterSpacing: '0.05em',
@@ -251,7 +251,7 @@ export function ShareSheet({ open, onClose }: Props) {
             padding: '12px 14px',
             borderRadius: 14,
             border: `1.5px solid ${shareAll ? 'var(--accent)' : 'var(--line)'}`,
-            background: shareAll ? 'rgba(245,177,74,0.07)' : 'var(--bg-3)',
+            background: shareAll ? 'var(--accent-wash)' : 'var(--bg-3)',
             cursor: 'pointer',
             marginBottom: 16,
           }}
@@ -316,7 +316,7 @@ export function ShareSheet({ open, onClose }: Props) {
                   padding: '10px',
                   borderRadius: 10,
                   border: '1.5px solid var(--line)',
-                  background: copied ? 'rgba(245,177,74,0.10)' : 'var(--bg-2)',
+                  background: copied ? 'var(--accent-wash)' : 'var(--bg-2)',
                   color: copied ? 'var(--accent)' : 'var(--ink-2)',
                   fontSize: 13,
                   fontWeight: 600,
@@ -333,7 +333,7 @@ export function ShareSheet({ open, onClose }: Props) {
                     padding: '10px',
                     borderRadius: 10,
                     border: '1.5px solid var(--accent)',
-                    background: 'rgba(245,177,74,0.08)',
+                    background: 'var(--accent-wash)',
                     color: 'var(--accent)',
                     fontSize: 13,
                     fontWeight: 600,

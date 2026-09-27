@@ -54,7 +54,7 @@ export function AnalogClock({
 
   const stroke = '#e9ecef'
   const dim = '#5f6a76'
-  const accent = '#f5b14a'
+  const accent = '#9c3b2e'
 
   return (
     <div
@@ -62,7 +62,7 @@ export function AnalogClock({
         position: 'relative',
         width: s,
         height: s,
-        filter: glow ? 'drop-shadow(0 0 24px rgba(245,177,74,0.07))' : 'none',
+        filter: glow ? 'drop-shadow(0 0 24px var(--accent-wash))' : 'none',
       }}
     >
       {/* Rough-noise filter used by the outer circle. Self-contained per clock. */}
@@ -160,7 +160,7 @@ export function AnalogClock({
         <line x1={c} y1={c} x2={hx} y2={hy} stroke={stroke} strokeWidth={variant === 'big' ? 5 : 3.5} strokeLinecap="round" />
         <line x1={c} y1={c} x2={mx} y2={my} stroke={stroke} strokeWidth={variant === 'big' ? 3 : 2.2} strokeLinecap="round" />
         <circle cx={c} cy={c} r={variant === 'big' ? 5 : 3.5} fill={stroke} />
-        <circle cx={c} cy={c} r={variant === 'big' ? 2 : 1.5} fill="#0d1115" />
+        <circle cx={c} cy={c} r={variant === 'big' ? 2 : 1.5} fill="#1a1612" />
       </svg>
     </div>
   )

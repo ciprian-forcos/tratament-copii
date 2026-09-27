@@ -59,7 +59,7 @@ function Wheel<T extends number>({ values, value, onChange, width = 80, height =
           height: itemH,
           borderTop: '1.5px solid var(--accent)',
           borderBottom: '1.5px solid var(--accent)',
-          background: 'rgba(245,177,74,0.06)',
+          background: 'var(--accent-wash)',
           pointerEvents: 'none',
           borderRadius: 0,
         }}

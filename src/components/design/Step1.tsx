@@ -78,7 +78,7 @@ export function Step1({ value, onChange, onBack, onNext }: Props) {
                 padding: '12px 0',
                 borderRadius: 12,
                 border: '1.5px solid ' + (active ? 'var(--accent)' : 'var(--line)'),
-                background: active ? 'rgba(245,177,74,0.12)' : 'var(--bg-2)',
+                background: active ? 'var(--accent-wash)' : 'var(--bg-2)',
                 color: active ? 'var(--accent)' : 'var(--ink)',
                 fontSize: 15,
                 cursor: 'pointer',

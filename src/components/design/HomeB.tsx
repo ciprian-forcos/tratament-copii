@@ -200,6 +200,9 @@ export function HomeB() {
         }}
       />
 
+      <div className="hand" style={{ textAlign: 'center', fontSize: 28, marginTop: 28 }}>
+        {child.name}
+      </div>
       <div
         ref={stripRef}
         onPointerDown={onPointerDown}
@@ -258,7 +261,7 @@ export function HomeB() {
                     borderRadius: '50%',
                     background: future ? 'transparent' : 'var(--cool)',
                     border: future ? '1.8px solid var(--accent)' : 'none',
-                    boxShadow: isNext ? '0 0 0 4px rgba(245,177,74,0.18)' : 'none',
+                    boxShadow: isNext ? '0 0 0 4px var(--accent-wash)' : 'none',
                   }}
                 />
                 <div className="mono" style={{ fontSize: 10, color: future ? 'var(--accent)' : 'var(--ink-3)' }}>

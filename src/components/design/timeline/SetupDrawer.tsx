@@ -73,6 +73,7 @@ export function SetupDrawer({
                   key={c.id}
                   type="button"
                   aria-label={`copil ${c.name}`}
+                  aria-pressed={on}
                   onClick={() => onSelectChild(c.id)}
                   onContextMenu={(e) => {
                     e.preventDefault()
@@ -120,10 +121,10 @@ export function SetupDrawer({
 function chip(on: boolean): CSSProperties {
   return {
     padding: '8px 12px',
-    borderRadius: 999,
+    borderRadius: 2,
     border: `1.5px solid ${on ? 'var(--accent)' : 'var(--line)'}`,
-    background: on ? 'rgba(245,177,74,0.16)' : 'var(--bg-3)',
-    color: on ? 'var(--accent)' : 'var(--ink-2)',
+    background: on ? 'var(--accent)' : 'var(--bg-3)',
+    color: on ? '#fbf7f0' : 'var(--ink-2)',
     fontSize: 13,
     fontWeight: 600,
     cursor: 'pointer',

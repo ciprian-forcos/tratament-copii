@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./skins.css";
 
 html,
 body,
@@ -9,37 +10,38 @@ body,
 }
 
 /* ============================================================
-   Plan tratament febră — wireframe / triage style
-   Dark, calm, sketchy. Not toy. Not chrome-y.
-   Ported from design package (Plan tratament febră - B.html).
+   Marmură, cerneală, un roșu de vas grecesc.
+   Linie dreaptă, literă cu serif. Fără glow, fără scris de mână.
    ============================================================ */
 
 :root {
-  --bg:        #0d1115;
-  --bg-2:      #161b21;
-  --bg-3:      #1e242c;
-  --ink:       #e9ecef;
-  --ink-2:     #a9b1bb;
-  --ink-3:     #5f6a76;
-  --line:      #3a434e;
-  --line-2:    #2a313a;
-  --accent:    #f5b14a;
-  --accent-2:  #ffd089;
-  --danger:    #ef6360;
-  --safe:      #74c69d;
-  --cool:      #7aa7e6;
+  --bg:        #f6f1e7;
+  --bg-2:      #efe6d6;
+  --bg-3:      #fbf7f0;
+  --ink:       #1a1612;
+  --ink-2:     #4a433a;
+  --ink-3:     #8a7d6b;
+  --line:      #d4c8b4;
+  --line-2:    #e6dccb;
+  --accent:    #9c3b2e;
+  --accent-2:  #6e2a22;
+  --accent-wash: rgba(156, 59, 46, 0.1);
+  --danger:    #9c3b2e;
+  --safe:      #3e5c45;
+  --cool:      #1a1612;
+  --on-accent: #fbf7f0;
 
-  --font-hand: "Caveat", "Patrick Hand", "Comic Sans MS", cursive;
-  --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --font-hand: "Cormorant Garamond", "Palatino Linotype", Palatino, serif;
+  --font-body: "Source Serif 4", "Palatino Linotype", Palatino, serif;
+  --font-mono: "Source Serif 4", "Palatino Linotype", Palatino, serif;
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
-  background: #0a0c0f;
+  background: #e7dfd0;
   font-family: var(--font-body);
   color: var(--ink);
   overflow-x: hidden;
@@ -52,38 +54,48 @@ body {
   place-items: center;
   padding: 24px;
   background:
-    radial-gradient(circle at 20% 10%, rgba(245,177,74,0.06), transparent 50%),
-    radial-gradient(circle at 80% 90%, rgba(122,167,230,0.05), transparent 50%),
-    #0a0c0f;
+    linear-gradient(180deg, #efe6d6 0%, #e3d8c4 100%);
 }
 .phone-frame {
   width: min(480px, 100vw);
   height: min(960px, calc(100vh - 48px));
   max-height: 960px;
-  background: #000;
-  border-radius: 44px;
-  padding: 14px;
+  background: #2c261f;
+  border-radius: 8px;
+  padding: 10px;
   box-shadow:
-    0 0 0 1.5px #1c2128,
-    0 30px 80px rgba(0,0,0,0.6),
-    0 2px 0 rgba(255,255,255,0.04) inset;
+    0 0 0 1px #8a7352,
+    0 24px 60px rgba(40, 28, 16, 0.28);
   position: relative;
 }
 .phone-frame::after {
   content: "";
   position: absolute;
-  top: 14px; left: 50%; transform: translateX(-50%);
-  width: 110px; height: 22px;
-  background: #000;
-  border-radius: 0 0 14px 14px;
+  top: 10px; left: 50%; transform: translateX(-50%);
+  width: 72px; height: 6px;
+  background: #8a7352;
+  border-radius: 0 0 2px 2px;
   z-index: 5;
 }
 .phone-frame > .phone-inner {
   width: 100%; height: 100%;
-  border-radius: 32px;
+  border-radius: 2px;
   overflow: hidden;
   background: var(--bg);
   position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.lab-screen {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.lab-screen > .phone {
+  flex: 1;
+  min-height: 0;
 }
 
 @media (max-width: 540px) {
@@ -148,7 +160,7 @@ body {
   background-color: var(--bg-3);
 }
 .meds-panel .bg-amber-50 {
-  background-color: rgba(245, 177, 74, 0.12);
+  background-color: var(--accent-wash);
 }
 .meds-panel .border-amber-200,
 .meds-panel .border-indigo-100 {
@@ -198,27 +210,24 @@ body {
 }
 
 /* sketchy hand-drawn surfaces */
-.sketch-border { border: 1.5px dashed var(--line); border-radius: 14px; }
-.sketch-solid  { border: 1.5px solid var(--line); border-radius: 14px; }
+.sketch-border { border: 1px solid var(--line); border-radius: 2px; }
+.sketch-solid  { border: 1px solid var(--line); border-radius: 2px; }
 
 .scribble {
-  background: linear-gradient(110deg,
-    transparent 0%, rgba(245,177,74,0.18) 8%,
-    rgba(245,177,74,0.22) 92%, transparent 100%);
+  background: var(--accent-wash);
   padding: 0 4px;
-  border-radius: 3px;
 }
 
 .tilt-l { transform: rotate(-0.6deg); }
 .tilt-r { transform: rotate(0.5deg); }
 
 /* Type helpers */
-.hand    { font-family: var(--font-hand); font-weight: 400; letter-spacing: 0; }
-.mono    { font-family: var(--font-mono); }
+.hand    { font-family: var(--font-hand); font-weight: 500; font-style: italic; letter-spacing: 0; }
+.mono    { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 .eyebrow {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.16em;
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--ink-3);
 }
@@ -228,21 +237,21 @@ body {
   width: 100%;
   min-height: 64px;
   padding: 18px 22px;
-  border-radius: 18px;
-  border: 1.5px solid var(--accent);
+  border-radius: 2px;
+  border: 1px solid var(--accent);
   background: var(--accent);
-  color: #1a1207;
+  color: #fbf7f0;
   font-family: var(--font-body);
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   cursor: pointer;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  box-shadow: 0 0 0 4px rgba(245,177,74,0.18);
+  box-shadow: none;
 }
 .btn-primary .arrow { font-size: 22px; }
 .btn-primary.btn-wait {
@@ -255,7 +264,7 @@ body {
   width: 100%;
   min-height: 50px;
   padding: 12px 18px;
-  border-radius: 14px;
+  border-radius: 2px;
   border: 1.5px solid var(--line);
   background: transparent;
   color: var(--ink);
@@ -289,7 +298,7 @@ body {
   position: absolute;
   left: -2%; right: -2%; bottom: -6px;
   height: 8px;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'><path d='M2,5 C25,1 45,7 60,4 C75,2 90,6 98,3' stroke='%23f5b14a' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'><path d='M2,5 C25,1 45,7 60,4 C75,2 90,6 98,3' stroke='%239c3b2e' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }
@@ -342,7 +351,7 @@ body {
   gap: 14px;
   padding: 18px 20px;
   border: 1.5px solid var(--line);
-  border-radius: 16px;
+  border-radius: 2px;
   background: var(--bg-2);
   cursor: pointer;
   font-size: 16px;
@@ -352,8 +361,8 @@ body {
 }
 .chip[aria-checked="true"] {
   border-color: var(--accent);
-  background: rgba(245,177,74,0.08);
-  box-shadow: 0 0 0 3px rgba(245,177,74,0.12);
+  background: var(--accent-wash);
+  box-shadow: none;
 }
 .chip .radio-dot {
   width: 22px; height: 22px;

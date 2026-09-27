@@ -32,7 +32,7 @@ export function PanicToggle({
               padding: '5px 10px',
               borderRadius: 9,
               border: 'none',
-              background: active ? 'rgba(245,177,74,0.18)' : 'transparent',
+              background: active ? 'var(--accent-wash)' : 'transparent',
               color: active ? 'var(--accent)' : 'var(--ink-3)',
               fontSize: 12,
               fontWeight: 600,

@@ -38,7 +38,7 @@ export function TabBar({
               padding: '10px 2px',
               borderRadius: 12,
               border: `1.5px solid ${active ? 'var(--accent)' : 'var(--line)'}`,
-              background: active ? 'rgba(245,177,74,0.12)' : 'var(--bg-3)',
+              background: active ? 'var(--accent-wash)' : 'var(--bg-3)',
               color: active ? 'var(--accent)' : 'var(--ink-2)',
               fontSize: 11,
               fontWeight: 700,

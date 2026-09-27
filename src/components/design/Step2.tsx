@@ -85,7 +85,7 @@ export function Step2({ value, onChange, onBack, onNext, medications = DEFAULT_F
                     padding: '12px 14px',
                     borderRadius: 14,
                     border: '1.5px solid ' + (active ? 'var(--accent)' : 'var(--line)'),
-                    background: active ? 'rgba(245,177,74,0.08)' : 'var(--bg-2)',
+                    background: active ? 'var(--accent-wash)' : 'var(--bg-2)',
                     color: 'var(--ink)',
                     cursor: 'pointer',
                   }}

@@ -198,7 +198,7 @@ export function ProgramScreen({
                   padding: '7px 12px',
                   borderRadius: 999,
                   border: `1.5px solid ${active ? 'var(--accent)' : 'var(--line)'}`,
-                  background: active ? 'rgba(245,177,74,0.12)' : 'var(--bg-2)',
+                  background: active ? 'var(--accent-wash)' : 'var(--bg-2)',
                   color: active ? 'var(--accent)' : 'var(--ink-2)',
                   fontSize: 13,
                   fontWeight: 600,
@@ -274,7 +274,7 @@ export function ProgramScreen({
                     padding: '10px 12px',
                     borderRadius: 14,
                     border: `1.5px solid ${isNext ? 'var(--accent)' : 'var(--line)'}`,
-                    background: given ? 'var(--bg-3)' : isNext ? 'rgba(245,177,74,0.08)' : 'var(--bg-2)',
+                    background: given ? 'var(--bg-3)' : isNext ? 'var(--accent-wash)' : 'var(--bg-2)',
                     opacity: given ? 0.55 : 1,
                   }}
                 >
@@ -288,7 +288,7 @@ export function ProgramScreen({
                       borderRadius: 999,
                       border: `1.5px solid ${given ? 'var(--safe)' : 'var(--line)'}`,
                       background: given ? 'var(--safe)' : 'transparent',
-                      color: given ? '#0d1115' : 'var(--ink-3)',
+                      color: given ? '#1a1612' : 'var(--ink-3)',
                       cursor: 'pointer',
                       fontWeight: 700,
                     }}
@@ -374,7 +374,7 @@ export function ProgramScreen({
                 padding: '10px',
                 borderRadius: 12,
                 border: '1.5px dashed var(--accent)',
-                background: 'rgba(245,177,74,0.06)',
+                background: 'var(--accent-wash)',
                 color: 'var(--accent)',
                 fontWeight: 600,
                 cursor: 'pointer',
