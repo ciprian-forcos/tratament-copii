@@ -47,4 +47,20 @@ describe('design variant switch', () => {
     expect(document.querySelector('.phone-inner')).toHaveAttribute('data-skin', 'mario')
     expect(localStorage.getItem('tratament-copii-skin')).toBe('mario')
   })
+
+  it('switches the look from the Temă menu, independent of the palette', () => {
+    localStorage.removeItem('tratament-copii-look')
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: /temă/i }))
+    expect(screen.getByRole('tab', { name: 'Grec' })).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('radio', { name: 'Material' }))
+    const inner = document.querySelector('.phone-inner')
+    expect(inner).toHaveAttribute('data-look', 'material')
+    expect(localStorage.getItem('tratament-copii-look')).toBe('material')
+
+    fireEvent.click(screen.getByRole('button', { name: /temă/i }))
+    fireEvent.click(screen.getByRole('radio', { name: 'Grec' }))
+    expect(inner).not.toHaveAttribute('data-look')
+  })
 })

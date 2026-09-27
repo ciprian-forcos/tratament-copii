@@ -1,5 +1,7 @@
 # Handoff: themes
 
+> Update 27 Sept: colour skins now sit under a second switch, **Stil** (look: shape, depth, motion). See `STYLE-HANDOFF.md`.
+
 Written so another agent can restyle the app without reopening the product argument.
 
 The owner wants you to take a crack at the **themes** (the color skins). Do not reopen the timeline, the three layouts, or the medication rules unless a theme makes text unreadable.

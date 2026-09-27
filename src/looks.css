@@ -1,0 +1,127 @@
+/* Looks: shape, depth, press, motion, type. Palettes (skins.css) load after
+   this file, so a skin recolours a look: Material + Mario works.
+   Colour-dependent tokens use color-mix() on the same element as data-skin,
+   so they follow the palette. */
+
+[data-look="material"] {
+  color-scheme: light;
+  --bg: #fff8f6;
+  --bg-2: #fceae5;
+  --bg-3: #fff1ed;
+  --ink: #231917;
+  --ink-2: #534340;
+  --ink-3: #85736f;
+  --line: #d8c2bd;
+  --accent: #904a3c;
+  --accent-2: #73342a;
+  --accent-wash: rgba(144, 74, 60, 0.14);
+  --on-accent: #ffffff;
+  --danger: #ba1a1a;
+  --safe: #3b6a3f;
+  --cool: #775650;
+
+  --font-hand: "Roboto Flex", system-ui, sans-serif;
+  --font-body: "Roboto Flex", system-ui, sans-serif;
+  --font-mono: "Roboto Flex", system-ui, sans-serif;
+  --hand-style: normal;
+  --hand-weight: 600;
+
+  /* Expressive: pills that square off when pressed or selected. */
+  --r-btn: 999px;
+  --r-btn-on: 14px;
+  --r-chip: 999px;
+  --r-chip-on: 12px;
+  --r-cta: 999px;
+  --r-cta-press: 16px;
+  --r-sheet: 28px 28px 0 0;
+  --btn-border: 0 solid transparent;
+  --btn-bg: var(--bg-2);
+  --chip-border: 1px solid var(--line);
+  --chip-bg: transparent;
+  --bar-bg: var(--bg);
+  --bar-line: 0 solid transparent;
+  --sheet-top: 0 solid transparent;
+  --press: scale(0.96);
+
+  /* Spatial spring with visible overshoot (M3 expressive scheme). */
+  --ease: linear(0, 0.14 4.4%, 0.72 12.9%, 0.94 16.7%, 1.07 22%, 1.11 26%, 1.08 30%, 1.05 32.5%, 0.99 38.5%, 0.96 42%, 0.95 46%, 0.97 52%, 1 60.5%, 1.005 66.5%, 1);
+  --dur: 420ms;
+  --dur-sheet: 520ms;
+  --sheet-from: translateY(100%);
+}
+
+[data-look="sticla"] {
+  color-scheme: light;
+  --bg: #eef1f7;
+  --bg-2: #e4e8f0;
+  --bg-3: #f8f9fc;
+  --ink: #1c1c1e;
+  --ink-2: #3a3a3c;
+  --ink-3: #6c6c70;
+  --line: #c7c9d1;
+  --accent: #0063d1;
+  --accent-2: #004a9f;
+  --accent-wash: rgba(0, 99, 209, 0.12);
+  --on-accent: #ffffff;
+  --danger: #d70015;
+  --safe: #248a3d;
+  --cool: #1c1c1e;
+
+  --font-hand: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, "Segoe UI", sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", sans-serif;
+  --font-mono: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", sans-serif;
+  --hand-style: normal;
+  --hand-weight: 600;
+
+  /* Glass only on the control layer (bar, sheet, buttons); the tape stays solid. */
+  --glass: blur(22px) saturate(180%);
+  --glass-edge: inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 0 0 1px color-mix(in srgb, var(--ink) 8%, transparent);
+  --phone-wash:
+    radial-gradient(90% 55% at 100% 0%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
+    radial-gradient(90% 55% at 0% 100%, color-mix(in srgb, var(--safe) 18%, transparent), transparent 70%);
+
+  --r-btn: 999px;
+  --r-btn-on: 999px;
+  --r-chip: 999px;
+  --r-chip-on: 999px;
+  --r-cta: 999px;
+  --r-cta-press: 999px;
+  --r-bar: 28px;
+  --bar-margin: 8px 8px 0;
+  --r-sheet: 32px;
+  --sheet-inset: 8px;
+  --btn-border: 0 solid transparent;
+  --btn-bg: color-mix(in srgb, var(--bg-3) 50%, transparent);
+  --btn-shadow: var(--glass-edge);
+  --bar-bg: color-mix(in srgb, var(--bg-3) 55%, transparent);
+  --bar-line: 0 solid transparent;
+  --bar-shadow: var(--glass-edge), 0 8px 24px rgba(0, 0, 0, 0.08);
+  --sheet-bg: color-mix(in srgb, var(--bg-3) 62%, transparent);
+  --sheet-top: 0 solid transparent;
+  --sheet-shadow: var(--glass-edge), 0 12px 40px rgba(0, 0, 0, 0.18);
+  --cta-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 6px 18px color-mix(in srgb, var(--accent) 35%, transparent);
+
+  /* Glass swells a little under the finger instead of sinking. */
+  --press: scale(1.04);
+  --ease: linear(0, 0.2 5%, 0.8 14%, 1.04 22%, 1.06 27%, 1.02 35%, 0.99 45%, 1 60%, 1);
+  --dur: 320ms;
+  --dur-sheet: 460ms;
+  --sheet-from: translateY(calc(100% + 16px));
+}
+
+/* Glass off when the phone asks for less transparency, or cannot blur. */
+@media (prefers-reduced-transparency: reduce) {
+  [data-look="sticla"] {
+    --glass: none;
+    --btn-bg: var(--bg-3);
+    --bar-bg: var(--bg-3);
+    --sheet-bg: var(--bg-2);
+  }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  [data-look="sticla"] {
+    --btn-bg: var(--bg-3);
+    --bar-bg: var(--bg-3);
+    --sheet-bg: var(--bg-2);
+  }
+}

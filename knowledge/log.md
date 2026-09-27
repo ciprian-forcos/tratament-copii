@@ -2,6 +2,14 @@
 
 ## 2026-09-27
 
+* **Looks + NHS baseline**: the Temă panel now has two groups, *Stil*
+  (`data-look`: Grec, Material, Sticlă) and *Culori* (`data-skin`). Looks
+  live in `src/looks.css` as structural tokens (radius, depth, glass, press,
+  spring motion, fonts); shared classes `.ui-bar`, `.ui-panel`, `.ui-btn`,
+  `.ui-chip`, `.ui-sheet` read them. Confirmă ignores a second tap within 1s
+  (`guardTap.ts`), focus is GOV.UK yellow, and reduce-motion /
+  reduce-transparency are honoured. Remaining work: `STYLE-HANDOFF.md`.
+
 * **Skin picker behind a Temă button**: the always-visible skin row is gone.
   A **Temă** button (swatch in the current `--accent`) sits after Acum / Edi /
   Fane in `LabBar`; it toggles `SkinBar`, which now wraps instead of

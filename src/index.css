@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./looks.css";
 @import "./skins.css";
 
 html,
@@ -81,7 +82,7 @@ body {
   width: 100%; height: 100%;
   border-radius: 2px;
   overflow: hidden;
-  background: var(--bg);
+  background: var(--phone-wash, none), var(--bg);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -113,7 +114,7 @@ body {
 .phone {
   width: 100%;
   height: 100%;
-  background: var(--bg);
+  background: transparent;
   color: var(--ink);
   font-family: var(--font-body);
   display: flex;
@@ -222,7 +223,7 @@ body {
 .tilt-r { transform: rotate(0.5deg); }
 
 /* Type helpers */
-.hand    { font-family: var(--font-hand); font-weight: 500; font-style: italic; letter-spacing: 0; }
+.hand    { font-family: var(--font-hand); font-weight: var(--hand-weight, 500); font-style: var(--hand-style, italic); letter-spacing: 0; }
 .mono    { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 .eyebrow {
   font-family: var(--font-body);
@@ -237,10 +238,10 @@ body {
   width: 100%;
   min-height: 64px;
   padding: 18px 22px;
-  border-radius: 2px;
+  border-radius: var(--r-cta, 2px);
   border: 1px solid var(--accent);
   background: var(--accent);
-  color: #fbf7f0;
+  color: var(--on-accent);
   font-family: var(--font-body);
   font-size: 18px;
   font-weight: 600;
@@ -251,7 +252,14 @@ body {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  box-shadow: none;
+  box-shadow: var(--cta-shadow, none);
+  transition:
+    transform var(--dur, 120ms) var(--ease, ease-out),
+    border-radius var(--dur, 120ms) var(--ease, ease-out);
+}
+.btn-primary:active {
+  transform: var(--press, scale(0.98));
+  border-radius: var(--r-cta-press, var(--r-cta, 2px));
 }
 .btn-primary .arrow { font-size: 22px; }
 .btn-primary.btn-wait {
@@ -394,3 +402,99 @@ body {
 }
 .progress span.active { background: var(--accent); }
 .progress span.done   { background: var(--ink-3); }
+
+/* ============================================================
+   Shared controls. Each look sets the tokens; Grec is the fallback.
+   ============================================================ */
+.ui-bar {
+  margin: var(--bar-margin, 0);
+  border-radius: var(--r-bar, 0);
+  background: var(--bar-bg, var(--bg-3));
+  border-bottom: var(--bar-line, 1px solid var(--line));
+  box-shadow: var(--bar-shadow, none);
+  backdrop-filter: var(--glass, none);
+  -webkit-backdrop-filter: var(--glass, none);
+}
+.ui-panel {
+  background: var(--bar-bg, var(--bg-2));
+  border-bottom: var(--bar-line, 1px solid var(--line));
+  backdrop-filter: var(--glass, none);
+  -webkit-backdrop-filter: var(--glass, none);
+}
+.ui-btn,
+.ui-chip {
+  border: var(--btn-border, 1px solid var(--line));
+  border-radius: var(--r-btn, 2px);
+  background: var(--btn-bg, var(--bg-3));
+  color: var(--ink);
+  box-shadow: var(--btn-shadow, none);
+  font-family: var(--font-body);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform var(--dur, 120ms) var(--ease, ease-out),
+    border-radius var(--dur, 120ms) var(--ease, ease-out),
+    background-color var(--dur, 120ms) ease-out,
+    color var(--dur, 120ms) ease-out;
+}
+.ui-chip {
+  border: var(--chip-border, var(--btn-border, 1px solid var(--line)));
+  border-radius: var(--r-chip, 2px);
+  background: var(--chip-bg, var(--btn-bg, var(--bg-3)));
+  color: var(--ink-2);
+}
+.ui-btn:active,
+.ui-chip:active {
+  transform: var(--press, scale(0.98));
+}
+.ui-btn[aria-selected="true"],
+.ui-btn[aria-checked="true"] {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent);
+  border-radius: var(--r-btn-on, var(--r-btn, 2px));
+}
+.ui-chip[aria-pressed="true"] {
+  background: var(--accent-wash);
+  color: var(--accent-2);
+  border-color: var(--accent);
+  border-radius: var(--r-chip-on, var(--r-chip, 2px));
+}
+
+.ui-sheet {
+  position: absolute;
+  left: var(--sheet-inset, 0);
+  right: var(--sheet-inset, 0);
+  bottom: var(--sheet-inset, 0);
+  z-index: 40;
+  padding: 14px 18px 20px;
+  background: var(--sheet-bg, var(--bg-2));
+  border-top: var(--sheet-top, 1.5px solid var(--line));
+  border-radius: var(--r-sheet, 2px 2px 0 0);
+  box-shadow: var(--sheet-shadow, none);
+  backdrop-filter: var(--glass, none);
+  -webkit-backdrop-filter: var(--glass, none);
+  animation: sheet-in var(--dur-sheet, 160ms) var(--ease, ease-out) both;
+}
+@keyframes sheet-in {
+  from { transform: var(--sheet-from, translateY(16px)); opacity: 0.4; }
+  to   { transform: none; opacity: 1; }
+}
+
+/* NHS / GOV.UK focus: yellow outside a dark ring, visible on any ground. */
+.phone-inner :focus-visible {
+  outline: 3px solid #ffdd00;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 3px #0b0c0c;
+}
+
+/* Phone set to reduce motion: no springs, no pulsing. */
+@media (prefers-reduced-motion: reduce) {
+  .phone-inner *,
+  .phone-inner *::before,
+  .phone-inner *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}

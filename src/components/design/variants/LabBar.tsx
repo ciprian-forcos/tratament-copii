@@ -17,9 +17,9 @@ export function LabBar({
   skinsOpen: boolean
   onToggleSkins: () => void
 }) {
-
   return (
     <div
+      className="ui-bar"
       style={{
         position: 'relative',
         zIndex: 20,
@@ -27,41 +27,26 @@ export function LabBar({
         flex: '0 0 auto',
         gap: 6,
         padding: 8,
-        background: 'var(--bg-3)',
-        borderBottom: '1px solid var(--line)',
-        pointerEvents: 'auto',
       }}
     >
       <div role="tablist" aria-label="variante de design" style={{ display: 'flex', flex: 1, gap: 6 }}>
-        {OPTIONS.map((opt) => {
-          const on = variant === opt.id
-          return (
-            <button
-              key={opt.id}
-              type="button"
-              role="tab"
-              aria-selected={on}
-              onClick={() => onSelect(opt.id)}
-              style={{
-                flex: 1,
-                border: '1px solid var(--line)',
-                borderRadius: 2,
-                minHeight: 44,
-                padding: '10px 8px',
-                background: on ? 'var(--accent)' : 'var(--bg-3)',
-                color: on ? 'var(--on-accent)' : 'var(--ink)',
-                font: '600 15px var(--font-body)',
-                cursor: 'pointer',
-                pointerEvents: 'auto',
-              }}
-            >
-              {opt.label}
-            </button>
-          )
-        })}
+        {OPTIONS.map((opt) => (
+          <button
+            key={opt.id}
+            type="button"
+            role="tab"
+            className="ui-btn"
+            aria-selected={variant === opt.id}
+            onClick={() => onSelect(opt.id)}
+            style={{ flex: 1, minHeight: 44, padding: '10px 8px', fontSize: 15 }}
+          >
+            {opt.label}
+          </button>
+        ))}
       </div>
       <button
         type="button"
+        className="ui-btn"
         aria-expanded={skinsOpen}
         aria-controls="skin-list"
         onClick={onToggleSkins}
@@ -70,14 +55,9 @@ export function LabBar({
           display: 'flex',
           alignItems: 'center',
           gap: 6,
-          border: '1px solid var(--line)',
-          borderRadius: 2,
           minHeight: 44,
-          padding: '10px 10px',
-          background: skinsOpen ? 'var(--bg-2)' : 'var(--bg-3)',
-          color: 'var(--ink)',
-          font: '600 15px var(--font-body)',
-          cursor: 'pointer',
+          padding: '10px 12px',
+          fontSize: 15,
         }}
       >
         <span
