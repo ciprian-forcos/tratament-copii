@@ -1,22 +1,23 @@
-/* Palettes only. No characters, no logos. */
+/* Palettes only. No characters, no logos.
+   The character colour goes on --accent, never on --bg.
+   src/palettes.test.ts enforces contrast for every block here. */
 
 [data-skin="mario"] {
   color-scheme: light;
-  --bg: #5c94fc;
-  --bg-2: #3d78e6;
-  --bg-3: #8eb8ff;
+  --bg: #fbf3e2;
+  --bg-2: #f2e5c9;
+  --bg-3: #fffaf0;
   --ink: #1b1b1b;
-  --ink-2: #1b2838;
-  --ink-3: #243044;
-  --line: #2f5cb8;
-  --line-2: #b7d0ff;
-  --accent: #e52521;
+  --ink-2: #3b3430;
+  --ink-3: #6b6159;
+  --line: #d8c9ab;
+  --accent: #d52b1e;
   --accent-2: #9e1210;
-  --accent-wash: rgba(229, 37, 33, 0.16);
-  --on-accent: #fff8e8;
-  --danger: #e52521;
+  --accent-wash: rgba(213, 43, 30, 0.12);
+  --on-accent: #fffaf0;
+  --danger: #b3160c;
   --safe: #1f7a32;
-  --cool: #1f7a32;
+  --cool: #1f4fbf;
 }
 
 [data-skin="leu"] {
@@ -29,9 +30,9 @@
   --ink-3: #8a6844;
   --line: #d2b48a;
   --line-2: #ead7b0;
-  --accent: #c45c26;
+  --accent: #a84a1a;
   --accent-2: #8a3e16;
-  --accent-wash: rgba(196, 92, 38, 0.16);
+  --accent-wash: rgba(168, 74, 26, 0.14);
   --on-accent: #fff6e8;
   --danger: #a33b24;
   --safe: #5c6b2e;
@@ -92,26 +93,25 @@
   --on-accent: #f6efe4;
   --danger: #c4523a;
   --safe: #4c8c6a;
-  --cool: #e07a3d;
+  --cool: #b8531a;
 }
 
 [data-skin="burete"] {
   color-scheme: light;
-  --bg: #ffe56b;
-  --bg-2: #f5d24a;
-  --bg-3: #fff4b0;
-  --ink: #1a3a4a;
-  --ink-2: #1f4d5c;
-  --ink-3: #3d6a6a;
-  --line: #e2c24a;
-  --line-2: #fff0a0;
-  --accent: #1f8a70;
-  --accent-2: #146454;
-  --accent-wash: rgba(31, 138, 112, 0.16);
-  --on-accent: #f7fff8;
-  --danger: #d23b4a;
-  --safe: #1f8a70;
-  --cool: #d23b6a;
+  --bg: #fff8d6;
+  --bg-2: #fbeeb0;
+  --bg-3: #fff1a8;
+  --ink: #16323f;
+  --ink-2: #22495a;
+  --ink-3: #56686b;
+  --line: #e3cf7a;
+  --accent: #c8202f;
+  --accent-2: #8f1420;
+  --accent-wash: rgba(200, 32, 47, 0.12);
+  --on-accent: #fffcea;
+  --danger: #a3121f;
+  --safe: #1f7a5c;
+  --cool: #7a4a1c;
 }
 
 [data-skin="paianjen"] {
@@ -135,21 +135,20 @@
 
 [data-skin="sonic"] {
   color-scheme: light;
-  --bg: #6ec1ff;
-  --bg-2: #4aa3ef;
-  --bg-3: #d7eeff;
-  --ink: #102033;
-  --ink-2: #16324d;
-  --ink-3: #2a5070;
-  --line: #3d92dc;
-  --line-2: #c5e4ff;
-  --accent: #e0a800;
-  --accent-2: #8a6800;
-  --accent-wash: rgba(224, 168, 0, 0.2);
-  --on-accent: #102033;
-  --danger: #e23b3b;
+  --bg: #eef6ff;
+  --bg-2: #dbeafc;
+  --bg-3: #f8fbff;
+  --ink: #0f2340;
+  --ink-2: #1e3a5f;
+  --ink-3: #4d6685;
+  --line: #bcd3ee;
+  --accent: #1d5fd1;
+  --accent-2: #123f94;
+  --accent-wash: rgba(29, 95, 209, 0.12);
+  --on-accent: #ffffff;
+  --danger: #c62828;
   --safe: #147a45;
-  --cool: #147a45;
+  --cool: #9a6a00;
 }
 
 [data-skin="moana"] {
@@ -162,9 +161,9 @@
   --ink-3: #6d8494;
   --line: #d7c4a4;
   --line-2: #eadcc4;
-  --accent: #0e7c86;
+  --accent: #0b6a73;
   --accent-2: #0a5c64;
-  --accent-wash: rgba(14, 124, 134, 0.14);
+  --accent-wash: rgba(11, 106, 115, 0.14);
   --on-accent: #f4e7cf;
   --danger: #c4452d;
   --safe: #2f8f6b;
@@ -181,8 +180,8 @@
   --ink-3: #7a756c;
   --line: #ddd6c8;
   --line-2: #eee8dc;
-  --accent: #ee1515;
-  --accent-2: #c41212;
+  --accent: #cc1010;
+  --accent-2: #a30d0d;
   --accent-wash: rgba(238, 21, 21, 0.1);
   --on-accent: #fffdf8;
   --danger: #ee1515;
