@@ -9,12 +9,13 @@ export function SkinBar({
 }) {
   return (
     <div
+      id="skin-list"
       role="tablist"
       aria-label="teme"
       style={{
         display: 'flex',
         gap: 6,
-        overflowX: 'auto',
+        flexWrap: 'wrap',
         padding: '6px 8px',
         background: 'var(--bg-2)',
         borderBottom: '1px solid var(--line)',

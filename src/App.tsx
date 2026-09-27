@@ -17,6 +17,7 @@ import { readVariant, variantHref, type DesignVariant } from './components/desig
 function App() {
   const [variant, setVariant] = useState<DesignVariant>(() => readVariant(window.location.search))
   const [skin, setSkin] = useState<SkinId>(loadSkin)
+  const [skinsOpen, setSkinsOpen] = useState(false)
 
   useEffect(() => {
     const sync = () => setVariant(readVariant(window.location.search))
@@ -32,6 +33,7 @@ function App() {
   function selectSkin(next: SkinId) {
     saveSkin(next)
     setSkin(next)
+    setSkinsOpen(false)
   }
 
   const screen =
@@ -41,8 +43,13 @@ function App() {
     <div className="stage">
       <div className="phone-frame">
         <div className="phone-inner" data-skin={skin === 'grec' ? undefined : skin}>
-          <LabBar variant={variant} onSelect={selectVariant} />
-          <SkinBar skin={skin} onSelect={selectSkin} />
+          <LabBar
+            variant={variant}
+            onSelect={selectVariant}
+            skinsOpen={skinsOpen}
+            onToggleSkins={() => setSkinsOpen((open) => !open)}
+          />
+          {skinsOpen && <SkinBar skin={skin} onSelect={selectSkin} />}
           <div className="lab-screen">
             <ImportGate>{screen}</ImportGate>
           </div>

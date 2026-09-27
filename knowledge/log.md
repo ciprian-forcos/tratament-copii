@@ -1,5 +1,12 @@
 # Knowledge Bundle Log
 
+## 2026-09-27
+
+* **Skin picker behind a Temă button**: the always-visible skin row is gone.
+  A **Temă** button (swatch in the current `--accent`) sits after Acum / Edi /
+  Fane in `LabBar`; it toggles `SkinBar`, which now wraps instead of
+  scrolling and closes after a pick. See `THEME-HANDOFF.md`.
+
 ## 2026-09-02
 
 * **Cycle 3 UX (C1–C3, C5, C7–C11)**: Step 2 no longer prefills last-dose

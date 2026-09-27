@@ -142,7 +142,7 @@ The two pictures he marked are in this repo:
 Two independent switches sit on the phone:
 
 1. **Layout** — top row: Acum / Edi / Fane. Same timeline, three arrangements. A skin must not merge these or delete one.
-2. **Skin** — second row. A palette applied with `data-skin` on `.phone-inner`. Saved in `localStorage` key `tratament-copii-skin`. Default is `grec` (no attribute; the variables in `:root`).
+2. **Skin** — the **Temă** button at the end of the top row opens the skin list under it; picking one closes it. A palette applied with `data-skin` on `.phone-inner`. Saved in `localStorage` key `tratament-copii-skin`. Default is `grec` (no attribute; the variables in `:root`).
 
 A skin is only the CSS variables. It does not change the path of the line, the filled-vs-hollow dose marks, the dose amounts, or which events exist.
 
@@ -151,7 +151,7 @@ A skin is only the CSS variables. It does not change the path of the line, the f
 - `src/index.css` — `:root` tokens. This is the Greek marble default. Also the phone frame and type styles.
 - `src/skins.css` — one `[data-skin="…"]` block per extra palette. Override the same variables. Set `color-scheme` when the ground is dark.
 - `src/components/design/skins.ts` — `{ id, label }` list. `id` must match the CSS attribute. Unknown ids fall back to `grec`.
-- `src/components/design/SkinBar.tsx` — the scrolling row. It already uses the variables, so a new skin recolors it.
+- `src/components/design/SkinBar.tsx` — the wrapping skin list shown while **Temă** is open. It already uses the variables, so a new skin recolors it.
 - `src/App.tsx` — `data-skin={skin === 'grec' ? undefined : skin}`.
 
 Tokens a skin must set:
@@ -191,5 +191,5 @@ The Greek skin is the calm default on purpose. You may refine it. Do not replace
 ## Out of scope
 
 - Official character art, catchphrases, or trademarks used as if this were a licensed product.
-- Putting the theme switch back `position: fixed` at the bottom of the viewport. It sat under the phone frame and could not be tapped. It lives in normal flow at the top of `.phone-inner`.
+- Putting the theme switch back `position: fixed` at the bottom of the viewport. It sat under the phone frame and could not be tapped. It lives in normal flow at the top of `.phone-inner`, behind the **Temă** button in the layout row.
 - Deploy secrets. Pushing `main` already publishes GitHub Pages via `.github/workflows/deploy.yml`.

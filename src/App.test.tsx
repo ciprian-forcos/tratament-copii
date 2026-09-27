@@ -30,4 +30,21 @@ describe('design variant switch', () => {
     expect(screen.getByRole('button', { name: /copii și medicamente/i })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'Acum' })).toHaveAttribute('aria-selected', 'true')
   })
+
+  it('opens the skin list from the top menu and closes it after a pick', () => {
+    localStorage.removeItem('tratament-copii-skin')
+    render(<App />)
+    expect(screen.queryByRole('tablist', { name: 'teme' })).not.toBeInTheDocument()
+
+    const toggle = screen.getByRole('button', { name: /temă/i })
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    fireEvent.click(toggle)
+    expect(toggle).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('tab', { name: 'Grec' })).toHaveAttribute('aria-selected', 'true')
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Mario' }))
+    expect(screen.queryByRole('tablist', { name: 'teme' })).not.toBeInTheDocument()
+    expect(document.querySelector('.phone-inner')).toHaveAttribute('data-skin', 'mario')
+    expect(localStorage.getItem('tratament-copii-skin')).toBe('mario')
+  })
 })
