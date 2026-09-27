@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
 import type { Medication, TimelineMark } from '../../../types'
+import { useGuardedTap } from '../guardTap'
 import { shortName } from './shortName'
 
 export type AttachKind = 'dose' | 'temperature' | 'note'
@@ -31,21 +32,10 @@ export function AttachSheet({
 }) {
   const time = fmt(value.at)
   const doseMeds = medications
+  const confirm = useGuardedTap(onConfirm)
 
   return (
-    <div
-      style={{
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 40,
-        background: 'var(--bg-2)',
-        borderTop: '1.5px solid var(--line)',
-        borderRadius: '2px 2px 0 0',
-        padding: '14px 18px 20px',
-      }}
-    >
+    <div className="ui-sheet">
       <button
         type="button"
         aria-label="închide"
@@ -94,8 +84,10 @@ export function AttachSheet({
               <button
                 key={m.id}
                 type="button"
+                className="ui-chip"
+                aria-pressed={on}
                 onClick={() => onChange({ ...value, medicationId: m.id })}
-                style={chipStyle(on)}
+                style={chipPad}
               >
                 {shortName(m.name)}
               </button>
@@ -144,7 +136,7 @@ export function AttachSheet({
         />
       )}
 
-      <button className="btn-primary" type="button" onClick={onConfirm}>
+      <button className="btn-primary" type="button" onClick={confirm}>
         Confirmă
       </button>
     </div>
@@ -153,7 +145,7 @@ export function AttachSheet({
 
 function KindChip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   return (
-    <button type="button" onClick={onClick} style={chipStyle(active)}>
+    <button type="button" className="ui-chip" aria-pressed={active} onClick={onClick} style={chipPad}>
       {label}
     </button>
   )
@@ -168,18 +160,7 @@ function fmt(d: Date) {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
 }
 
-function chipStyle(on: boolean): CSSProperties {
-  return {
-    padding: '12px 8px',
-    borderRadius: 2,
-    border: `1.5px solid ${on ? 'var(--accent)' : 'var(--line)'}`,
-    background: on ? 'var(--accent-wash)' : 'var(--bg-3)',
-    color: on ? 'var(--accent)' : 'var(--ink-2)',
-    fontSize: 13,
-    fontWeight: 600,
-    cursor: 'pointer',
-  }
-}
+const chipPad: CSSProperties = { padding: '12px 8px', fontSize: 13, fontWeight: 600 }
 
 const roundBtn: CSSProperties = {
   width: 48,

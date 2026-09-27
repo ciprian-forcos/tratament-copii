@@ -7,6 +7,7 @@ import { loadMedications, MEDICATIONS_CHANGED_EVENT, notifyMedicationsChanged, s
 import { materializeWindow, nextProjectedDose, projectRange } from '../timeline/project'
 import { timelineStore, useTimelineFacts } from '../timeline/store'
 import { marksForView, viewWindow } from '../timeline/view'
+import { useGuardedTap } from '../guardTap'
 import { acumChip, dayTickLabel, dayTicks, splitAmount, stepAmount } from './fane'
 
 const PATH = 'M 6 38 Q 80 32 160 40 T 314 36'
@@ -103,6 +104,7 @@ export function HomeFane() {
     setGiving(false)
     setPanMs(0)
   }
+  const guardedConfirm = useGuardedTap(confirmDose)
 
   function addOther() {
     const name = otherName.trim()
@@ -279,7 +281,7 @@ export function HomeFane() {
             unit={nextAmount.unit}
             onChange={(n, unit) => setOverrides((prev) => ({ ...prev, [next.medicationId]: { n, unit } }))}
           />
-          <button type="button" className="btn-primary" style={{ marginTop: 16 }} onClick={confirmDose}>
+          <button type="button" className="btn-primary" style={{ marginTop: 16 }} onClick={guardedConfirm}>
             Confirmă
           </button>
         </div>
