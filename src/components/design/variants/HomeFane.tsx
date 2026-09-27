@@ -339,9 +339,14 @@ export function HomeFane() {
                 onChange={(e) => setOtherName(e.target.value)}
                 placeholder="Alt medicament"
                 className="ui-field"
-                style={{ flex: 1, padding: '10px 12px', font: 'inherit' }}
+                style={{ flex: 1, minWidth: 0, padding: '10px 12px', font: 'inherit' }}
               />
-              <button type="submit" aria-label="adaugă alt medicament" className="ui-chip">
+              <button
+                type="submit"
+                aria-label="adaugă alt medicament"
+                className="ui-chip"
+                style={{ flex: '0 0 auto', minWidth: 48, padding: '0 14px', fontSize: 20 }}
+              >
                 +
               </button>
             </form>

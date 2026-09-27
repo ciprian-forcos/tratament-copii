@@ -39,6 +39,8 @@
   --btn-bg: var(--bg-2);
   --chip-border: 1px solid var(--line);
   --chip-bg: transparent;
+  --r-field: 12px;
+  --field-border: 1px solid var(--ink-3);
   --bar-bg: var(--bg);
   --bar-line: 0 solid transparent;
   --sheet-top: 0 solid transparent;
@@ -88,6 +90,8 @@
   --r-cta: 999px;
   --r-cta-press: 999px;
   --r-bar: 28px;
+  --r-field: 16px;
+  --field-border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
   --bar-margin: 8px 8px 0;
   --r-sheet: 32px;
   --sheet-inset: 8px;
