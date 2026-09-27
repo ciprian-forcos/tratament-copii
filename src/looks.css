@@ -51,6 +51,10 @@
   --dur: 420ms;
   --dur-sheet: 520ms;
   --sheet-from: translateY(100%);
+
+  --lens-bg: transparent;
+  --next-fill: var(--accent-wash);
+  --next-stroke: 2.2px;
 }
 
 [data-look="sticla"] {
@@ -112,12 +116,21 @@
   --dur: 320ms;
   --dur-sheet: 460ms;
   --sheet-from: translateY(calc(100% + 16px));
+
+  /* The next dose sits under a small glass lens; the tape itself stays solid. */
+  --lens-size: 32px;
+  --lens-bg: color-mix(in srgb, var(--bg-3) 45%, transparent);
+  --lens-shadow: var(--glass-edge), 0 4px 12px rgba(0, 0, 0, 0.12);
+  --lens-filter: blur(4px) saturate(180%);
+  --next-stroke: 2px;
 }
 
 /* Glass off when the phone asks for less transparency, or cannot blur. */
 @media (prefers-reduced-transparency: reduce) {
   [data-look="sticla"] {
     --glass: none;
+    --lens-filter: none;
+    --lens-bg: var(--bg-3);
     --btn-bg: var(--bg-3);
     --bar-bg: var(--bg-3);
     --sheet-bg: var(--bg-2);

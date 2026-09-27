@@ -75,18 +75,23 @@ Apply these instead of inline shape styles. Keep inline styles for layout only (
 Each step: write a failing test first where behaviour changes, then `npm run type-check`, `npx eslint src`, `npx vitest run`. Look at every step on a 390×844 screen in all three looks, with a dark palette (Dragon) too.
 
 1. **Move the remaining controls onto the shared classes.** Done. Drawer, child editor, Edi tiles, Fane settings, the give sheet, the medicine note, and the temperature steppers use `.ui-chip`, `.ui-btn`, `.ui-sheet`, `.ui-surface`, and `.ui-field`. Material sets `--tap: 48px`; the other looks stay at 44px. Fane's quick-add is behind the same one-second tap guard as Confirmă. Review fixes: `.ui-field` has its own `--r-field` / `--field-border` (a textarea must not take the pill radius), `.ui-btn[aria-pressed="false"]` is unfilled so Edi's off medicines read as off, and Fane's `+` keeps a 48px width.
-2. **Marks on the tape, per look.** Draw them with tokens, not by branching on the look name in TSX:
-   - Material: the next-dose mark as an M3 "cookie" (scalloped) shape that turns slowly and morphs to a filled circle when the dose is given. Use CSS `d: path()` transitions on SVG, where both paths have the same point count. Draw the elapsed part of the tape as the M3 wavy progress line and the future part as a flat track.
-   - Sticlă: a small glass lens over the next-dose ring. The tape itself stays solid.
-   - Grec: leave it as it is.
-   - Keep: past dose = filled mark, future = empty ring, next = shows the ml. Those are product rules.
-3. **The confirm moment.** After Confirmă, the chosen ring should visibly become a filled mark (spring in Material and Sticlă, a plain 120ms fade in Grec) and the sheet should close. Right now it closes instantly.
-4. **Palettes.** They fail readability. See the contrast table in the conversation summary below. The rule: the character colour goes on `--accent`, never on `--bg`. The tape must reach 3:1 against `--bg`, the next ring 3:1, amounts 4.5:1. Add a unit test that parses `skins.css` and `looks.css` and checks these ratios, so a new palette cannot regress them.
-5. **The rest of the NHS baseline:**
-   - Audit touch targets: at least 44px, and 48px in Material.
+2. **Marks on the tape, per look.** Done on Acum (`HomeB`). The TSX emits classes only: `.tl-dot--given`, `.tl-dot--future` and `.tl-next` wrapping `path.tl-next-shape` (a 72-point circle from `timeline/markShapes.ts`).
+   - Material replaces the path in CSS with a 72-point scalloped "cookie" that turns slowly (`d: path()`, `tl-turn`).
+   - Sticlă puts the next ring under a small glass lens (`--lens-*` tokens). The tape stays solid.
+   - Grec is unchanged.
+   - Still open: Edi and Fane draw their own marks and have not been moved onto these classes. The M3 wavy "elapsed" tape was not built, because the tape is a curve and a sine along it needs real path maths; it's a nice-to-have.
+3. **The confirm moment.** Done. A dose confirmed in the last minute (`FRESH_MARK_MS`) gets `.tl-dot--fresh`, which springs in on the look's `--ease`. Still open: the sheet closes instantly; an exit animation needs a short unmount delay.
+4. **Palettes.** Done.
+   - `src/palettes.test.ts` reads `index.css`, `looks.css` and `skins.css` and checks every palette: body text 4.5:1, names 4.5:1, `--ink-3` (tape and small labels) 3:1, next ring 3:1, amount 4.5:1, given mark 3:1, and Confirmă text on `--accent` 4.5:1.
+   - Mario, Sonic and Burete were redesigned (character colour on the accent, never on the background). Leu, Moana and Poké accents and Bluey's given-mark colour were darkened.
+   - The tape is drawn with `var(--tape, var(--ink-3))`, not the hairline `--line`.
+   - Acum's times went from 10px to 12px, and the amount from 11px to 14px semibold in `--accent-2`.
+5. **The rest of the NHS baseline.** Tap targets done: every control on every screen in every look is at least 44px (48px in Material via `--tap`). Drag handles use `.ui-grabber`, a thin pill with a 44px hit area. Still open:
    - Button labels in sentence case, describing the action.
-   - A second double-tap guard on any other button that writes to `timelineStore`, for example Fane's `[+]` quick add.
    - Error text next to the field, not in a toast.
+   - Times on the tape still sit on the line and the line runs through them. Moving them above the marks is a layout change to agree with Ciprian first.
+
+Note: `npm run type-check` checks nothing (the root `tsconfig.json` has `"files": []`). Use `npx tsc -p tsconfig.app.json --noEmit` or `npm run build`.
 
 ## Do not
 

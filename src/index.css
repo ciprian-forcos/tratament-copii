@@ -485,6 +485,31 @@ body {
   font-family: var(--font-body);
 }
 
+/* Drag handles look thin but keep a full NHS-size hit area. */
+.ui-grabber {
+  position: relative;
+  display: block;
+  width: 64px;
+  height: 44px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+.ui-grabber::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 42px;
+  height: 5px;
+  border-radius: 99px;
+  background: var(--line);
+  transform: translate(-50%, -50%);
+}
+
 .ui-sheet {
   position: absolute;
   left: var(--sheet-inset, 0);
@@ -522,3 +547,46 @@ body {
     transition-duration: 1ms !important;
   }
 }
+
+/* ============================================================
+   Marks on the tape. TSX emits classes only; looks restyle them.
+   ============================================================ */
+.tl-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.tl-dot--given { background: var(--cool); }
+.tl-dot--future { border: 1.8px solid var(--accent); }
+/* A dose confirmed in the last minute springs into place. */
+.tl-dot--fresh { animation: mark-in var(--dur-sheet, 240ms) var(--ease, ease-out) both; }
+@keyframes mark-in {
+  from { transform: scale(0.3); opacity: 0.2; }
+  to   { transform: none; opacity: 1; }
+}
+
+.tl-next {
+  display: grid;
+  place-items: center;
+  width: var(--lens-size, 24px);
+  height: var(--lens-size, 24px);
+  border-radius: 50%;
+  background: var(--lens-bg, var(--accent-wash));
+  box-shadow: var(--lens-shadow, none);
+  backdrop-filter: var(--lens-filter, none);
+  -webkit-backdrop-filter: var(--lens-filter, none);
+}
+.tl-next svg { display: block; overflow: visible; }
+.tl-next-shape {
+  fill: var(--next-fill, none);
+  stroke: var(--accent);
+  stroke-width: var(--next-stroke, 1.8px);
+  transition: d var(--dur, 120ms) var(--ease, ease-out);
+}
+
+/* Material: the next dose is a scalloped "cookie" that turns slowly. */
+[data-look="material"] .tl-next-shape {
+  d: path("M0.00 -9.90 L0.83 -9.48 L1.49 -8.47 L1.99 -7.42 L2.50 -6.86 L3.25 -6.96 L4.30 -7.45 L5.46 -7.80 L6.36 -7.58 L6.73 -6.73 L6.59 -5.53 L6.29 -4.41 L6.32 -3.65 L6.96 -3.25 L8.08 -2.94 L9.19 -2.46 L9.75 -1.72 L9.48 -0.83 L8.60 0.00 L7.65 0.67 L7.19 1.27 L7.42 1.99 L8.08 2.94 L8.63 4.02 L8.57 4.95 L7.80 5.46 L6.59 5.53 L5.43 5.43 L4.69 5.59 L4.41 6.29 L4.30 7.45 L4.02 8.63 L3.39 9.30 L2.46 9.19 L1.49 8.47 L0.67 7.65 L0.00 7.30 L-0.67 7.65 L-1.49 8.47 L-2.46 9.19 L-3.39 9.30 L-4.02 8.63 L-4.30 7.45 L-4.41 6.29 L-4.69 5.59 L-5.43 5.43 L-6.59 5.53 L-7.80 5.46 L-8.57 4.95 L-8.63 4.02 L-8.08 2.94 L-7.42 1.99 L-7.19 1.27 L-7.65 0.67 L-8.60 0.00 L-9.48 -0.83 L-9.75 -1.72 L-9.19 -2.46 L-8.08 -2.94 L-6.96 -3.25 L-6.32 -3.65 L-6.29 -4.41 L-6.59 -5.53 L-6.73 -6.73 L-6.36 -7.58 L-5.46 -7.80 L-4.30 -7.45 L-3.25 -6.96 L-2.50 -6.86 L-1.99 -7.42 L-1.49 -8.47 L-0.83 -9.48 Z");
+}
+[data-look="material"] .tl-next svg { animation: tl-turn 14s linear infinite; }
+@keyframes tl-turn { to { transform: rotate(1turn); } }

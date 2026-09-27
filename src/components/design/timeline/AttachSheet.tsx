@@ -40,16 +40,8 @@ export function AttachSheet({
         type="button"
         aria-label="închide"
         onClick={onClose}
-        style={{
-          width: 40,
-          height: 4,
-          borderRadius: 4,
-          background: 'var(--line)',
-          margin: '0 auto 12px',
-          border: 'none',
-          display: 'block',
-          cursor: 'pointer',
-        }}
+        className="ui-grabber"
+        style={{ marginTop: -12, marginBottom: 0 }}
       />
       <div className="eyebrow">eveniment · {time}</div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, margin: '12px 0' }}>
