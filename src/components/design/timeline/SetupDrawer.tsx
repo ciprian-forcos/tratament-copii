@@ -1,4 +1,4 @@
-import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react'
+import type { PointerEvent as ReactPointerEvent } from 'react'
 import type { Child, Medication } from '../../../types'
 import { shortName } from './shortName'
 
@@ -56,15 +56,7 @@ export function SetupDrawer({
         }}
       />
       {open && (
-        <div
-          style={{
-            margin: '10px 14px 0',
-            padding: '12px',
-            borderRadius: 18,
-            border: '1.5px solid var(--line)',
-            background: 'var(--bg-2)',
-          }}
-        >
+        <div className="ui-surface" style={{ margin: '10px 14px 0', padding: 12 }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
             {childList.map((c) => {
               const on = c.id === active?.id
@@ -80,13 +72,14 @@ export function SetupDrawer({
                     onLongChild(c.id)
                   }}
                   onPointerDown={(e) => hold(e, () => onLongChild(c.id))}
-                  style={chip(on)}
+                  className="ui-chip"
+                  style={chipPad}
                 >
                   {c.name}
                 </button>
               )
             })}
-            <button type="button" aria-label="adaugă copil" onClick={onAddChild} style={chip(false)}>
+            <button type="button" aria-label="adaugă copil" onClick={onAddChild} className="ui-chip" style={chipPad}>
               +
             </button>
           </div>
@@ -105,7 +98,8 @@ export function SetupDrawer({
                     onLongMed(m.id)
                   }}
                   onPointerDown={(e) => hold(e, () => onLongMed(m.id))}
-                  style={chip(on)}
+                  className="ui-chip"
+                  style={chipPad}
                 >
                   {shortName(m.name)}
                 </button>
@@ -118,18 +112,7 @@ export function SetupDrawer({
   )
 }
 
-function chip(on: boolean): CSSProperties {
-  return {
-    padding: '8px 12px',
-    borderRadius: 2,
-    border: `1.5px solid ${on ? 'var(--accent)' : 'var(--line)'}`,
-    background: on ? 'var(--accent)' : 'var(--bg-3)',
-    color: on ? '#fbf7f0' : 'var(--ink-2)',
-    fontSize: 13,
-    fontWeight: 600,
-    cursor: 'pointer',
-  }
-}
+const chipPad = { padding: '8px 12px', fontSize: 13 }
 
 function hold(e: ReactPointerEvent, fire: () => void) {
   const start = window.setTimeout(fire, 450)

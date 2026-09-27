@@ -26,18 +26,9 @@ export function ChildEditor({ open, onClose }: Props) {
       }}
     >
       <div
+        className="ui-sheet"
         onClick={(e) => e.stopPropagation()}
-        style={{
-          width: '100%',
-          maxHeight: '90%',
-          overflowY: 'auto',
-          background: 'var(--bg-2)',
-          borderTop: '1.5px solid var(--line)',
-          borderRadius: '20px 20px 0 0',
-          padding: '14px 18px 18px',
-          color: 'var(--ink)',
-          boxShadow: '0 -20px 40px rgba(0,0,0,0.45)',
-        }}
+        style={{ position: 'relative', width: '100%', maxHeight: '90%', overflowY: 'auto' }}
       >
         <div
           style={{
@@ -91,16 +82,13 @@ export function ChildEditor({ open, onClose }: Props) {
             <button
               key={c.id}
               onClick={() => childStore.setActive(c.id)}
+              aria-pressed={c.id === state.activeId}
+              className="ui-chip"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
                 padding: '8px 12px 8px 6px',
-                borderRadius: 999,
-                border: '1.5px solid ' + (c.id === state.activeId ? 'var(--accent)' : 'var(--line)'),
-                background: c.id === state.activeId ? 'var(--accent-wash)' : 'var(--bg-3)',
-                color: 'var(--ink)',
-                cursor: 'pointer',
                 flex: '0 0 auto',
               }}
             >
@@ -129,16 +117,8 @@ export function ChildEditor({ open, onClose }: Props) {
           ))}
           <button
             onClick={() => childStore.add()}
-            style={{
-              flex: '0 0 auto',
-              padding: '8px 14px',
-              borderRadius: 999,
-              border: '1.5px dashed var(--line)',
-              background: 'transparent',
-              color: 'var(--ink-2)',
-              fontSize: 13,
-              cursor: 'pointer',
-            }}
+            className="ui-chip"
+            style={{ flex: '0 0 auto', padding: '8px 14px', fontSize: 13 }}
           >
             + adaugă
           </button>
@@ -154,13 +134,11 @@ export function ChildEditor({ open, onClose }: Props) {
             })
           }
           placeholder="Nume copil"
+          className="ui-field"
           style={{
             width: '100%',
             boxSizing: 'border-box',
             padding: '14px 16px',
-            borderRadius: 14,
-            border: '1.5px solid var(--line)',
-            background: 'var(--bg-3)',
             color: 'var(--ink)',
             fontSize: 18,
             fontWeight: 600,
@@ -218,7 +196,7 @@ export function ChildEditor({ open, onClose }: Props) {
           style={{
             marginTop: 18,
             paddingTop: 14,
-            borderTop: '1.5px dashed var(--line)',
+            borderTop: '1px solid var(--line)',
             display: 'flex',
             gap: 10,
           }}
@@ -226,15 +204,12 @@ export function ChildEditor({ open, onClose }: Props) {
           <button
             onClick={() => childStore.remove(active.id)}
             disabled={state.children.length <= 1}
+            className="ui-btn"
             style={{
               flex: 1,
-              padding: '12px',
-              borderRadius: 12,
-              border: '1.5px solid var(--line)',
-              background: 'transparent',
+              padding: 12,
               color: state.children.length <= 1 ? 'var(--ink-3)' : 'var(--danger)',
               fontSize: 13,
-              cursor: state.children.length <= 1 ? 'not-allowed' : 'pointer',
               opacity: state.children.length <= 1 ? 0.5 : 1,
             }}
           >
@@ -242,17 +217,8 @@ export function ChildEditor({ open, onClose }: Props) {
           </button>
           <button
             onClick={onClose}
-            style={{
-              flex: 2,
-              padding: '14px',
-              borderRadius: 12,
-              border: '1.5px solid var(--accent)',
-              background: 'var(--accent)',
-              color: '#1a1207',
-              fontSize: 15,
-              fontWeight: 700,
-              cursor: 'pointer',
-            }}
+            className="btn-primary"
+            style={{ flex: 2, padding: 14, fontSize: 15 }}
           >
             Gata
           </button>
@@ -298,15 +264,13 @@ export function Stepper({
 
   return (
     <div
+      className="ui-field"
       style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 14,
         padding: '12px 14px',
-        border: '1.5px solid var(--line)',
-        borderRadius: 14,
-        background: 'var(--bg-3)',
       }}
     >
       <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -320,16 +284,8 @@ export function Stepper({
           type="button"
           onClick={() => bump(-1)}
           aria-label="minus"
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: 999,
-            border: '1.5px solid var(--line)',
-            background: 'var(--bg-2)',
-            color: 'var(--ink)',
-            fontSize: 22,
-            cursor: 'pointer',
-          }}
+          className="ui-btn"
+          style={{ width: 44, height: 44, fontSize: 22 }}
         >
           −
         </button>
@@ -337,16 +293,8 @@ export function Stepper({
           type="button"
           onClick={() => bump(1)}
           aria-label="plus"
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: 999,
-            border: '1.5px solid var(--accent)',
-            background: 'var(--accent-wash)',
-            color: 'var(--accent)',
-            fontSize: 22,
-            cursor: 'pointer',
-          }}
+          className="ui-btn"
+          style={{ width: 44, height: 44, fontSize: 22, color: 'var(--accent)' }}
         >
           +
         </button>

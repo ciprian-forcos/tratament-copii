@@ -74,12 +74,7 @@ Apply these instead of inline shape styles. Keep inline styles for layout only (
 
 Each step: write a failing test first where behaviour changes, then `npm run type-check`, `npx eslint src`, `npx vitest run`. Look at every step on a 390×844 screen in all three looks, with a dark palette (Dragon) too.
 
-1. **Move the remaining controls onto the shared classes.** These still carry inline radius, border and background, so the looks do not reach them:
-   - `timeline/SetupDrawer.tsx`: child chips and medicine chips → `.ui-chip` with `aria-pressed`; the drawer surface → the sheet tokens.
-   - `ChildEditor.tsx`: its buttons and sheet.
-   - `variants/HomeEdi.tsx`: pictogram tiles (they want `--r-btn`, plus `--btn-bg` and `--btn-shadow`).
-   - `variants/HomeFane.tsx`: `gearStyle`, the settings dialog, the `acum` chip, the give-sheet → `.ui-sheet`, and `SwipeAmount`.
-   - `HomeB.tsx`: the `medNote` overlay card (radius 16 inline) and the round temperature buttons in `AttachSheet` (`roundBtn`).
+1. **Move the remaining controls onto the shared classes.** Done. Drawer, child editor, Edi tiles, Fane settings, the give sheet, the medicine note, and the temperature steppers use `.ui-chip`, `.ui-btn`, `.ui-sheet`, `.ui-surface`, and `.ui-field`. Material sets `--tap: 48px`; the other looks stay at 44px. Fane's quick-add is behind the same one-second tap guard as Confirmă.
 2. **Marks on the tape, per look.** Draw them with tokens, not by branching on the look name in TSX:
    - Material: the next-dose mark as an M3 "cookie" (scalloped) shape that turns slowly and morphs to a filled circle when the dose is given. Use CSS `d: path()` transitions on SVG, where both paths have the same point count. Draw the elapsed part of the tape as the M3 wavy progress line and the future part as a flat track.
    - Sticlă: a small glass lens over the next-dose ring. The tape itself stays solid.

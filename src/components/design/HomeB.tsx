@@ -331,15 +331,7 @@ export function HomeB() {
             textAlign: 'left',
           }}
         >
-          <div
-            style={{
-              background: 'var(--bg-2)',
-              border: '1.5px solid var(--line)',
-              borderRadius: 16,
-              padding: 16,
-              whiteSpace: 'pre-wrap',
-            }}
-          >
+          <div className="ui-surface" style={{ padding: 16, whiteSpace: 'pre-wrap' }}>
             {medNote}
           </div>
         </button>

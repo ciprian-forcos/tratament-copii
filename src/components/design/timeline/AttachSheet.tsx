@@ -104,13 +104,13 @@ export function AttachSheet({
 
       {value.kind === 'temperature' && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, margin: '8px 0 14px' }}>
-          <button type="button" style={roundBtn} onClick={() => bumpTemp(value, onChange, -0.1)}>
+          <button type="button" className="ui-btn" style={roundBtn} onClick={() => bumpTemp(value, onChange, -0.1)}>
             −
           </button>
           <div className="mono" style={{ fontSize: 36, color: 'var(--danger)' }}>
             {(value.celsius ?? 38).toFixed(1)}°
           </div>
-          <button type="button" style={roundBtn} onClick={() => bumpTemp(value, onChange, 0.1)}>
+          <button type="button" className="ui-btn" style={roundBtn} onClick={() => bumpTemp(value, onChange, 0.1)}>
             +
           </button>
         </div>
@@ -122,14 +122,11 @@ export function AttachSheet({
           value={value.text ?? ''}
           onChange={(e) => onChange({ ...value, text: e.target.value })}
           rows={3}
+          className="ui-field"
           style={{
             width: '100%',
             marginBottom: 12,
             padding: 12,
-            borderRadius: 14,
-            border: '1.5px solid var(--line)',
-            background: 'var(--bg-3)',
-            color: 'var(--ink)',
             font: 'inherit',
             resize: 'none',
           }}
@@ -165,10 +162,5 @@ const chipPad: CSSProperties = { padding: '12px 8px', fontSize: 13, fontWeight: 
 const roundBtn: CSSProperties = {
   width: 48,
   height: 48,
-  borderRadius: 999,
-  border: '1.5px solid var(--line)',
-  background: 'var(--bg-3)',
-  color: 'var(--ink)',
   fontSize: 24,
-  cursor: 'pointer',
 }

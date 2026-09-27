@@ -460,6 +460,25 @@ body {
   border-color: var(--accent);
   border-radius: var(--r-chip-on, var(--r-chip, 2px));
 }
+.ui-chip,
+.ui-btn {
+  min-height: var(--tap, 44px);
+}
+.ui-surface {
+  background: var(--sheet-bg, var(--bg-2));
+  border: var(--sheet-top, 1.5px solid var(--line));
+  border-radius: var(--r-sheet, 2px);
+  box-shadow: var(--sheet-shadow, none);
+  backdrop-filter: var(--glass, none);
+  -webkit-backdrop-filter: var(--glass, none);
+}
+.ui-field {
+  border: var(--btn-border, 1.5px solid var(--line));
+  border-radius: var(--r-btn, 2px);
+  background: var(--bg-3);
+  color: var(--ink);
+  font-family: var(--font-body);
+}
 
 .ui-sheet {
   position: absolute;

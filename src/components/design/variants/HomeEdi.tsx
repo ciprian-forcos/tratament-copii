@@ -281,6 +281,7 @@ function IconButton({
       type="button"
       aria-label={label}
       aria-pressed={pressed}
+      className="ui-btn"
       onClick={onClick}
       onContextMenu={(e) => {
         if (!onHold) return
@@ -288,9 +289,6 @@ function IconButton({
         onHold()
       }}
       style={{
-        border: '1px solid var(--line)',
-        background: pressed === false ? 'transparent' : 'var(--bg-3)',
-        borderRadius: 2,
         minHeight: 64,
         padding: '8px 10px',
         display: 'flex',

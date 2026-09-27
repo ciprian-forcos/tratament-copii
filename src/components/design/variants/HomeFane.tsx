@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import type { Medication } from '../../../types'
 import { activeChild, childStore, useChildren } from '../childStore'
 import { fmtHHMM } from '../dosePlan'
@@ -126,13 +126,16 @@ export function HomeFane() {
     setOtherName('')
   }
 
+  const guardedAdd = useGuardedTap(addOther)
+
   return (
     <div className="phone">
       <button
         type="button"
+        className="ui-btn"
         aria-label="setări tratament"
         onClick={() => setSettingsOpen(true)}
-        style={gearStyle}
+        style={{ position: 'absolute', top: 14, right: 14, zIndex: 5, padding: '6px 10px', fontSize: 12 }}
       >
         setări
       </button>
@@ -235,20 +238,15 @@ export function HomeFane() {
         {chip && (
           <button
             type="button"
+            className="ui-chip"
             onClick={() => setPanMs(0)}
             style={{
               position: 'absolute',
               top: '42%',
               [chip.startsWith('<<') ? 'left' : 'right']: 16,
               zIndex: 6,
-              borderRadius: 2,
-              border: '1px solid var(--accent)',
-              background: 'var(--bg-2)',
-              color: 'var(--accent-2)',
               padding: '8px 12px',
-              fontFamily: 'var(--font-mono)',
               fontSize: 13,
-              cursor: 'pointer',
             }}
           >
             {chip}
@@ -257,21 +255,7 @@ export function HomeFane() {
       </div>
 
       {giving && next && nextAmount && (
-        <div
-          role="dialog"
-          aria-label="eveniment"
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 30,
-            background: 'var(--bg-2)',
-            borderTop: '1.5px solid var(--line)',
-            borderRadius: '20px 20px 0 0',
-            padding: '16px 16px 22px',
-          }}
-        >
+        <div role="dialog" aria-label="eveniment" className="ui-sheet">
           <div className="eyebrow">eveniment · {fmtHHMM(next.at)}</div>
           <div className="hand" style={{ fontSize: 28, color: 'var(--accent-2)', margin: '8px 0 4px' }}>
             {next.label}
@@ -301,16 +285,7 @@ export function HomeFane() {
           }}
           onClick={() => setSettingsOpen(false)}
         >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              width: '100%',
-              background: 'var(--bg-2)',
-              borderTop: '1.5px solid var(--line)',
-              borderRadius: '20px 20px 0 0',
-              padding: '16px 16px 22px',
-            }}
-          >
+          <div className="ui-sheet" onClick={(e) => e.stopPropagation()} style={{ position: 'relative', width: '100%' }}>
             <div className="eyebrow">tratament</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
               {state.children.map((c) => {
@@ -322,7 +297,8 @@ export function HomeFane() {
                     aria-label={`copil ${c.name}`}
                     aria-pressed={on}
                     onClick={() => childStore.setActive(c.id)}
-                    style={chipStyle(on)}
+                    className="ui-chip"
+                    style={{ padding: '8px 12px', fontSize: 13 }}
                   >
                     {c.name}
                   </button>
@@ -342,7 +318,8 @@ export function HomeFane() {
                         enabledMedications: toggleEnabledMedication(child, med.id),
                       })
                     }
-                    style={chipStyle(on)}
+                    className="ui-chip"
+                    style={{ padding: '8px 12px', fontSize: 13 }}
                   >
                     {med.name.split(/[/(]/)[0].trim()}
                   </button>
@@ -352,7 +329,7 @@ export function HomeFane() {
             <form
               onSubmit={(e) => {
                 e.preventDefault()
-                addOther()
+                guardedAdd()
               }}
               style={{ display: 'flex', gap: 8, marginTop: 14 }}
             >
@@ -361,17 +338,10 @@ export function HomeFane() {
                 value={otherName}
                 onChange={(e) => setOtherName(e.target.value)}
                 placeholder="Alt medicament"
-                style={{
-                  flex: 1,
-                  borderRadius: 12,
-                  border: '1.5px solid var(--line)',
-                  background: 'var(--bg-3)',
-                  color: 'var(--ink)',
-                  padding: '10px 12px',
-                  font: 'inherit',
-                }}
+                className="ui-field"
+                style={{ flex: 1, padding: '10px 12px', font: 'inherit' }}
               />
-              <button type="submit" aria-label="adaugă alt medicament" style={chipStyle(true)}>
+              <button type="submit" aria-label="adaugă alt medicament" className="ui-chip">
                 +
               </button>
             </form>
@@ -439,12 +409,10 @@ function SwipeAmount({
           onKeyDown={(e) => {
             if (e.key === 'Enter') commitText()
           }}
+          className="ui-field"
           style={{
             width: 72,
             textAlign: 'center',
-            border: '1px solid var(--accent)',
-            borderRadius: 8,
-            background: 'var(--bg-3)',
             color: 'var(--accent-2)',
             font: '600 16px var(--font-mono)',
           }}
@@ -458,29 +426,5 @@ function SwipeAmount({
   )
 }
 
-const gearStyle: CSSProperties = {
-  position: 'absolute',
-  top: 14,
-  right: 14,
-  zIndex: 5,
-  borderRadius: 2,
-  border: '1px solid var(--line)',
-  background: 'transparent',
-  color: 'var(--ink-2)',
-  padding: '6px 10px',
-  fontSize: 12,
-  cursor: 'pointer',
-}
 
-function chipStyle(on: boolean): CSSProperties {
-  return {
-    borderRadius: 2,
-    border: `1.5px solid ${on ? 'var(--accent)' : 'var(--line)'}`,
-    background: on ? 'var(--accent)' : 'transparent',
-    color: on ? '#fbf7f0' : 'var(--ink-2)',
-    padding: '8px 12px',
-    cursor: 'pointer',
-    font: 'inherit',
-  }
-}
 
