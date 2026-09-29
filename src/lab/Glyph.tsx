@@ -1,6 +1,17 @@
 import type { MedicationForm } from '../types'
 
-export type GlyphName = MedicationForm | 'temperatura' | 'nota' | 'plus' | 'setari'
+export type GlyphName =
+  | MedicationForm
+  | 'temperatura'
+  | 'nota'
+  | 'plus'
+  | 'setari'
+  | 'somn'
+  | 'mancare'
+  | 'varsat'
+  | 'eruptie'
+  | 'tuse'
+  | 'sterge'
 
 /** Fir's own pictograms: 24×24, one stroke weight, currentColor. */
 const PATHS: Record<GlyphName, string> = {
@@ -12,6 +23,12 @@ const PATHS: Record<GlyphName, string> = {
   nota: 'M4.5 5.5h15a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H10l-4.5 3.5v-3.5h-1a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z M8 9.5h8 M8 12.5h5',
   plus: 'M12 5v14 M5 12h14',
   setari: 'M4 7h9 M17 7h3 M4 17h3 M11 17h9 M15 4.5v5 M9 14.5v5',
+  somn: 'M19.5 14.5A8 8 0 1 1 9.5 4.5a6.3 6.3 0 0 0 10 10z',
+  mancare: 'M3.5 11.5h17a8.5 8.5 0 0 1-17 0z M8 8.5c0-1.5 1-2 1-3.5 M12 8.5c0-1.5 1-2 1-3.5 M16 8.5c0-1.5 1-2 1-3.5',
+  varsat: 'M4 20.5h16 M7 16.5c1.2-2.5 2.2-2.5 3.4 0s2.2 2.5 3.4 0 2.2-2.5 3.4 0 M12 3.5v7 M9 8l3 3 3-3',
+  eruptie: 'M8 7.5v.01 M15 6v.01 M11.5 11.5v.01 M7 14.5v.01 M16.5 12.5v.01 M13 17v.01 M9.5 19.5v.01 M18 18v.01',
+  tuse: 'M6 15.5a3.5 3.5 0 0 1 .5-7 5 5 0 0 1 9.6-1.2A4 4 0 1 1 17 15.5z M8 19.5h2 M13 19.5h4',
+  sterge: 'M4.5 7h15 M9.5 7V4.5h5V7 M6.5 7l1 12.5h9l1-12.5 M10.5 11v5 M13.5 11v5',
 }
 
 export function Glyph({ name, size = 24, label }: { name: GlyphName; size?: number; label?: string }) {
