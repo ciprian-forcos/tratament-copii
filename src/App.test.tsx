@@ -63,4 +63,17 @@ describe('design variant switch', () => {
     fireEvent.click(screen.getByRole('radio', { name: 'Grec' }))
     expect(inner).not.toHaveAttribute('data-look')
   })
+
+  it('opens the Fir lab from the Lab tab', () => {
+    render(<App />)
+    fireEvent.click(screen.getByRole('tab', { name: 'Lab' }))
+    expect(screen.getByLabelText('firul zilelor')).toBeInTheDocument()
+    expect(window.location.search).toContain('v=lab')
+  })
+
+  it('opens the trading-chart lab from the Grafic tab', () => {
+    render(<App />)
+    fireEvent.click(screen.getByRole('tab', { name: 'Grafic' }))
+    expect(screen.getByRole('region', { name: 'cotație' })).toBeInTheDocument()
+  })
 })

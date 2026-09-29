@@ -1,0 +1,830 @@
+/* Fir: every colour, radius and motion comes from the look tokens,
+   so Grec, Material, Sticlă, every palette and every night apply. */
+
+.fir {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.fir-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px 4px;
+}
+.fir-child {
+  font-family: var(--font-hand);
+  font-style: var(--hand-style, italic);
+  font-weight: var(--hand-weight, 500);
+  font-size: 28px;
+  color: var(--ink);
+}
+
+/* ---------- The thread ---------- */
+.fir-thread-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+.fir-thread {
+  position: absolute;
+  inset: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.fir-thread::-webkit-scrollbar { display: none; }
+.fir-track {
+  position: relative;
+  height: 100%;
+  min-height: 250px;
+}
+
+.fir-night {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--ink) 5%, transparent) 40px, color-mix(in srgb, var(--ink) 5%, transparent) calc(100% - 40px), transparent);
+}
+.fir-day {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  border-left: 1px solid var(--line);
+}
+.fir-day span {
+  position: absolute;
+  top: 0;
+  left: 8px;
+  white-space: nowrap;
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.fir-hour {
+  position: absolute;
+  bottom: 14px;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
+.fir-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  margin-top: -1px;
+  border-radius: 2px;
+  background: var(--tape, var(--ink-3));
+  opacity: 0.55;
+}
+.fir-line--past {
+  right: auto;
+  height: 4px;
+  margin-top: -2px;
+  background: var(--accent);
+  opacity: 1;
+}
+
+.fir-needle {
+  position: absolute;
+  top: 30px;
+  bottom: 34px;
+  width: 0;
+  border-left: 2px solid color-mix(in srgb, var(--ink) 55%, transparent);
+}
+/* The label sits at the foot of the needle, clear of beads stacked at now. */
+.fir-needle span {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  padding: 2px 8px;
+  border-radius: var(--r-btn, 2px);
+  background: var(--ink);
+  color: var(--bg);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ---------- Beads ---------- */
+.fir-bead {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--ink);
+  transform: translate(-50%, -22px);
+  cursor: pointer;
+}
+.fir-bead-dot {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--med);
+  background: var(--bg);
+  color: var(--med);
+  transition: transform var(--dur, 120ms) var(--ease, ease-out);
+}
+.fir-bead:active .fir-bead-dot { transform: var(--press, scale(0.96)); }
+.fir-bead--given .fir-bead-dot {
+  background: var(--med);
+  color: #fff;
+  border-color: color-mix(in srgb, var(--med) 70%, #000);
+}
+.fir-bead--next .fir-bead-dot {
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--med) 22%, transparent);
+  animation: fir-breathe 2.4s var(--ease, ease-in-out) infinite;
+}
+@keyframes fir-breathe {
+  50% { box-shadow: 0 0 0 11px color-mix(in srgb, var(--med) 8%, transparent); }
+}
+.fir-bead-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 1.25;
+  white-space: nowrap;
+  color: var(--ink-2);
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+}
+.fir-bead-label b {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.fir-pin {
+  position: absolute;
+  transform: translateX(-50%);
+  min-width: 44px;
+  min-height: 30px;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-chip, 2px);
+  background: var(--bg-3);
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.fir-pin--hot {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.fir-pin--note {
+  display: grid;
+  place-items: center;
+  min-width: 36px;
+  color: var(--ink-3);
+}
+
+.fir-acum {
+  position: absolute;
+  top: 50%;
+  z-index: 5;
+  min-height: 44px;
+  padding: 8px 14px;
+  font-size: 14px;
+  animation: fir-pop var(--dur, 120ms) var(--ease, ease-out) both;
+}
+.fir-acum--left { left: 10px; }
+.fir-acum--right { right: 10px; }
+@keyframes fir-pop {
+  from { transform: scale(0.8); opacity: 0; }
+}
+
+/* ---------- The dock and the next card ---------- */
+.fir-dock {
+  padding: 0 12px 14px;
+}
+.fir-card {
+  padding: 14px 16px 16px;
+  border: var(--sheet-top, 1.5px solid var(--line));
+  border-radius: var(--r-sheet, 2px);
+  background: var(--sheet-bg, var(--bg-2));
+  box-shadow: var(--sheet-shadow, none);
+  backdrop-filter: var(--glass, none);
+  -webkit-backdrop-filter: var(--glass, none);
+  animation: sheet-in var(--dur-sheet, 160ms) var(--ease, ease-out) both;
+}
+.fir-card--due {
+  border-color: var(--accent);
+}
+.fir-card-row {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.fir-card-name {
+  font-family: var(--font-hand);
+  font-style: var(--hand-style, italic);
+  font-weight: var(--hand-weight, 500);
+  font-size: 22px;
+  line-height: 1.1;
+  color: var(--ink);
+  margin: 2px 0 4px;
+  overflow-wrap: anywhere;
+}
+.fir-card-when {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.fir-card-when b { color: var(--accent-2); }
+
+.fir-ring {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  color: var(--med);
+}
+.fir-ring-track {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 6;
+}
+.fir-ring-fill {
+  fill: none;
+  stroke: var(--med);
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 800ms var(--ease, ease-out);
+}
+.fir-ring-glyph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.fir-card--due .fir-ring { animation: fir-nudge 1.6s var(--ease, ease-in-out) infinite; }
+@keyframes fir-nudge {
+  0%, 100% { transform: none; }
+  50% { transform: scale(1.05); }
+}
+
+.fir-give { min-height: 60px; }
+
+/* The amount: swipe down/up to step, tap to type. */
+.fir-amount {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 72px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: var(--r-btn, 2px);
+  background: transparent;
+  color: var(--accent-2);
+  touch-action: none;
+  cursor: ns-resize;
+}
+.fir-amount-value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.fir-amount-value small { font-size: 14px; }
+.fir-amount-ghost {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-3);
+  opacity: 0.7;
+}
+.fir-amount-input {
+  width: 80px;
+  min-height: 48px;
+  text-align: center;
+  font-size: 22px;
+}
+
+.fir-start {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+.fir-start-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-height: 96px;
+  padding: 12px;
+  font-size: 15px;
+}
+.fir-start-glyph {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--med);
+  color: #fff;
+}
+
+/* ---------- Undo ---------- */
+/* Just above the next card: near the thumb, clear of the faces and of Am dat. */
+.fir-dock { position: relative; }
+.fir-toast {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: calc(100% + 8px);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 12px 12px 16px;
+  overflow: hidden;
+  border-radius: var(--r-sheet, 2px);
+  background: var(--ink);
+  color: var(--bg);
+  font-family: var(--font-body);
+  font-size: 15px;
+  animation: sheet-in var(--dur-sheet, 160ms) var(--ease, ease-out) both;
+}
+.fir-toast > span:first-child { flex: 1; }
+.fir-toast-undo {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1.5px solid currentColor;
+  border-radius: var(--r-btn, 2px);
+  background: transparent;
+  color: var(--bg);
+  font: 600 15px var(--font-body);
+  cursor: pointer;
+}
+.fir-toast-timer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--accent);
+  transform-origin: left;
+  animation: fir-drain 6s linear both;
+}
+@keyframes fir-drain { to { transform: scaleX(0); } }
+
+/* ---------- Header + ---------- */
+.fir-fab {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border-radius: var(--r-cta, 2px);
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent);
+  box-shadow: var(--cta-shadow, none);
+}
+
+/* ---------- Sheets ---------- */
+.fir-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: color-mix(in srgb, #000 28%, transparent);
+  animation: fir-fade var(--dur, 120ms) ease-out both;
+}
+/* Fade the colour, not opacity: an opacity animation would stop the glass sheet blurring what is behind it. */
+@keyframes fir-fade { from { background-color: transparent; } }
+.fir-add,
+.fir-bead-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 88%;
+}
+.fir-add-body {
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.fir-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.fir-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-height: 60px;
+  padding: 8px 4px;
+  font-size: 13px;
+}
+
+.fir-med-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+/* Tall tiles keep a card radius even when the look's chips are pills. */
+.fir .fir-med,
+.fir .fir-med[aria-pressed="true"],
+.fir .fir-preset,
+.fir .fir-preset[aria-pressed="true"],
+.fir .fir-tab,
+.fir .fir-tab[aria-selected="true"] {
+  border-radius: clamp(0px, var(--r-chip, 2px), 18px);
+}
+.fir-med {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-height: 92px;
+  padding: 10px 6px;
+  font-size: 13px;
+  text-align: center;
+}
+.fir-med small {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.fir-med-name { line-height: 1.15; }
+.fir-med-glyph {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--med, var(--bg-3));
+  color: #fff;
+}
+.fir-med--new .fir-med-glyph {
+  background: transparent;
+  color: var(--accent);
+  border: 1.5px dashed var(--accent);
+}
+.fir-new-med {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+.fir-new-med .ui-field { min-height: 48px; padding: 0 12px; font-size: 16px; }
+.fir-forms {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+.fir-form { display: grid; place-items: center; min-height: 48px; }
+.fir-add-amount {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding: 4px 4px 0;
+}
+
+.fir-temp {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  align-items: center;
+  gap: 8px;
+}
+.fir-step {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  font-size: 24px;
+  border-radius: 50%;
+}
+.fir-dial {
+  position: relative;
+  width: 100%;
+  max-width: 240px;
+  margin: 0 auto;
+  --heat: var(--safe);
+}
+.fir-dial--warm { --heat: var(--accent); }
+.fir-dial--fever,
+.fir-dial--high { --heat: var(--danger); }
+.fir-dial svg {
+  display: block;
+  width: 100%;
+  touch-action: none;
+  cursor: grab;
+}
+.fir-dial svg:focus-visible { outline-offset: -8px; }
+.fir-dial-track,
+.fir-dial-fill {
+  fill: none;
+  stroke-width: 14;
+  stroke-linecap: round;
+}
+.fir-dial-track { stroke: var(--line); }
+.fir-dial-fill { stroke: var(--heat); }
+.fir-dial-tick line { stroke: var(--ink-3); stroke-width: 1.5; }
+.fir-dial-tick text {
+  fill: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-anchor: middle;
+}
+.fir-dial-knob {
+  fill: var(--bg);
+  stroke: var(--heat);
+  stroke-width: 4;
+  transition: cx var(--dur, 120ms) var(--ease, ease-out), cy var(--dur, 120ms) var(--ease, ease-out);
+}
+.fir-dial-read {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.fir-dial-read b {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 34px;
+  color: var(--heat);
+}
+.fir-dial-read span {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.fir-presets {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+.fir-preset {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-height: 76px;
+  padding: 8px 2px;
+  font-size: 11px;
+}
+.fir-note {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px 12px;
+  font-size: 16px;
+  resize: none;
+}
+
+.fir-when {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+.fir-when-btn { min-height: 44px; font-size: 13px; }
+
+.btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ---------- Bead card ---------- */
+.fir-bead-card-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.fir-bead-card-glyph {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--med);
+  color: #fff;
+}
+.fir-bead-card-glyph.is-planned {
+  background: var(--bg);
+  color: var(--med);
+  border: 2.5px solid var(--med);
+}
+.fir-bead-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.fir-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  color: var(--danger);
+}
+
+/* ---------- Faces ---------- */
+.fir-faces {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px;
+}
+.fir-faces::-webkit-scrollbar { display: none; }
+.fir-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 0 0 auto;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 2px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--ink);
+  cursor: pointer;
+  opacity: 0.62;
+  transition: opacity var(--dur, 120ms) ease-out, transform var(--dur, 120ms) var(--ease, ease-out);
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+.fir-face:active { transform: var(--press, scale(0.96)); }
+.fir-face.is-active { opacity: 1; }
+.fir-face.is-active .fir-face-svg {
+  border-radius: 50%;
+  box-shadow: 0 0 0 2.5px var(--bg), 0 0 0 4.5px var(--accent);
+}
+.fir-face-name {
+  font-family: var(--font-hand);
+  font-style: var(--hand-style, italic);
+  font-weight: var(--hand-weight, 500);
+  font-size: 15px;
+  line-height: 1;
+}
+.fir-face-hair { fill: color-mix(in srgb, var(--ink) 78%, #5a3a22); }
+.fir-face-eye { fill: #1c1612; }
+.fir-face-line {
+  fill: none;
+  stroke: #1c1612;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.fir-face-flush {
+  fill: #e0564a;
+  opacity: 0.55;
+  animation: fir-flush 2.2s ease-in-out infinite;
+}
+@keyframes fir-flush { 50% { opacity: 0.9; } }
+.fir-face--add span {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px dashed var(--ink-3);
+  color: var(--ink-3);
+  font-size: 22px;
+}
+
+.fir-top { align-items: flex-start; }
+.fir-top-actions {
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+.fir-icon-btn {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+}
+
+/* ---------- Settings ---------- */
+.fir-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 88%;
+}
+.fir-settings-body {
+  overflow-y: auto;
+  min-height: 0;
+}
+.fir-settings-child {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 56px;
+  padding: 8px 14px;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.fir .fir-settings-child { border-radius: clamp(0px, var(--r-chip, 2px), 18px); }
+.fir-settings-note {
+  margin: 4px 0 8px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.fir-settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+.fir-settings-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: clamp(0px, var(--r-chip, 2px), 14px);
+  background: color-mix(in srgb, var(--bg-3) 70%, transparent);
+  color: var(--ink);
+  font: 600 15px var(--font-body);
+  text-align: left;
+}
+.fir-settings-row .fir-med-glyph { width: 34px; height: 34px; }
+.fir-switch { cursor: pointer; }
+.fir-switch > span:nth-child(2) { flex: 1; }
+.fir-switch-track {
+  position: relative;
+  width: 46px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--line);
+  transition: background-color var(--dur, 120ms) ease-out;
+}
+.fir-switch-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--bg-3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform var(--dur, 120ms) var(--ease, ease-out);
+}
+.fir-switch.is-on .fir-switch-track { background: var(--accent); }
+.fir-switch.is-on .fir-switch-knob { transform: translateX(18px); }
+.fir-share {
+  min-height: 52px;
+  font-size: 15px;
+}
+
+/* ---------- Joacă on the thread: stickers with ink outlines ---------- */
+[data-look="joaca"] .fir-bead-dot {
+  border: 2.5px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+[data-look="joaca"] .fir-bead--given .fir-bead-dot { border-color: var(--ink); }
+[data-look="joaca"] .fir-line { height: 3px; opacity: 1; }
+[data-look="joaca"] .fir-line--past { height: 6px; margin-top: -3px; box-shadow: 0 0 0 2px var(--ink); }
+[data-look="joaca"] .fir-pin,
+[data-look="joaca"] .fir-bead-label { border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); background: var(--bg-3); }
+[data-look="joaca"] .fir-card { border: 2.5px solid var(--ink); border-radius: 18px; }
+[data-look="joaca"] .fir-toast { border: 2.5px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); background: var(--accent); color: var(--on-accent); }
+[data-look="joaca"] .fir-toast-undo { color: var(--on-accent); }
+[data-look="joaca"] .fir-toast-timer { background: var(--ink); }
+[data-look="joaca"] .fir-med-glyph,
+[data-look="joaca"] .fir-start-glyph,
+[data-look="joaca"] .fir-bead-card-glyph { border: 2.5px solid var(--ink); }
+[data-look="joaca"] .fir-face.is-active .fir-face-svg { box-shadow: 0 0 0 2.5px var(--ink), 3px 3px 0 2.5px var(--ink); }

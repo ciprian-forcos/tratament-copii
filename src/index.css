@@ -240,7 +240,7 @@ body {
   min-height: 64px;
   padding: 18px 22px;
   border-radius: var(--r-cta, 2px);
-  border: 1px solid var(--accent);
+  border: var(--cta-border, 1px solid var(--accent));
   background: var(--accent);
   color: var(--on-accent);
   font-family: var(--font-body);
@@ -259,6 +259,7 @@ body {
     border-radius var(--dur, 120ms) var(--ease, ease-out);
 }
 .btn-primary:active {
+  box-shadow: var(--btn-shadow-press, var(--cta-shadow, none));
   transform: var(--press, scale(0.98));
   border-radius: var(--r-cta-press, var(--r-cta, 2px));
 }
@@ -447,6 +448,7 @@ body {
 .ui-btn:active,
 .ui-chip:active {
   transform: var(--press, scale(0.98));
+  box-shadow: var(--btn-shadow-press, var(--btn-shadow, none));
 }
 .ui-btn[aria-selected="true"],
 .ui-btn[aria-checked="true"] {

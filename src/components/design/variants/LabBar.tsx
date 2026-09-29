@@ -4,6 +4,8 @@ const OPTIONS: { id: DesignVariant; label: string }[] = [
   { id: 'acum', label: 'Acum' },
   { id: 'edi', label: 'Edi' },
   { id: 'fane', label: 'Fane' },
+  { id: 'lab', label: 'Lab' },
+  { id: 'grafic', label: 'Grafic' },
 ]
 
 export function LabBar({
@@ -29,7 +31,7 @@ export function LabBar({
         padding: 8,
       }}
     >
-      <div role="tablist" aria-label="variante de design" style={{ display: 'flex', flex: 1, gap: 6 }}>
+      <div role="tablist" aria-label="variante de design" style={{ display: 'flex', flex: 1, minWidth: 0, gap: 4 }}>
         {OPTIONS.map((opt) => (
           <button
             key={opt.id}
@@ -38,7 +40,7 @@ export function LabBar({
             className="ui-btn"
             aria-selected={variant === opt.id}
             onClick={() => onSelect(opt.id)}
-            style={{ flex: 1, minHeight: 44, padding: '10px 8px', fontSize: 15 }}
+            style={{ flex: 1, minWidth: 0, minHeight: 44, padding: '10px 2px', fontSize: 14 }}
           >
             {opt.label}
           </button>
@@ -47,30 +49,29 @@ export function LabBar({
       <button
         type="button"
         className="ui-btn"
+        aria-label="Temă"
         aria-expanded={skinsOpen}
         aria-controls="skin-list"
         onClick={onToggleSkins}
         style={{
           flex: '0 0 auto',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 6,
+          display: 'grid',
+          placeItems: 'center',
+          width: 44,
           minHeight: 44,
-          padding: '10px 12px',
-          fontSize: 15,
+          padding: 0,
         }}
       >
         <span
           aria-hidden="true"
           style={{
-            width: 14,
-            height: 14,
+            width: 20,
+            height: 20,
             borderRadius: '50%',
-            background: 'var(--accent)',
-            boxShadow: '0 0 0 1px var(--ink-3)',
+            background: 'conic-gradient(var(--accent) 0 50%, var(--ink) 50% 75%, var(--bg-2) 75%)',
+            boxShadow: '0 0 0 1.5px var(--ink-3)',
           }}
         />
-        Temă
       </button>
     </div>
   )

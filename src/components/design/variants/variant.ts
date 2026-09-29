@@ -1,8 +1,8 @@
-export type DesignVariant = 'acum' | 'edi' | 'fane'
+export type DesignVariant = 'acum' | 'edi' | 'fane' | 'lab' | 'grafic'
 
 export function readVariant(search: string): DesignVariant {
   const value = new URLSearchParams(search).get('v')
-  if (value === 'edi' || value === 'fane') return value
+  if (value === 'edi' || value === 'fane' || value === 'lab' || value === 'grafic') return value
   return 'acum'
 }
 
