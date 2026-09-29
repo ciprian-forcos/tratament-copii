@@ -3,6 +3,7 @@ import { FlowProtoB } from './components/design/FlowProtoB'
 import { ImportGate } from './components/design/share/ImportGate'
 import { HomeEdi } from './components/design/variants/HomeEdi'
 import { HomeFane } from './components/design/variants/HomeFane'
+import { Fir } from './lab/Fir'
 import { SkinBar } from './components/design/SkinBar'
 import { loadLook, saveLook, type LookId } from './components/design/looks'
 import { loadSkin, saveSkin, type SkinId } from './components/design/skins'
@@ -45,7 +46,7 @@ function App() {
   }
 
   const screen =
-    variant === 'edi' ? <HomeEdi /> : variant === 'fane' ? <HomeFane /> : <FlowProtoB />
+    variant === 'edi' ? <HomeEdi /> : variant === 'fane' ? <HomeFane /> : variant === 'lab' ? <Fir /> : <FlowProtoB />
 
   return (
     <div className="stage">

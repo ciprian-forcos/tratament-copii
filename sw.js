@@ -1,5 +1,5 @@
 // Service Worker for Tratament Copii PWA
-const CACHE_NAME = 'tratament-copii-BmWxWaOK';
+const CACHE_NAME = 'tratament-copii-DvFWQcmY';
 
 // Install: cache the shell
 self.addEventListener('install', (event) => {

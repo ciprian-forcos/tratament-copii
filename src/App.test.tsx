@@ -63,4 +63,11 @@ describe('design variant switch', () => {
     fireEvent.click(screen.getByRole('radio', { name: 'Grec' }))
     expect(inner).not.toHaveAttribute('data-look')
   })
+
+  it('opens the Fir lab from the Lab tab', () => {
+    render(<App />)
+    fireEvent.click(screen.getByRole('tab', { name: 'Lab' }))
+    expect(screen.getByLabelText('firul zilelor')).toBeInTheDocument()
+    expect(window.location.search).toContain('v=lab')
+  })
 })

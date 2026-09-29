@@ -4,6 +4,7 @@ const OPTIONS: { id: DesignVariant; label: string }[] = [
   { id: 'acum', label: 'Acum' },
   { id: 'edi', label: 'Edi' },
   { id: 'fane', label: 'Fane' },
+  { id: 'lab', label: 'Lab' },
 ]
 
 export function LabBar({
@@ -38,7 +39,7 @@ export function LabBar({
             className="ui-btn"
             aria-selected={variant === opt.id}
             onClick={() => onSelect(opt.id)}
-            style={{ flex: 1, minHeight: 44, padding: '10px 8px', fontSize: 15 }}
+            style={{ flex: 1, minHeight: 44, padding: '10px 4px', fontSize: 15 }}
           >
             {opt.label}
           </button>

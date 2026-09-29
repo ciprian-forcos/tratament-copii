@@ -1,0 +1,395 @@
+/* Fir: every colour, radius and motion comes from the look tokens,
+   so Grec, Material, Sticlă, every palette and every night apply. */
+
+.fir {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.fir-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px 4px;
+}
+.fir-child {
+  font-family: var(--font-hand);
+  font-style: var(--hand-style, italic);
+  font-weight: var(--hand-weight, 500);
+  font-size: 28px;
+  color: var(--ink);
+}
+
+/* ---------- The thread ---------- */
+.fir-thread-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+.fir-thread {
+  position: absolute;
+  inset: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.fir-thread::-webkit-scrollbar { display: none; }
+.fir-track {
+  position: relative;
+  height: 100%;
+  min-height: 250px;
+}
+
+.fir-night {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--ink) 5%, transparent) 40px, color-mix(in srgb, var(--ink) 5%, transparent) calc(100% - 40px), transparent);
+}
+.fir-day {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  border-left: 1px solid var(--line);
+}
+.fir-day span {
+  position: absolute;
+  top: 0;
+  left: 8px;
+  white-space: nowrap;
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.fir-hour {
+  position: absolute;
+  bottom: 14px;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
+.fir-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  margin-top: -1px;
+  border-radius: 2px;
+  background: var(--tape, var(--ink-3));
+  opacity: 0.55;
+}
+.fir-line--past {
+  right: auto;
+  height: 4px;
+  margin-top: -2px;
+  background: var(--accent);
+  opacity: 1;
+}
+
+.fir-needle {
+  position: absolute;
+  top: 30px;
+  bottom: 34px;
+  width: 0;
+  border-left: 2px solid color-mix(in srgb, var(--ink) 55%, transparent);
+}
+/* The label sits at the foot of the needle, clear of beads stacked at now. */
+.fir-needle span {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  padding: 2px 8px;
+  border-radius: var(--r-btn, 2px);
+  background: var(--ink);
+  color: var(--bg);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ---------- Beads ---------- */
+.fir-bead {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--ink);
+  transform: translate(-50%, -22px);
+  cursor: pointer;
+}
+.fir-bead-dot {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--med);
+  background: var(--bg);
+  color: var(--med);
+  transition: transform var(--dur, 120ms) var(--ease, ease-out);
+}
+.fir-bead:active .fir-bead-dot { transform: var(--press, scale(0.96)); }
+.fir-bead--given .fir-bead-dot {
+  background: var(--med);
+  color: #fff;
+  border-color: color-mix(in srgb, var(--med) 70%, #000);
+}
+.fir-bead--next .fir-bead-dot {
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--med) 22%, transparent);
+  animation: fir-breathe 2.4s var(--ease, ease-in-out) infinite;
+}
+@keyframes fir-breathe {
+  50% { box-shadow: 0 0 0 11px color-mix(in srgb, var(--med) 8%, transparent); }
+}
+.fir-bead-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 1.25;
+  white-space: nowrap;
+  color: var(--ink-2);
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+}
+.fir-bead-label b {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.fir-pin {
+  position: absolute;
+  transform: translateX(-50%);
+  min-width: 44px;
+  min-height: 30px;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-chip, 2px);
+  background: var(--bg-3);
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.fir-pin--hot {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.fir-pin--note {
+  display: grid;
+  place-items: center;
+  min-width: 36px;
+  color: var(--ink-3);
+}
+
+.fir-acum {
+  position: absolute;
+  top: 50%;
+  z-index: 5;
+  min-height: 44px;
+  padding: 8px 14px;
+  font-size: 14px;
+  animation: fir-pop var(--dur, 120ms) var(--ease, ease-out) both;
+}
+.fir-acum--left { left: 10px; }
+.fir-acum--right { right: 10px; }
+@keyframes fir-pop {
+  from { transform: scale(0.8); opacity: 0; }
+}
+
+/* ---------- The dock and the next card ---------- */
+.fir-dock {
+  padding: 0 12px 14px;
+}
+.fir-card {
+  padding: 14px 16px 16px;
+  border: var(--sheet-top, 1.5px solid var(--line));
+  border-radius: var(--r-sheet, 2px);
+  background: var(--sheet-bg, var(--bg-2));
+  box-shadow: var(--sheet-shadow, none);
+  backdrop-filter: var(--glass, none);
+  -webkit-backdrop-filter: var(--glass, none);
+  animation: sheet-in var(--dur-sheet, 160ms) var(--ease, ease-out) both;
+}
+.fir-card--due {
+  border-color: var(--accent);
+}
+.fir-card-row {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.fir-card-name {
+  font-family: var(--font-hand);
+  font-style: var(--hand-style, italic);
+  font-weight: var(--hand-weight, 500);
+  font-size: 22px;
+  line-height: 1.1;
+  color: var(--ink);
+  margin: 2px 0 4px;
+  overflow-wrap: anywhere;
+}
+.fir-card-when {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.fir-card-when b { color: var(--accent-2); }
+
+.fir-ring {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  color: var(--med);
+}
+.fir-ring-track {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 6;
+}
+.fir-ring-fill {
+  fill: none;
+  stroke: var(--med);
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 800ms var(--ease, ease-out);
+}
+.fir-ring-glyph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.fir-card--due .fir-ring { animation: fir-nudge 1.6s var(--ease, ease-in-out) infinite; }
+@keyframes fir-nudge {
+  0%, 100% { transform: none; }
+  50% { transform: scale(1.05); }
+}
+
+.fir-give { min-height: 60px; }
+
+/* The amount: swipe down/up to step, tap to type. */
+.fir-amount {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 72px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: var(--r-btn, 2px);
+  background: transparent;
+  color: var(--accent-2);
+  touch-action: none;
+  cursor: ns-resize;
+}
+.fir-amount-value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.fir-amount-value small { font-size: 14px; }
+.fir-amount-ghost {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-3);
+  opacity: 0.7;
+}
+.fir-amount-input {
+  width: 80px;
+  min-height: 48px;
+  text-align: center;
+  font-size: 22px;
+}
+
+.fir-start {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+.fir-start-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-height: 96px;
+  padding: 12px;
+  font-size: 15px;
+}
+.fir-start-glyph {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--med);
+  color: #fff;
+}
+
+/* ---------- Undo ---------- */
+/* Under the header, so it never covers Am dat. */
+.fir-toast {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: 64px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 12px 12px 16px;
+  overflow: hidden;
+  border-radius: var(--r-sheet, 2px);
+  background: var(--ink);
+  color: var(--bg);
+  font-family: var(--font-body);
+  font-size: 15px;
+  animation: sheet-in var(--dur-sheet, 160ms) var(--ease, ease-out) both;
+}
+.fir-toast > span:first-child { flex: 1; }
+.fir-toast-undo {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1.5px solid currentColor;
+  border-radius: var(--r-btn, 2px);
+  background: transparent;
+  color: var(--bg);
+  font: 600 15px var(--font-body);
+  cursor: pointer;
+}
+.fir-toast-timer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--accent);
+  transform-origin: left;
+  animation: fir-drain 6s linear both;
+}
+@keyframes fir-drain { to { transform: scaleX(0); } }
