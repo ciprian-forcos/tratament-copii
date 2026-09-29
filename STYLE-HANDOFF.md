@@ -79,8 +79,10 @@ Each step: write a failing test first where behaviour changes, then `npm run typ
    - Material replaces the path in CSS with a 72-point scalloped "cookie" that turns slowly (`d: path()`, `tl-turn`).
    - Sticlă puts the next ring under a small glass lens (`--lens-*` tokens). The tape stays solid.
    - Grec is unchanged.
-   - Still open: Edi and Fane draw their own marks and have not been moved onto these classes. The M3 wavy "elapsed" tape was not built, because the tape is a curve and a sine along it needs real path maths; it's a nice-to-have.
-3. **The confirm moment.** Done. A dose confirmed in the last minute (`FRESH_MARK_MS`) gets `.tl-dot--fresh`, which springs in on the look's `--ease`. Still open: the sheet closes instantly; an exit animation needs a short unmount delay.
+   - Edi and Fane now use the same marks through `timeline/DoseMark.tsx` (`DoseDot`, `NextMark`). Edi keeps his medicine-coloured capsules inside the shared next and fresh treatment (`.tl-next--wide`).
+   - Material draws the elapsed tape as an M3 wavy line (`.tl-wave`, `timeline/wave.ts`, a sine offset along the tape's normal) on all three layouts.
+3. **The confirm moment.** Done. A dose confirmed in the last minute (`FRESH_MARK_MS`) gets `.tl-dot--fresh`, which springs in on the look's `--ease`. Sheets now leave too: `<Presence>` keeps a closed sheet for `EXIT_MS` inside `.ui-exit`, where it slides back out (`--dur-sheet-out`) and ignores taps.
+6. **Night.** Done. `src/night.css`: with the phone in dark mode and no colour skin picked, each look flips to its own dark palette. Grec becomes red-figure pottery, Material uses its dark tonal scheme, and Sticlă goes near-black with a dimmer glass edge. `palettes.test.ts` checks these too. There is no toggle; the phone decides.
 4. **Palettes.** Done.
    - `src/palettes.test.ts` reads `index.css`, `looks.css` and `skins.css` and checks every palette: body text 4.5:1, names 4.5:1, `--ink-3` (tape and small labels) 3:1, next ring 3:1, amount 4.5:1, given mark 3:1, and Confirmă text on `--accent` 4.5:1.
    - Mario, Sonic and Burete were redesigned (character colour on the accent, never on the background). Leu, Moana and Poké accents and Bluey's given-mark colour were darkened.

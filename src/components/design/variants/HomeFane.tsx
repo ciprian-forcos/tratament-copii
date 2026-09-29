@@ -8,9 +8,12 @@ import { materializeWindow, nextProjectedDose, projectRange } from '../timeline/
 import { timelineStore, useTimelineFacts } from '../timeline/store'
 import { marksForView, viewWindow } from '../timeline/view'
 import { useGuardedTap } from '../guardTap'
+import { DoseDot, isFresh } from '../timeline/DoseMark'
+import { Presence } from '../Presence'
 import { acumChip, dayTickLabel, dayTicks, splitAmount, stepAmount } from './fane'
+import { TAPE_PATH, wavyPath } from '../timeline/wave'
 
-const PATH = 'M 6 38 Q 80 32 160 40 T 314 36'
+const PATH = TAPE_PATH
 
 /**
  * Fane, on the current dark tape:
@@ -151,6 +154,7 @@ export function HomeFane() {
         <div style={{ position: 'absolute', left: 24, right: 24, top: '46%', height: 120 }}>
           <svg viewBox="0 0 320 70" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: 78 }}>
             <path d={PATH} stroke="var(--tape, var(--ink-3))" strokeWidth={1.4} fill="none" />
+            <path className="tl-wave" d={wavyPath(6, pct(now) * 3.2)} />
           </svg>
           {ticks.map((tick) => (
             <div
@@ -189,16 +193,8 @@ export function HomeFane() {
                   zIndex: isNext ? 3 : 1,
                 }}
               >
-                <div
-                  style={{
-                    width: isNext ? 16 : 10,
-                    height: isNext ? 16 : 10,
-                    borderRadius: '50%',
-                    background: future ? 'transparent' : 'var(--cool)',
-                    border: future ? '1.8px solid var(--accent)' : 'none',
-                  }}
-                />
-                <div className="mono" style={{ fontSize: 10, color: 'var(--ink-3)' }}>{fmtHHMM(m.at)}</div>
+                <DoseDot future={future} isNext={isNext} fresh={isFresh(m.at, now, future)} />
+                <div className="mono" style={{ fontSize: 12, color: future ? 'var(--accent-2)' : 'var(--ink-2)' }}>{fmtHHMM(m.at)}</div>
                 <div className="hand" style={{ fontSize: 15, color: future ? 'var(--accent-2)' : 'var(--ink-2)' }}>{m.label}</div>
                 {isNext && shown && (
                   <SwipeAmount
@@ -256,105 +252,109 @@ export function HomeFane() {
         )}
       </div>
 
-      {giving && next && nextAmount && (
-        <div role="dialog" aria-label="eveniment" className="ui-sheet">
-          <div className="eyebrow">eveniment · {fmtHHMM(next.at)}</div>
-          <div className="hand" style={{ fontSize: 28, color: 'var(--accent-2)', margin: '8px 0 4px' }}>
-            {next.label}
+      <Presence show={Boolean(giving && next && nextAmount)}>
+        {giving && next && nextAmount && (
+          <div role="dialog" aria-label="eveniment" className="ui-sheet">
+            <div className="eyebrow">eveniment · {fmtHHMM(next.at)}</div>
+            <div className="hand" style={{ fontSize: 28, color: 'var(--accent-2)', margin: '8px 0 4px' }}>
+              {next.label}
+            </div>
+            <SwipeAmount
+              value={nextAmount.n}
+              unit={nextAmount.unit}
+              onChange={(n, unit) => setOverrides((prev) => ({ ...prev, [next.medicationId]: { n, unit } }))}
+            />
+            <button type="button" className="btn-primary" style={{ marginTop: 16 }} onClick={guardedConfirm}>
+              Confirmă
+            </button>
           </div>
-          <SwipeAmount
-            value={nextAmount.n}
-            unit={nextAmount.unit}
-            onChange={(n, unit) => setOverrides((prev) => ({ ...prev, [next.medicationId]: { n, unit } }))}
-          />
-          <button type="button" className="btn-primary" style={{ marginTop: 16 }} onClick={guardedConfirm}>
-            Confirmă
-          </button>
-        </div>
-      )}
+        )}
+      </Presence>
 
-      {settingsOpen && (
-        <div
-          role="dialog"
-          aria-label="tratament"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            zIndex: 40,
-            background: 'rgba(0,0,0,0.45)',
-            display: 'flex',
-            alignItems: 'flex-end',
-          }}
-          onClick={() => setSettingsOpen(false)}
-        >
-          <div className="ui-sheet" onClick={(e) => e.stopPropagation()} style={{ position: 'relative', width: '100%' }}>
-            <div className="eyebrow">tratament</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
-              {state.children.map((c) => {
-                const on = c.id === child.id
-                return (
-                  <button
-                    key={c.id}
-                    type="button"
-                    aria-label={`copil ${c.name}`}
-                    aria-pressed={on}
-                    onClick={() => childStore.setActive(c.id)}
-                    className="ui-chip"
-                    style={{ padding: '8px 12px', fontSize: 13 }}
-                  >
-                    {c.name}
-                  </button>
-                )
-              })}
-            </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
-              {medications.map((med) => {
-                const on = child.enabledMedications.includes(med.id)
-                return (
-                  <button
-                    key={med.id}
-                    type="button"
-                    aria-pressed={on}
-                    onClick={() =>
-                      childStore.patchActive({
-                        enabledMedications: toggleEnabledMedication(child, med.id),
-                      })
-                    }
-                    className="ui-chip"
-                    style={{ padding: '8px 12px', fontSize: 13 }}
-                  >
-                    {med.name.split(/[/(]/)[0].trim()}
-                  </button>
-                )
-              })}
-            </div>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                guardedAdd()
-              }}
-              style={{ display: 'flex', gap: 8, marginTop: 14 }}
-            >
-              <input
-                aria-label="alt medicament"
-                value={otherName}
-                onChange={(e) => setOtherName(e.target.value)}
-                placeholder="Alt medicament"
-                className="ui-field"
-                style={{ flex: 1, minWidth: 0, padding: '10px 12px', font: 'inherit' }}
-              />
-              <button
-                type="submit"
-                aria-label="adaugă alt medicament"
-                className="ui-chip"
-                style={{ flex: '0 0 auto', minWidth: 48, padding: '0 14px', fontSize: 20 }}
+      <Presence show={settingsOpen}>
+        {settingsOpen && (
+          <div
+            role="dialog"
+            aria-label="tratament"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              zIndex: 40,
+              background: 'rgba(0,0,0,0.45)',
+              display: 'flex',
+              alignItems: 'flex-end',
+            }}
+            onClick={() => setSettingsOpen(false)}
+          >
+            <div className="ui-sheet" onClick={(e) => e.stopPropagation()} style={{ position: 'relative', width: '100%' }}>
+              <div className="eyebrow">tratament</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
+                {state.children.map((c) => {
+                  const on = c.id === child.id
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      aria-label={`copil ${c.name}`}
+                      aria-pressed={on}
+                      onClick={() => childStore.setActive(c.id)}
+                      className="ui-chip"
+                      style={{ padding: '8px 12px', fontSize: 13 }}
+                    >
+                      {c.name}
+                    </button>
+                  )
+                })}
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
+                {medications.map((med) => {
+                  const on = child.enabledMedications.includes(med.id)
+                  return (
+                    <button
+                      key={med.id}
+                      type="button"
+                      aria-pressed={on}
+                      onClick={() =>
+                        childStore.patchActive({
+                          enabledMedications: toggleEnabledMedication(child, med.id),
+                        })
+                      }
+                      className="ui-chip"
+                      style={{ padding: '8px 12px', fontSize: 13 }}
+                    >
+                      {med.name.split(/[/(]/)[0].trim()}
+                    </button>
+                  )
+                })}
+              </div>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  guardedAdd()
+                }}
+                style={{ display: 'flex', gap: 8, marginTop: 14 }}
               >
-                +
-              </button>
-            </form>
+                <input
+                  aria-label="alt medicament"
+                  value={otherName}
+                  onChange={(e) => setOtherName(e.target.value)}
+                  placeholder="Alt medicament"
+                  className="ui-field"
+                  style={{ flex: 1, minWidth: 0, padding: '10px 12px', font: 'inherit' }}
+                />
+                <button
+                  type="submit"
+                  aria-label="adaugă alt medicament"
+                  className="ui-chip"
+                  style={{ flex: '0 0 auto', minWidth: 48, padding: '0 14px', fontSize: 20 }}
+                >
+                  +
+                </button>
+              </form>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </Presence>
     </div>
   )
 }

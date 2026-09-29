@@ -1,5 +1,13 @@
 # Knowledge Bundle Log
 
+## 2026-09-29
+
+* **Looks complete across layouts**: Edi and Fane share Acum's per-look dose
+  marks (`timeline/DoseMark.tsx`); Material draws the elapsed tape as a wave
+  (`timeline/wave.ts`); sheets animate out via `<Presence>`; `src/night.css`
+  gives each look a dark palette under the phone's dark mode (Grec =
+  red-figure). Edi's face and clock use theme tokens.
+
 ## 2026-09-27
 
 * **Palettes, marks, tap targets**: `src/palettes.test.ts` enforces contrast

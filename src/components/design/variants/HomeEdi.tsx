@@ -6,17 +6,20 @@ import { fmtHHMM } from '../dosePlan'
 import { toggleEnabledMedication } from '../enabledMeds'
 import { loadMedications, MEDICATIONS_CHANGED_EVENT } from '../medicineStorage'
 import { AttachSheet, type AttachValue } from '../timeline/AttachSheet'
+import { isFresh, NextMark } from '../timeline/DoseMark'
+import { Presence } from '../Presence'
 import { calculateDose } from '../../../utils/doseCalculation'
 import { doseAmount, materializeWindow, nextProjectedDose, projectRange } from '../timeline/project'
 import { timelineStore, useTimelineFacts } from '../timeline/store'
 import { marksForView, viewWindow } from '../timeline/view'
+import { TAPE_PATH, wavyPath } from '../timeline/wave'
 
 /**
  * Edi: same medication timeline, different surface.
  * Grouped pictograms stay visible (child face, small clock, medicine glyphs).
  * No amber, no handwriting, no wall of labels on the line.
  */
-const PATH = 'M 6 38 Q 80 32 160 40 T 314 36'
+const PATH = TAPE_PATH
 
 export function HomeEdi() {
   const state = useChildren()
@@ -195,36 +198,47 @@ export function HomeEdi() {
         <div style={{ position: 'relative', height: 110 }}>
           <svg viewBox="0 0 320 70" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: 70 }}>
             <path d={PATH} stroke="var(--tape, var(--ink-3))" strokeWidth={1.4} fill="none" />
+            <path className="tl-wave" d={wavyPath(6, toPct(now) * 3.2)} />
           </svg>
           {marks.map((m) => {
             const future = m.source === 'projected'
             const isNext = next != null && future && m.at.getTime() === next.at.getTime()
             const color = colorFor(m.medicationId)
             return (
-              <Mark key={`${m.factId ?? m.policy}-${m.at.toISOString()}`} mark={m} left={toPct(m.at)} color={color} future={future} emphasize={isNext} />
+              <Mark
+                key={`${m.factId ?? m.policy}-${m.at.toISOString()}`}
+                mark={m}
+                left={toPct(m.at)}
+                color={color}
+                future={future}
+                emphasize={isNext}
+                fresh={isFresh(m.at, now, future)}
+              />
             )
           })}
-          <div style={{ position: 'absolute', top: 0, left: `${toPct(now)}%`, transform: 'translateX(-50%)', fontSize: 10, color: '#1e2430', textAlign: 'center' }}>
+          <div style={{ position: 'absolute', top: 0, left: `${toPct(now)}%`, transform: 'translateX(-50%)', fontSize: 10, color: 'var(--ink)', textAlign: 'center' }}>
             ▼
           </div>
         </div>
       </div>
 
-      {attach && (
-        <AttachSheet
-          value={attach}
-          medications={medications}
-          suggested={next}
-          amount={
-            attach.kind === 'dose' && attach.medicationId
-              ? doseAmount(attach.medicationId, child, medications)
-              : undefined
-          }
-          onChange={setAttach}
-          onConfirm={confirmAttach}
-          onClose={() => setAttach(null)}
-        />
-      )}
+      <Presence show={attach != null}>
+        {attach && (
+          <AttachSheet
+            value={attach}
+            medications={medications}
+            suggested={next}
+            amount={
+              attach.kind === 'dose' && attach.medicationId
+                ? doseAmount(attach.medicationId, child, medications)
+                : undefined
+            }
+            onChange={setAttach}
+            onConfirm={confirmAttach}
+            onClose={() => setAttach(null)}
+          />
+        )}
+      </Presence>
       <ChildEditor open={editorOpen} onClose={() => setEditorOpen(false)} />
     </div>
   )
@@ -236,13 +250,16 @@ function Mark({
   color,
   future,
   emphasize,
+  fresh,
 }: {
   mark: TimelineMark
   left: number
   color: string
   future: boolean
   emphasize: boolean
+  fresh: boolean
 }) {
+  const capsule = <Capsule color={color} hollow={future} small={!emphasize} />
   return (
     <div
       style={{
@@ -257,8 +274,14 @@ function Mark({
         pointerEvents: 'none',
       }}
     >
-      <Capsule color={color} hollow={future} small={!emphasize} />
-      <span style={{ fontSize: 10, color: 'var(--ink-3)', fontVariantNumeric: 'tabular-nums' }}>{fmtHHMM(mark.at)}</span>
+      {emphasize ? (
+        <NextMark wide>{capsule}</NextMark>
+      ) : (
+        <span className={fresh ? 'tl-dot--fresh' : undefined} style={{ display: 'inline-flex' }}>
+          {capsule}
+        </span>
+      )}
+      <span style={{ fontSize: 12, color: 'var(--ink-2)', fontVariantNumeric: 'tabular-nums' }}>{fmtHHMM(mark.at)}</span>
     </div>
   )
 }
@@ -305,10 +328,10 @@ function IconButton({
 function Face() {
   return (
     <svg width="40" height="40" viewBox="0 0 48 48" aria-hidden>
-      <circle cx="24" cy="24" r="22" fill="#1a1612" />
-      <circle cx="17" cy="20" r="2.2" fill="#f6f1e7" />
-      <circle cx="31" cy="20" r="2.2" fill="#f6f1e7" />
-      <path d="M16 29 Q24 36 32 29" stroke="#f6f1e7" strokeWidth="2" fill="none" strokeLinecap="round" />
+      <circle cx="24" cy="24" r="22" fill="var(--ink)" />
+      <circle cx="17" cy="20" r="2.2" fill="var(--bg)" />
+      <circle cx="31" cy="20" r="2.2" fill="var(--bg)" />
+      <path d="M16 29 Q24 36 32 29" stroke="var(--bg)" strokeWidth="2" fill="none" strokeLinecap="round" />
     </svg>
   )
 }
@@ -324,9 +347,9 @@ function Clock({ hour, minute }: { hour: number; minute: number }) {
   const [hx, hy] = hand(h, 9)
   return (
     <svg width="40" height="40" viewBox="0 0 48 48" aria-hidden>
-      <circle cx="24" cy="24" r="20" fill="none" stroke="#1a1612" strokeWidth="1.4" />
-      <line x1="24" y1="24" x2={hx} y2={hy} stroke="#1a1612" strokeWidth="1.8" strokeLinecap="round" />
-      <line x1="24" y1="24" x2={mx} y2={my} stroke="#9c3b2e" strokeWidth="1.4" strokeLinecap="round" />
+      <circle cx="24" cy="24" r="20" fill="none" stroke="var(--ink)" strokeWidth="1.4" />
+      <line x1="24" y1="24" x2={hx} y2={hy} stroke="var(--ink)" strokeWidth="1.8" strokeLinecap="round" />
+      <line x1="24" y1="24" x2={mx} y2={my} stroke="var(--accent)" strokeWidth="1.4" strokeLinecap="round" />
     </svg>
   )
 }
