@@ -63,4 +63,24 @@
     --cool: #f2f2f7;
     --glass-edge: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 0 0 1px rgba(255, 255, 255, 0.08);
   }
+
+  /* Joacă at night: the same thick outlines, drawn in warm paper on black. */
+  .phone-inner[data-look="joaca"]:not([data-skin]) {
+    /* night:joaca */
+    color-scheme: dark;
+    --bg: #151515;
+    --bg-2: #1f1f1f;
+    --bg-3: #262626;
+    --ink: #fff6e0;
+    --ink-2: #eadfc4;
+    --ink-3: #a89f8a;
+    --line: #fff6e0;
+    --accent: #ff7a52;
+    --accent-2: #ffb49c;
+    --accent-wash: rgba(255, 122, 82, 0.18);
+    --on-accent: #151515;
+    --danger: #ff6b6b;
+    --safe: #5fd38a;
+    --cool: #7ea0ff;
+  }
 }

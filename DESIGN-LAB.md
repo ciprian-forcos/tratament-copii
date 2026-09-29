@@ -39,11 +39,28 @@ One continuous thread you can throw with your thumb, and one card that tells you
 
 Everything moves through the look's `--ease` / `--dur` tokens: springs in Material and Sticlă, quick and quiet in Grec, a hard snap in Joacă. The phone's reduce-motion setting stops all of it.
 
-## Phases
+## Where it is
 
-1. Shell, thread, beads, needle, `acum` pill, next card with Am dat + undo.
-2. Quick add: dose, temperature dial, notes, inline new medicine. Bead cards with delete.
-3. Faces, settings sheet, share link.
-4. Joacă look, polish, motion pass.
+All four phases are built, tested and screenshotted in every look, light and dark:
 
-Each phase: tests first where behaviour changes, then `npx eslint src`, `npx vitest run`, `npm run build`, screenshots in every look, and a hosted preview.
+1. **Thread and next card** (`src/lab/Thread.tsx`, `NextCard.tsx`, `thread.ts`): the momentum scroller over six days, night bands, weekday lines, the now needle, the `acum` pill, pictogram beads (filled given, hollow planned, breathing next), temperature and note pins, and the countdown ring with swipe-or-type amount and one Am dat.
+2. **Quick add and bead cards** (`AddSheet.tsx`, `TempDial.tsx`, `dial.ts`, `BeadCard.tsx`):
+   - dose for any medicine, or a new one created inline with its form;
+   - a 270° temperature dial with heat bands;
+   - note presets;
+   - when chips (acum … −1 h);
+   - bead cards with Am dat acum or Șterge.
+
+   Every add and delete has a 6-second undo, and double taps are ignored.
+3. **Faces and settings** (`Face.tsx`, `mood.ts`, `SettingsSheet.tsx`): moods follow the thread (flushed after a fever, eyes closed after Doarme); tap to switch, long-press to edit; Fane's treatment window with programme switches and share by link.
+4. **Joacă** (`src/looks.css`, `src/night.css`): the fourth look, with a night version, contrast-tested like the others.
+
+Checks: `npx eslint src`, `npx vitest run` (lab tests in `src/lab/*.test.*`), `npm run build`.
+
+## Ideas not built yet
+
+- Zoom: pinch or a toggle between hours and a week of beads.
+- Drag a given bead along the thread to fix its time.
+- A temperature curve layer you can switch on over the thread.
+- Reminders (notifications) at the next dose, with the countdown ring on the lock screen via a web push.
+- A night-light mode: red on black, the dimmest possible screen, for checking at 3am without waking anyone.

@@ -352,12 +352,13 @@
 }
 
 /* ---------- Undo ---------- */
-/* Under the header, so it never covers Am dat. */
+/* Just above the next card: near the thumb, clear of the faces and of Am dat. */
+.fir-dock { position: relative; }
 .fir-toast {
   position: absolute;
   left: 12px;
   right: 12px;
-  top: 64px;
+  bottom: calc(100% + 8px);
   z-index: 30;
   display: flex;
   align-items: center;
@@ -808,3 +809,22 @@
   min-height: 52px;
   font-size: 15px;
 }
+
+/* ---------- Joacă on the thread: stickers with ink outlines ---------- */
+[data-look="joaca"] .fir-bead-dot {
+  border: 2.5px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+[data-look="joaca"] .fir-bead--given .fir-bead-dot { border-color: var(--ink); }
+[data-look="joaca"] .fir-line { height: 3px; opacity: 1; }
+[data-look="joaca"] .fir-line--past { height: 6px; margin-top: -3px; box-shadow: 0 0 0 2px var(--ink); }
+[data-look="joaca"] .fir-pin,
+[data-look="joaca"] .fir-bead-label { border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); background: var(--bg-3); }
+[data-look="joaca"] .fir-card { border: 2.5px solid var(--ink); border-radius: 18px; }
+[data-look="joaca"] .fir-toast { border: 2.5px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); background: var(--accent); color: var(--on-accent); }
+[data-look="joaca"] .fir-toast-undo { color: var(--on-accent); }
+[data-look="joaca"] .fir-toast-timer { background: var(--ink); }
+[data-look="joaca"] .fir-med-glyph,
+[data-look="joaca"] .fir-start-glyph,
+[data-look="joaca"] .fir-bead-card-glyph { border: 2.5px solid var(--ink); }
+[data-look="joaca"] .fir-face.is-active .fir-face-svg { box-shadow: 0 0 0 2.5px var(--ink), 3px 3px 0 2.5px var(--ink); }

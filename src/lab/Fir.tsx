@@ -184,6 +184,16 @@ export function Fir() {
       />
 
       <div className="fir-dock">
+        {toast && (
+          <UndoToast
+            text={toast.text}
+            onUndo={() => {
+              toast.undo()
+              setToast(null)
+            }}
+            onDone={hideToast}
+          />
+        )}
         {next && amount ? (
           <NextCard
             mark={next as TimelineMark}
@@ -284,16 +294,6 @@ export function Fir() {
       <ChildEditor open={editing} onClose={() => setEditing(false)} />
       <ShareSheet open={sharing} onClose={() => setSharing(false)} />
 
-      {toast && (
-        <UndoToast
-          text={toast.text}
-          onUndo={() => {
-            toast.undo()
-            setToast(null)
-          }}
-          onDone={hideToast}
-        />
-      )}
     </div>
   )
 }

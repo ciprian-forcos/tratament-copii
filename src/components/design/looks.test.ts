@@ -10,5 +10,6 @@ describe('readLook', () => {
   it('accepts a known look', () => {
     expect(readLook('material')).toBe('material')
     expect(readLook('sticla')).toBe('sticla')
+    expect(readLook('joaca')).toBe('joaca')
   })
 })

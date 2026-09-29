@@ -127,6 +127,68 @@
   --next-stroke: 2px;
 }
 
+/* Joacă: neo-brutalist play. Thick ink outlines, hard offset shadows,
+   buttons that sink into their shadow. Made for the kids' palettes. */
+[data-look="joaca"] {
+  color-scheme: light;
+  --bg: #fff6e0;
+  --bg-2: #ffe9b8;
+  --bg-3: #ffffff;
+  --ink: #111111;
+  --ink-2: #2b2b2b;
+  --ink-3: #5c5c5c;
+  --line: #111111;
+  --accent: #f04a22;
+  --accent-2: #b3260d;
+  --accent-wash: rgba(240, 74, 34, 0.16);
+  --on-accent: #111111;
+  --danger: #d62828;
+  --safe: #1b7f3b;
+  --cool: #2f5bea;
+
+  --font-hand: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-body: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-mono: "Bricolage Grotesque", system-ui, sans-serif;
+  --hand-style: normal;
+  --hand-weight: 800;
+
+  --r-btn: 12px;
+  --r-btn-on: 12px;
+  --r-chip: 10px;
+  --r-chip-on: 10px;
+  --r-cta: 14px;
+  --r-cta-press: 14px;
+  --r-field: 10px;
+  --r-sheet: 18px 18px 0 0;
+  --btn-border: 2.5px solid var(--ink);
+  --chip-border: 2.5px solid var(--ink);
+  --field-border: 2.5px solid var(--ink);
+  --btn-bg: var(--bg-3);
+  --btn-shadow: 3px 3px 0 var(--ink);
+  --btn-shadow-press: 0 0 0 var(--ink);
+  --bar-bg: var(--bg);
+  --bar-line: 2.5px solid var(--ink);
+  --sheet-bg: var(--bg-3);
+  --sheet-top: 2.5px solid var(--ink);
+  --sheet-shadow: 4px 4px 0 var(--ink);
+  --cta-border: 2.5px solid var(--ink);
+  --cta-shadow: 4px 4px 0 var(--ink);
+  --tape: var(--ink);
+  --phone-wash: radial-gradient(color-mix(in srgb, var(--ink) 10%, transparent) 1px, transparent 1.6px) 0 0 / 14px 14px;
+
+  --lens-bg: var(--bg-3);
+  --lens-shadow: 0 0 0 2.5px var(--ink), 3px 3px 0 var(--ink);
+  --next-stroke: 2.5px;
+
+  /* Sinks into its shadow, then snaps back. */
+  --press: translate(3px, 3px);
+  --ease: cubic-bezier(0.3, 1.6, 0.5, 1);
+  --dur: 140ms;
+  --dur-sheet: 260ms;
+  --dur-sheet-out: 160ms;
+  --sheet-from: translateY(100%);
+}
+
 /* Glass off when the phone asks for less transparency, or cannot blur. */
 @media (prefers-reduced-transparency: reduce) {
   [data-look="sticla"] {

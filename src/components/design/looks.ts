@@ -6,6 +6,7 @@ export const LOOKS = [
   { id: 'grec', label: 'Grec' },
   { id: 'material', label: 'Material' },
   { id: 'sticla', label: 'Sticlă' },
+  { id: 'joaca', label: 'Joacă' },
 ] as const
 
 export type LookId = (typeof LOOKS)[number]['id']
