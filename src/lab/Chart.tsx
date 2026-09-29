@@ -68,7 +68,11 @@ export function Chart({
     const stepH = step / 3600_000
     first.setHours(Math.ceil(first.getHours() / stepH) * stepH)
   }
-  for (let t = first.getTime(); t <= to; t += step) labels.push(t)
+  for (let t = first.getTime(); t <= to; t += step) {
+    // Keep labels clear of the edges so none is cut off.
+    const lx = ((t - from) / (to - from)) * PLOT_W
+    if (lx >= 18 && lx <= PLOT_W - 18) labels.push(t)
+  }
 
   function onPointer(e: PointerEvent<SVGSVGElement>) {
     const box = svg.current?.getBoundingClientRect()

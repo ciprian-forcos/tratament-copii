@@ -57,8 +57,10 @@ export function Grafic() {
   )
   const next = nextProjectedDose(marks)
   const colorOf = (id: string) => medications.find((m) => m.id === id)?.color ?? 'var(--accent)'
+  // Volume: every dose given, and only the next one ahead, like a single open order.
   const bars: VolumeBar[] = marks
     .filter((m) => m.at.getTime() >= win.from && m.at.getTime() <= win.to)
+    .filter((m) => m.source === 'fact' || m === next)
     .map((m) => ({ t: m.at.getTime(), color: colorOf(m.medicationId), given: m.source === 'fact', label: m.label }))
 
   const shown = scrub != null ? valueAt(points, scrub) : lastPoint?.v ?? null
