@@ -23,6 +23,9 @@ function palettes() {
       if (t.bg) list.push([m[1], t])
     }
   }
+  for (const m of css('night.css').matchAll(/\/\* night:(\w+) \*\/([\s\S]*?)\n {2}\}/g)) {
+    list.push([`night-${m[1]}`, tokens(m[2])])
+  }
   return list
 }
 
@@ -55,7 +58,10 @@ describe('palette readability', () => {
 
   it('finds every look and skin', () => {
     expect(all.map(([id]) => id)).toEqual(
-      expect.arrayContaining(['grec', 'material', 'sticla', 'mario', 'sonic', 'burete', 'dragon']),
+      expect.arrayContaining([
+        'grec', 'material', 'sticla', 'mario', 'sonic', 'burete', 'dragon',
+        'night-grec', 'night-material', 'night-sticla',
+      ]),
     )
   })
 

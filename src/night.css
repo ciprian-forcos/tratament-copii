@@ -1,0 +1,66 @@
+/* Night: each look's own colours flip dark when the phone is in dark mode.
+   Only when no colour skin is picked (a skin is an explicit choice).
+   No toggle: the phone decides. src/palettes.test.ts checks every block. */
+
+@media (prefers-color-scheme: dark) {
+  /* Grec at night is red-figure pottery: black glaze, terracotta, ivory. */
+  .phone-inner:not([data-skin]):not([data-look]) {
+    /* night:grec */
+    color-scheme: dark;
+    --bg: #1a1512;
+    --bg-2: #251e19;
+    --bg-3: #211a16;
+    --ink: #f1e6d2;
+    --ink-2: #d3c3a8;
+    --ink-3: #9c8a72;
+    --line: #4a3d32;
+    --accent: #d27440;
+    --accent-2: #e89a68;
+    --accent-wash: rgba(210, 116, 64, 0.16);
+    --on-accent: #1a1512;
+    --danger: #ef7d6a;
+    --safe: #8fbf8a;
+    --cool: #f1e6d2;
+  }
+
+  /* Material dark scheme from the same terracotta seed. */
+  .phone-inner[data-look="material"]:not([data-skin]) {
+    /* night:material */
+    color-scheme: dark;
+    --bg: #1a110f;
+    --bg-2: #271d1b;
+    --bg-3: #231917;
+    --ink: #f1dfda;
+    --ink-2: #d8c2bd;
+    --ink-3: #a08c87;
+    --line: #534340;
+    --accent: #ffb4a6;
+    --accent-2: #ffdad3;
+    --accent-wash: rgba(255, 180, 166, 0.16);
+    --on-accent: #561f15;
+    --danger: #ffb4ab;
+    --safe: #a4d3a6;
+    --cool: #e7bdb5;
+  }
+
+  /* Glass over a near-black room; the highlight dims so it does not glare. */
+  .phone-inner[data-look="sticla"]:not([data-skin]) {
+    /* night:sticla */
+    color-scheme: dark;
+    --bg: #0f1115;
+    --bg-2: #1a1d24;
+    --bg-3: #22262e;
+    --ink: #f2f2f7;
+    --ink-2: #d1d1d6;
+    --ink-3: #8e8e93;
+    --line: #3a3a3c;
+    --accent: #409cff;
+    --accent-2: #7cc0ff;
+    --accent-wash: rgba(64, 156, 255, 0.18);
+    --on-accent: #0b1a2e;
+    --danger: #ff6961;
+    --safe: #30d158;
+    --cool: #f2f2f7;
+    --glass-edge: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+}

@@ -7,14 +7,16 @@ import { toggleEnabledMedication } from './enabledMeds'
 import { loadMedications, MEDICATIONS_CHANGED_EVENT } from './medicineStorage'
 import { useDoseReminder } from './useDoseReminder'
 import { AttachSheet, type AttachValue } from './timeline/AttachSheet'
-import { FRESH_MARK_MS, NEXT_RING_PATH } from './timeline/markShapes'
+import { DoseDot, isFresh } from './timeline/DoseMark'
+import { Presence } from './Presence'
 import { calculateDose } from '../../utils/doseCalculation'
 import { doseAmount, materializeWindow, nextProjectedDose, projectRange } from './timeline/project'
 import { SetupDrawer } from './timeline/SetupDrawer'
 import { timelineStore, useTimelineFacts } from './timeline/store'
 import { marksForView, viewWindow, VIEW_SPAN_MS } from './timeline/view'
+import { TAPE_PATH, wavyPath } from './timeline/wave'
 
-const PATH = 'M 6 38 Q 80 32 160 40 T 314 36'
+const PATH = TAPE_PATH
 
 type Pointer = { id: number; x: number; y: number }
 
@@ -235,6 +237,7 @@ export function HomeB() {
             style={{ position: 'absolute', inset: 0, width: '100%', height: 78 }}
           >
             <path d={PATH} stroke="var(--tape, var(--ink-3))" strokeWidth={1.4} fill="none" />
+            <path className="tl-wave" d={wavyPath(6, toPct(now) * 3.2)} />
           </svg>
           {marks.map((m) => {
             const isNext = next != null && m.source === 'projected' && m.at.getTime() === next.at.getTime()
@@ -254,22 +257,7 @@ export function HomeB() {
                   pointerEvents: 'none',
                 }}
               >
-                {isNext ? (
-                  <span className="tl-next pulse-dot" aria-hidden="true">
-                    <svg viewBox="-12 -12 24 24" width={24} height={24}>
-                      <path className="tl-next-shape" d={NEXT_RING_PATH} />
-                    </svg>
-                  </span>
-                ) : (
-                  <div
-                    aria-hidden="true"
-                    className={[
-                      'tl-dot',
-                      future ? 'tl-dot--future' : 'tl-dot--given',
-                      !future && now.getTime() - m.at.getTime() < FRESH_MARK_MS ? 'tl-dot--fresh' : '',
-                    ].join(' ')}
-                  />
-                )}
+                <DoseDot future={future} isNext={isNext} fresh={isFresh(m.at, now, future)} />
                 <div className="mono" style={{ fontSize: 12, color: future ? 'var(--accent-2)' : 'var(--ink-2)' }}>
                   {fmtHHMM(m.at)}
                 </div>
@@ -303,21 +291,23 @@ export function HomeB() {
         </div>
       </div>
 
-      {attach && (
-        <AttachSheet
-          value={attach}
-          medications={medications}
-          suggested={next}
-          amount={
-            attach.kind === 'dose' && attach.medicationId
-              ? doseAmount(attach.medicationId, child, medications)
-              : undefined
-          }
-          onChange={setAttach}
-          onConfirm={confirmAttach}
-          onClose={() => setAttach(null)}
-        />
-      )}
+      <Presence show={attach != null}>
+        {attach && (
+          <AttachSheet
+            value={attach}
+            medications={medications}
+            suggested={next}
+            amount={
+              attach.kind === 'dose' && attach.medicationId
+                ? doseAmount(attach.medicationId, child, medications)
+                : undefined
+            }
+            onChange={setAttach}
+            onConfirm={confirmAttach}
+            onClose={() => setAttach(null)}
+          />
+        )}
+      </Presence>
 
       <ChildEditor open={editorOpen} onClose={() => setEditorOpen(false)} />
 
