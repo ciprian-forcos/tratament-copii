@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { Medication, TimelineFact, TimelineMark } from '../types'
 import { activeChild, childStore, useChildren } from '../components/design/childStore'
+import { ChildEditor } from '../components/design/ChildEditor'
+import { toggleEnabledMedication } from '../components/design/enabledMeds'
 import { Presence } from '../components/design/Presence'
+import { ShareSheet } from '../components/design/share/ShareSheet'
 import { fmtHHMM } from '../components/design/dosePlan'
 import { loadMedications, MEDICATIONS_CHANGED_EVENT, notifyMedicationsChanged, saveMedications } from '../components/design/medicineStorage'
 import { doseAmount, materializeWindow, nextProjectedDose, projectRange } from '../components/design/timeline/project'
@@ -10,8 +13,10 @@ import { timelineStore, useTimelineFacts } from '../components/design/timeline/s
 import { splitAmount } from '../components/design/variants/fane'
 import { AddSheet, type NewMedicine } from './AddSheet'
 import { BeadCard } from './BeadCard'
+import { Faces } from './Face'
 import { Glyph } from './Glyph'
 import { NextCard, StartCard } from './NextCard'
+import { SettingsSheet } from './SettingsSheet'
 import { Thread, type BeadSelection } from './Thread'
 import { UndoToast } from './UndoToast'
 import { threadWindow } from './thread'
@@ -49,6 +54,9 @@ export function Fir() {
   const [toast, setToast] = useState<{ text: string; undo: () => void } | null>(null)
   const [selected, setSelected] = useState<BeadSelection | null>(null)
   const [adding, setAdding] = useState(false)
+  const [settings, setSettings] = useState(false)
+  const [editing, setEditing] = useState(false)
+  const [sharing, setSharing] = useState(false)
 
   const window_ = threadWindow(now)
   const range = materializeWindow(now)
@@ -139,10 +147,28 @@ export function Fir() {
   return (
     <div className="phone fir">
       <header className="fir-top">
-        <div className="fir-child">{child.name}</div>
-        <button type="button" className="ui-btn fir-fab" aria-label="adaugă" onClick={() => setAdding(true)}>
-          <Glyph name="plus" size={26} />
-        </button>
+        <Faces
+          childList={state.children}
+          activeId={child.id}
+          now={now}
+          onPick={(id) => childStore.setActive(id)}
+          onEdit={(id) => {
+            childStore.setActive(id)
+            setEditing(true)
+          }}
+          onAdd={() => {
+            childStore.add()
+            setEditing(true)
+          }}
+        />
+        <div className="fir-top-actions">
+          <button type="button" className="ui-btn fir-icon-btn" aria-label="setări tratament" onClick={() => setSettings(true)}>
+            <Glyph name="setari" size={22} />
+          </button>
+          <button type="button" className="ui-btn fir-fab" aria-label="adaugă" onClick={() => setAdding(true)}>
+            <Glyph name="plus" size={26} />
+          </button>
+        </div>
       </header>
 
       <Thread
@@ -231,6 +257,32 @@ export function Fir() {
           </div>
         )}
       </Presence>
+
+      <Presence show={settings}>
+        {settings && (
+          <div className="fir-scrim" onClick={() => setSettings(false)}>
+            <div onClick={(e) => e.stopPropagation()}>
+              <SettingsSheet
+                child={child}
+                medications={medications}
+                onClose={() => setSettings(false)}
+                onToggle={(id) => childStore.patchActive({ enabledMedications: toggleEnabledMedication(child, id) })}
+                onEditChild={() => {
+                  setSettings(false)
+                  setEditing(true)
+                }}
+                onShare={() => {
+                  setSettings(false)
+                  setSharing(true)
+                }}
+              />
+            </div>
+          </div>
+        )}
+      </Presence>
+
+      <ChildEditor open={editing} onClose={() => setEditing(false)} />
+      <ShareSheet open={sharing} onClose={() => setSharing(false)} />
 
       {toast && (
         <UndoToast
