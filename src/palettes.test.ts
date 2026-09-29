@@ -60,7 +60,7 @@ describe('palette readability', () => {
     expect(all.map(([id]) => id)).toEqual(
       expect.arrayContaining([
         'grec', 'material', 'sticla', 'mario', 'sonic', 'burete', 'dragon',
-        'joaca', 'night-grec', 'night-material', 'night-sticla', 'night-joaca',
+        'joaca', 'bursa', 'night-grec', 'night-material', 'night-sticla', 'night-joaca',
       ]),
     )
   })

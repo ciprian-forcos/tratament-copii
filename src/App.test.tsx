@@ -70,4 +70,10 @@ describe('design variant switch', () => {
     expect(screen.getByLabelText('firul zilelor')).toBeInTheDocument()
     expect(window.location.search).toContain('v=lab')
   })
+
+  it('opens the trading-chart lab from the Grafic tab', () => {
+    render(<App />)
+    fireEvent.click(screen.getByRole('tab', { name: 'Grafic' }))
+    expect(screen.getByRole('region', { name: 'cotație' })).toBeInTheDocument()
+  })
 })

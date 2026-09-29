@@ -57,6 +57,20 @@ All four phases are built, tested and screenshotted in every look, light and dar
 
 Checks: `npx eslint src`, `npx vitest run` (lab tests in `src/lab/*.test.*`), `npm run build`.
 
+## Grafic: the fever as a stock chart
+
+Ciprian: "Hai să facem un design care să semene cu un grafic de la o platformă de investiții." A fifth layout behind the **Grafic** tab (`?v=grafic`), in `src/lab/Grafic.tsx`, `Chart.tsx` and `grafic.ts`:
+
+- **Quote.** The latest temperature is the price, big and in mono. The change over the range shows ▲ in red when it's hotter and ▼ in green when it's cooler, because up is bad here.
+- **Chart.** Monotone area line with readings, a dashed fever line at 38°, a price tag on the right axis and a pulsing last reading. After now there's a forecast zone.
+- **Volume.** Doses are volume bars in the medicine's colour, filled when given and dashed when planned.
+- **Range and scrubbing.** Range tabs 6O / 12O / 1Z / 3Z / 1S. Drag across the chart to scrub, and the quote follows the crosshair.
+- **Stats row.** Max and min over 24h, doses over 24h, and the time of the last dose. Under it, the next dose.
+- **Watchlist.** Every child with a sparkline, the latest value and the 24h change. Tap a row to switch child.
+- **Ticket.** Two buttons, like Buy and Sell: Temperatură (opens the dial) and Am dat doza.
+- **Încarcă un exemplu.** Seeds a made-up 30-hour episode (`demo.ts`) so the chart can be explored without real data. It can be undone.
+- **Bursă.** A sixth look: a dark trading terminal with yellow accent, green and red, IBM Plex, 4px corners and no bounce. It passes the contrast test and applies to every layout.
+
 ## Ideas not built yet
 
 - Zoom: pinch or a toggle between hours and a week of beads.

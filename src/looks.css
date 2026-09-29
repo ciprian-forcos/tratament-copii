@@ -189,6 +189,55 @@
   --sheet-from: translateY(100%);
 }
 
+/* Bursă: a trading terminal. Near-black panels, trading yellow, green for
+   down (cooling) and red for up (heating), mono numbers, tight corners, no bounce. */
+[data-look="bursa"] {
+  color-scheme: dark;
+  --bg: #0b0e11;
+  --bg-2: #161a1e;
+  --bg-3: #1e2329;
+  --ink: #eaecef;
+  --ink-2: #b7bdc6;
+  --ink-3: #848e9c;
+  --line: #2b3139;
+  --accent: #f0b90b;
+  --accent-2: #fcd535;
+  --accent-wash: rgba(240, 185, 11, 0.14);
+  --on-accent: #0b0e11;
+  --danger: #f6465d;
+  --safe: #0ecb81;
+  --cool: #eaecef;
+
+  --font-hand: "IBM Plex Sans", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --hand-style: normal;
+  --hand-weight: 600;
+
+  --r-btn: 4px;
+  --r-btn-on: 4px;
+  --r-chip: 4px;
+  --r-chip-on: 4px;
+  --r-cta: 4px;
+  --r-cta-press: 4px;
+  --r-field: 4px;
+  --r-sheet: 10px 10px 0 0;
+  --btn-border: 1px solid var(--line);
+  --btn-bg: var(--bg-3);
+  --bar-bg: var(--bg);
+  --bar-line: 1px solid var(--line);
+  --sheet-bg: var(--bg-2);
+  --sheet-top: 1px solid var(--line);
+  --tape: var(--ink-3);
+
+  --press: scale(0.98);
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --dur: 100ms;
+  --dur-sheet: 180ms;
+  --dur-sheet-out: 120ms;
+  --sheet-from: translateY(100%);
+}
+
 /* Glass off when the phone asks for less transparency, or cannot blur. */
 @media (prefers-reduced-transparency: reduce) {
   [data-look="sticla"] {

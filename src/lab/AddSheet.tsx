@@ -9,7 +9,7 @@ import { Amount } from './Amount'
 import { Glyph, type GlyphName } from './Glyph'
 import { TempDial } from './TempDial'
 
-type Tab = 'doza' | 'temp' | 'nota'
+export type Tab = 'doza' | 'temp' | 'nota'
 
 const FORMS: { id: MedicationForm; label: string }[] = [
   { id: 'sirop', label: 'sirop' },
@@ -40,6 +40,7 @@ export function AddSheet({
   child,
   medications,
   suggestedMedId,
+  initialTab = 'doza',
   onClose,
   onDose,
   onTemperature,
@@ -48,12 +49,13 @@ export function AddSheet({
   child: Child
   medications: Medication[]
   suggestedMedId?: string
+  initialTab?: Tab
   onClose: () => void
   onDose: (med: Medication | NewMedicine, amount: { n: number; unit: string }, at: Date) => void
   onTemperature: (celsius: number, at: Date) => void
   onNote: (text: string, at: Date) => void
 }) {
-  const [tab, setTab] = useState<Tab>('doza')
+  const [tab, setTab] = useState<Tab>(initialTab)
   const [medId, setMedId] = useState<string | null>(suggestedMedId ?? null)
   const [creating, setCreating] = useState(false)
   const [newName, setNewName] = useState('')

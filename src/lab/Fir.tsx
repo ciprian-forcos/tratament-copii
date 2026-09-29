@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import type { Medication, TimelineFact, TimelineMark } from '../types'
 import { activeChild, childStore, useChildren } from '../components/design/childStore'
 import { ChildEditor } from '../components/design/ChildEditor'
@@ -6,7 +6,7 @@ import { toggleEnabledMedication } from '../components/design/enabledMeds'
 import { Presence } from '../components/design/Presence'
 import { ShareSheet } from '../components/design/share/ShareSheet'
 import { fmtHHMM } from '../components/design/dosePlan'
-import { loadMedications, MEDICATIONS_CHANGED_EVENT, notifyMedicationsChanged, saveMedications } from '../components/design/medicineStorage'
+import { notifyMedicationsChanged, saveMedications } from '../components/design/medicineStorage'
 import { doseAmount, materializeWindow, nextProjectedDose, projectRange } from '../components/design/timeline/project'
 import { shortName } from '../components/design/timeline/shortName'
 import { timelineStore, useTimelineFacts } from '../components/design/timeline/store'
@@ -20,28 +20,10 @@ import { SettingsSheet } from './SettingsSheet'
 import { Thread, type BeadSelection } from './Thread'
 import { UndoToast } from './UndoToast'
 import { threadWindow } from './thread'
+import { useMedications, useNow } from './hooks'
 import './fir.css'
 
 const NEW_COLORS = ['#0e7490', '#7c3aed', '#be185d', '#15803d', '#b45309']
-
-function useNow(everyMs: number) {
-  const [now, setNow] = useState(() => new Date())
-  useEffect(() => {
-    const id = window.setInterval(() => setNow(new Date()), everyMs)
-    return () => window.clearInterval(id)
-  }, [everyMs])
-  return now
-}
-
-function useMedications() {
-  const [meds, setMeds] = useState<Medication[]>(loadMedications)
-  useEffect(() => {
-    const reload = () => setMeds(loadMedications())
-    window.addEventListener(MEDICATIONS_CHANGED_EVENT, reload)
-    return () => window.removeEventListener(MEDICATIONS_CHANGED_EVENT, reload)
-  }, [])
-  return meds
-}
 
 /** Fir: one thread you throw with your thumb, one card that says what's next. */
 export function Fir() {
