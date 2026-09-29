@@ -194,7 +194,7 @@ export function HomeEdi() {
         )}
         <div style={{ position: 'relative', height: 110 }}>
           <svg viewBox="0 0 320 70" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: 70 }}>
-            <path d={PATH} stroke="var(--line)" strokeWidth={1.4} fill="none" />
+            <path d={PATH} stroke="var(--tape, var(--ink-3))" strokeWidth={1.4} fill="none" />
           </svg>
           {marks.map((m) => {
             const future = m.source === 'projected'

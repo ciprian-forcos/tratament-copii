@@ -2,6 +2,13 @@
 
 ## 2026-09-27
 
+* **Palettes, marks, tap targets**: `src/palettes.test.ts` enforces contrast
+  for every look and skin; Mario, Sonic and Burete redesigned, four others
+  darkened. The tape uses `--tape` / `--ink-3`. Acum's next dose is a
+  `.tl-next` shape the look restyles (Material cookie, Sticlă lens); a dose
+  confirmed in the last minute springs in. All controls are ≥44px (drag
+  handles via `.ui-grabber`); `acum` no longer collides with a mark at now.
+
 * **Looks + NHS baseline**: the Temă panel now has two groups, *Stil*
   (`data-look`: Grec, Material, Sticlă) and *Culori* (`data-skin`). Looks
   live in `src/looks.css` as structural tokens (radius, depth, glass, press,

@@ -150,7 +150,7 @@ export function HomeFane() {
       >
         <div style={{ position: 'absolute', left: 24, right: 24, top: '46%', height: 120 }}>
           <svg viewBox="0 0 320 70" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: 78 }}>
-            <path d={PATH} stroke="var(--line)" strokeWidth={1.4} fill="none" />
+            <path d={PATH} stroke="var(--tape, var(--ink-3))" strokeWidth={1.4} fill="none" />
           </svg>
           {ticks.map((tick) => (
             <div
@@ -217,10 +217,12 @@ export function HomeFane() {
               onClick={() => setPanMs(0)}
               style={{
                 position: 'absolute',
-                top: -6,
+                top: -13,
                 left: `${pct(now)}%`,
                 transform: 'translateX(-50%)',
                 zIndex: 6,
+                minWidth: 44,
+                minHeight: 44,
                 background: 'transparent',
                 border: 'none',
                 color: 'var(--ink)',
@@ -339,9 +341,14 @@ export function HomeFane() {
                 onChange={(e) => setOtherName(e.target.value)}
                 placeholder="Alt medicament"
                 className="ui-field"
-                style={{ flex: 1, padding: '10px 12px', font: 'inherit' }}
+                style={{ flex: 1, minWidth: 0, padding: '10px 12px', font: 'inherit' }}
               />
-              <button type="submit" aria-label="adaugă alt medicament" className="ui-chip">
+              <button
+                type="submit"
+                aria-label="adaugă alt medicament"
+                className="ui-chip"
+                style={{ flex: '0 0 auto', minWidth: 48, padding: '0 14px', fontSize: 20 }}
+              >
                 +
               </button>
             </form>

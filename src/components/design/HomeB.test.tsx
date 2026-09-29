@@ -99,6 +99,32 @@ describe('HomeB timeline', () => {
     expect(screen.getByText('8 ml')).toBeInTheDocument()
   })
 
+  it('draws the next dose as a shape each look can restyle', () => {
+    const lastAt = new Date('2026-06-07T21:00:00').toISOString()
+    act(() => {
+      doseStore.record({ childId: MAYA_ID, medicationId: 'nurofen', scheduledAt: lastAt, administeredAt: lastAt })
+    })
+
+    const { container } = render(<HomeB />)
+
+    expect(container.querySelectorAll('.tl-next path.tl-next-shape')).toHaveLength(1)
+    expect(container.querySelector('.tl-dot--given')).not.toBeNull()
+  })
+
+  it('springs in only a dose given in the last minute', () => {
+    const old = new Date('2026-06-07T21:00:00').toISOString()
+    const fresh = new Date('2026-06-07T22:59:30').toISOString()
+    act(() => {
+      doseStore.record({ childId: MAYA_ID, medicationId: 'nurofen', scheduledAt: old, administeredAt: old })
+      doseStore.record({ childId: MAYA_ID, medicationId: 'panadol', scheduledAt: fresh, administeredAt: fresh })
+    })
+
+    const { container } = render(<HomeB />)
+
+    expect(container.querySelectorAll('.tl-dot--given')).toHaveLength(2)
+    expect(container.querySelectorAll('.tl-dot--fresh')).toHaveLength(1)
+  })
+
   it("does not show a next dose from another child's recorded dose", () => {
     seedLuca()
     const lastAt = new Date('2026-06-07T21:00:00').toISOString()

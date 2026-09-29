@@ -43,17 +43,8 @@ export function SetupDrawer({
         aria-label="copii și medicamente"
         aria-expanded={open}
         onClick={onToggle}
-        style={{
-          pointerEvents: 'auto',
-          display: 'block',
-          margin: '10px auto 0',
-          width: 42,
-          height: 5,
-          borderRadius: 99,
-          border: 'none',
-          background: 'var(--line)',
-          cursor: 'pointer',
-        }}
+        className="ui-grabber"
+        style={{ pointerEvents: 'auto', marginTop: -10, marginBottom: -19 }}
       />
       {open && (
         <div className="ui-surface" style={{ margin: '10px 14px 0', padding: 12 }}>
@@ -112,7 +103,7 @@ export function SetupDrawer({
   )
 }
 
-const chipPad = { padding: '8px 12px', fontSize: 13 }
+const chipPad = { padding: '8px 12px', fontSize: 13, minWidth: 'var(--tap, 44px)' }
 
 function hold(e: ReactPointerEvent, fire: () => void) {
   const start = window.setTimeout(fire, 450)

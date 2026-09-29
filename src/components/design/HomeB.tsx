@@ -7,6 +7,7 @@ import { toggleEnabledMedication } from './enabledMeds'
 import { loadMedications, MEDICATIONS_CHANGED_EVENT } from './medicineStorage'
 import { useDoseReminder } from './useDoseReminder'
 import { AttachSheet, type AttachValue } from './timeline/AttachSheet'
+import { FRESH_MARK_MS, NEXT_RING_PATH } from './timeline/markShapes'
 import { calculateDose } from '../../utils/doseCalculation'
 import { doseAmount, materializeWindow, nextProjectedDose, projectRange } from './timeline/project'
 import { SetupDrawer } from './timeline/SetupDrawer'
@@ -233,7 +234,7 @@ export function HomeB() {
             preserveAspectRatio="none"
             style={{ position: 'absolute', inset: 0, width: '100%', height: 78 }}
           >
-            <path d={PATH} stroke="var(--line)" strokeWidth={1.4} fill="none" />
+            <path d={PATH} stroke="var(--tape, var(--ink-3))" strokeWidth={1.4} fill="none" />
           </svg>
           {marks.map((m) => {
             const isNext = next != null && m.source === 'projected' && m.at.getTime() === next.at.getTime()
@@ -253,25 +254,30 @@ export function HomeB() {
                   pointerEvents: 'none',
                 }}
               >
-                <div
-                  className={isNext ? 'pulse-dot' : undefined}
-                  style={{
-                    width: isNext ? 16 : 10,
-                    height: isNext ? 16 : 10,
-                    borderRadius: '50%',
-                    background: future ? 'transparent' : 'var(--cool)',
-                    border: future ? '1.8px solid var(--accent)' : 'none',
-                    boxShadow: isNext ? '0 0 0 4px var(--accent-wash)' : 'none',
-                  }}
-                />
-                <div className="mono" style={{ fontSize: 10, color: future ? 'var(--accent)' : 'var(--ink-3)' }}>
+                {isNext ? (
+                  <span className="tl-next pulse-dot" aria-hidden="true">
+                    <svg viewBox="-12 -12 24 24" width={24} height={24}>
+                      <path className="tl-next-shape" d={NEXT_RING_PATH} />
+                    </svg>
+                  </span>
+                ) : (
+                  <div
+                    aria-hidden="true"
+                    className={[
+                      'tl-dot',
+                      future ? 'tl-dot--future' : 'tl-dot--given',
+                      !future && now.getTime() - m.at.getTime() < FRESH_MARK_MS ? 'tl-dot--fresh' : '',
+                    ].join(' ')}
+                  />
+                )}
+                <div className="mono" style={{ fontSize: 12, color: future ? 'var(--accent-2)' : 'var(--ink-2)' }}>
                   {fmtHHMM(m.at)}
                 </div>
                 <div className="hand" style={{ fontSize: 16, color: future ? 'var(--accent-2)' : 'var(--ink-2)' }}>
                   {m.label}
                 </div>
                 {isNext && m.amount && (
-                  <div className="mono" style={{ fontSize: 11, color: 'var(--accent)' }}>
+                  <div className="mono" style={{ fontSize: 14, fontWeight: 600, color: 'var(--accent-2)' }}>
                     {m.amount}
                   </div>
                 )}
@@ -281,7 +287,7 @@ export function HomeB() {
           <div
             style={{
               position: 'absolute',
-              top: 0,
+              bottom: 'calc(100% - 16px)',
               left: `${toPct(now)}%`,
               transform: 'translateX(-50%)',
               color: 'var(--ink)',
